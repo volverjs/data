@@ -1,0 +1,99 @@
+{
+    "name": "@volverjs/data",
+    "description": "Repository pattern implementation with a tiny HttpClient based on Fetch API",
+    "author": "24/Consulting",
+    "license": "MIT",
+    "keywords": [
+        "repository",
+        "http-client",
+        "http",
+        "url-builder",
+        "fetch"
+    ],
+    "homepage": "https://github.com/volverjs/data",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/volverjs/data"
+    },
+    "bugs": {
+        "url": "https://github.com/volverjs/data/issues"
+    },
+    "version": "0.0.0",
+    "engines": {
+        "node": ">= 16.x"
+    },
+    "packageManager": "pnpm@7.8.0",
+    "scripts": {
+        "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+        "type-check": "tsc --noEmit",
+        "build": "tsc && copy src/**/*.d.ts dist",
+        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles",
+        "credits": "npx @opengovsg/credits-generator"
+    },
+    "type": "module",
+    "sideEffects": false,
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "dist",
+        "src",
+        "node",
+        "*.d.ts"
+    ],
+    "dependencies": {
+        "abort-controller": "^3.0.0",
+        "ky": "^0.33.2",
+        "node-fetch": "^3.3.0",
+        "qs": "^6.11.0"
+    },
+    "devDependencies": {
+        "@types/jest": "^29.4.0",
+        "@types/qs": "^6.9.7",
+        "@typescript-eslint/eslint-plugin": "^5.52.0",
+        "@typescript-eslint/parser": "^5.52.0",
+        "copy": "^0.3.2",
+        "eslint": "^8.34.0",
+        "eslint-config-prettier": "^8.6.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "jest": "^29.4.3",
+        "jest-fetch-mock": "^3.0.3",
+        "prettier": "^2.8.4",
+        "ts-jest": "^29.0.5",
+        "typescript": "^4.9.5"
+    },
+    "typesVersions": {
+        "*": {
+            "*": [
+                "dist/index.d.ts"
+            ]
+        }
+    },
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "node": "./node/index.js"
+        },
+        "./src/*": "./src/*",
+        "./dist/*": "./dist/*",
+        "./hash": {
+            "types": "./dist/Hash.d.ts",
+            "import": "./dist/Hash.js"
+        },
+        "./http-client": {
+            "types": "./dist/HttpClient.d.ts",
+            "import": "./dist/HttpClient.js"
+        },
+        "./repository": {
+            "types": "./dist/Repository.d.ts"
+        },
+        "./repository-http": {
+            "types": "./dist/RepositoryHttp.d.ts",
+            "import": "./dist/RepositoryHttp.js"
+        },
+        "./url-builder": {
+            "types": "./dist/UrlBuilder.d.ts",
+            "import": "./dist/UrlBuilder.js"
+        }
+    }
+}
