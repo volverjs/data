@@ -26,40 +26,40 @@ export type HttpClientOptions = Omit<Options, 'searchParams'> & {
 export type HttpClientRequestOptions = HttpClientOptions & {
 	abortController?: AbortController
 }
-export type HttpClientInput = Input
 export type HttpClientMethod = HttpMethod
 export type HttpClientHeaders = KyHeadersInit
 export type HttpClientRetryOptions = RetryOptions
 export type HttpClientHooks = Hooks
-
-export type HttpClientUrl = {
+export type HttpClientInput = Input
+export type HttpClientUrlTemplate = {
 	template: string
 	params: ParamMap
 }
+export type HttpClientInputTemplate = Input | HttpClientUrlTemplate
 
 export interface HttpClientInstance {
 	get: (
-		url: HttpClientInput | HttpClientUrl,
+		url: HttpClientInputTemplate,
 		options?: HttpClientOptions,
 	) => HttpClientResponsePromise
 	post: (
-		url: HttpClientInput | HttpClientUrl,
+		url: HttpClientInputTemplate,
 		options?: HttpClientOptions,
 	) => HttpClientResponsePromise
 	put: (
-		url: HttpClientInput | HttpClientUrl,
+		url: HttpClientInputTemplate,
 		options?: HttpClientOptions,
 	) => HttpClientResponsePromise
 	delete: (
-		url: HttpClientInput | HttpClientUrl,
+		url: HttpClientInputTemplate,
 		options?: HttpClientOptions,
 	) => HttpClientResponsePromise
 	patch: (
-		url: HttpClientInput | HttpClientUrl,
+		url: HttpClientInputTemplate,
 		options?: HttpClientOptions,
 	) => HttpClientResponsePromise
 	head: (
-		url: HttpClientInput | HttpClientUrl,
+		url: HttpClientInputTemplate,
 		options?: HttpClientOptions,
 	) => HttpClientResponsePromise
 	extend: (options: HttpClientOptions) => void
@@ -67,7 +67,7 @@ export interface HttpClientInstance {
 	fetch: (request: Request) => HttpClientResponsePromise
 	request: (
 		method: HttpClientMethod,
-		url: HttpClientInput | HttpClientUrl,
+		url: HttpClientInputTemplate,
 		options?: HttpClientOptions,
 	) => {
 		responsePromise: HttpClientResponsePromise
@@ -76,7 +76,7 @@ export interface HttpClientInstance {
 	}
 	setBearerToken: (token: string) => void
 	buildUrl: (
-		url: HttpClientInput | HttpClientUrl,
+		url: HttpClientInputTemplate,
 		options?: UrlBuilderOptions,
 	) => HttpClientInput
 }
@@ -99,71 +99,75 @@ export class HttpClient implements HttpClientInstance {
 	}
 
 	public get = (
-		url: HttpClientInput | HttpClientUrl,
-		options?: HttpClientOptions,
+		url: HttpClientInputTemplate,
+		options: HttpClientOptions = {},
 	) => {
-		const { searchParams, ...clientOptions } = options ?? {}
-		url = this.buildUrl(url, searchParams)
-		return this._client.get(url, clientOptions)
+		const { searchParams, ...clientOptions } = options
+		return this._client.get(this.buildUrl(url, searchParams), clientOptions)
 	}
 
 	public post = (
-		url: HttpClientInput | HttpClientUrl,
-		options?: HttpClientOptions,
+		url: HttpClientInputTemplate,
+		options: HttpClientOptions = {},
 	) => {
-		const { searchParams, ...clientOptions } = options ?? {}
-		url = this.buildUrl(url, searchParams)
-		return this._client.post(url, clientOptions)
+		const { searchParams, ...clientOptions } = options
+		return this._client.post(
+			this.buildUrl(url, searchParams),
+			clientOptions,
+		)
 	}
 
 	public put = (
-		url: HttpClientInput | HttpClientUrl,
-		options?: HttpClientOptions,
+		url: HttpClientInputTemplate,
+		options: HttpClientOptions = {},
 	) => {
-		const { searchParams, ...clientOptions } = options ?? {}
-		url = this.buildUrl(url, searchParams)
-		return this._client.put(url, clientOptions)
+		const { searchParams, ...clientOptions } = options
+		return this._client.put(this.buildUrl(url, searchParams), clientOptions)
 	}
 
 	public delete = (
-		url: HttpClientInput | HttpClientUrl,
-		options?: HttpClientOptions,
+		url: HttpClientInputTemplate,
+		options: HttpClientOptions = {},
 	) => {
-		const { searchParams, ...clientOptions } = options ?? {}
-		url = this.buildUrl(url, searchParams)
-		return this._client.delete(url, clientOptions)
+		const { searchParams, ...clientOptions } = options
+		return this._client.delete(
+			this.buildUrl(url, searchParams),
+			clientOptions,
+		)
 	}
 
 	public patch = (
-		url: HttpClientInput | HttpClientUrl,
-		options?: HttpClientOptions,
+		url: HttpClientInputTemplate,
+		options: HttpClientOptions = {},
 	) => {
-		const { searchParams, ...clientOptions } = options ?? {}
-		url = this.buildUrl(url, searchParams)
-		return this._client.patch(url, clientOptions)
+		const { searchParams, ...clientOptions } = options
+		return this._client.patch(
+			this.buildUrl(url, searchParams),
+			clientOptions,
+		)
 	}
 
 	public head = (
-		url: HttpClientInput | HttpClientUrl,
-		options?: HttpClientOptions,
+		url: HttpClientInputTemplate,
+		options: HttpClientOptions = {},
 	) => {
-		const { searchParams, ...clientOptions } = options ?? {}
-		url = this.buildUrl(url, searchParams)
-		return this._client.head(url, clientOptions)
+		const { searchParams, ...clientOptions } = options
+		return this._client.head(
+			this.buildUrl(url, searchParams),
+			clientOptions,
+		)
 	}
 
 	public request = (
 		method: HttpClientMethod,
-		url: HttpClientInput | HttpClientUrl,
-		options?: HttpClientRequestOptions,
+		url: HttpClientInputTemplate,
+		options: HttpClientRequestOptions = {},
 	) => {
-		const { searchParams, abortController, ...clientOptions } =
-			options ?? {}
-		url = this.buildUrl(url, searchParams)
+		const { abortController, ...otherOptions } = options
 		const { controller, signal } =
 			HttpClient.createAbortController(abortController)
 		return {
-			responsePromise: this[method](url, { signal, ...clientOptions }),
+			responsePromise: this[method](url, { signal, ...otherOptions }),
 			abort: (reason?: string) => controller.abort(reason),
 			signal,
 		}
@@ -173,14 +177,14 @@ export class HttpClient implements HttpClientInstance {
 		return this._client(request)
 	}
 
-	public extend = (options: HttpClientOptions) => {
-		const { searchParams, ...clientOptions } = options ?? {}
+	public extend = (options: HttpClientOptions = {}) => {
+		const { searchParams, ...clientOptions } = options
 		this._client = this._client.extend(clientOptions)
 		this._urlBuilder.extend(searchParams ?? {})
 	}
 
-	public clone = (options?: HttpClientOptions) => {
-		const { searchParams, ...clientOptions } = options ?? {}
+	public clone = (options: HttpClientOptions = {}) => {
+		const { searchParams, ...clientOptions } = options
 		return new HttpClient({
 			client: this._client.extend(clientOptions),
 			urlBuilder: this._urlBuilder.clone(searchParams),
@@ -200,32 +204,34 @@ export class HttpClient implements HttpClientInstance {
 	}
 
 	public buildUrl(
-		url: HttpClientInput | HttpClientUrl,
+		url: HttpClientInputTemplate,
 		options?: UrlBuilderOptions,
 	): HttpClientInput {
-		if (HttpClient.validHttpClientUrl(url)) {
-			const { template, params } = url as HttpClientUrl
-			return this._urlBuilder.build(template, params, options)
-		}
-		return url as HttpClientInput
+		return HttpClient.buildUrl(url, options, this._urlBuilder)
 	}
 
 	public static buildUrl = (
-		url: HttpClientInput | HttpClientUrl,
+		url: HttpClientInputTemplate,
 		options?: UrlBuilderOptions,
+		builder?: UrlBuilderInstance,
 	) => {
-		if (HttpClient.validHttpClientUrl(url)) {
-			const { template, params } = url as HttpClientUrl
-			return UrlBuilder.build(template, params, options)
+		if (HttpClient.isUrlTemplate(url)) {
+			const { template, params } = url as HttpClientUrlTemplate
+			return builder
+				? builder.build(template, params, options)
+				: UrlBuilder.build(template, params, options)
 		}
 		return url as HttpClientInput
 	}
 
-	private static validHttpClientUrl(url: HttpClientInput | HttpClientUrl) {
+	private static isUrlTemplate(url: HttpClientInputTemplate) {
 		return (
-			typeof url !== 'string' &&
-			!(url instanceof URL) &&
-			!(url instanceof Request)
+			typeof url === 'object' &&
+			url !== null &&
+			((arrayOfKeys: string[]) =>
+				['template', 'params'].every((key) =>
+					arrayOfKeys.includes(key),
+				))(Object.keys(url))
 		)
 	}
 

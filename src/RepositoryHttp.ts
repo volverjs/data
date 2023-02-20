@@ -2,7 +2,7 @@ import type {
 	HttpClientInstance,
 	HttpClientOptions,
 	HttpClientRequestOptions,
-	HttpClientUrl,
+	HttpClientUrlTemplate,
 	HTTPError,
 } from './HttpClient'
 import type { Repository } from './Repository'
@@ -253,7 +253,7 @@ export class RepositoryHttp<Type> implements Repository<Type> {
 		return this._cloneReadPendingRequest(key)
 	}
 
-	private _requestUrl = (params: ParamMap): HttpClientUrl => {
+	private _requestUrl = (params: ParamMap): HttpClientUrlTemplate => {
 		return { template: this._template, params }
 	}
 

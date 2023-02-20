@@ -3,7 +3,7 @@ import type { ParamMap } from './types'
 export interface Repository<Type> {
 	read(
 		params: ParamMap,
-		options?: { key?: string; [string]: unknown },
+		options?: { key?: string | number | boolean; [string]: unknown },
 	): {
 		response: Promise<{
 			ok: boolean
