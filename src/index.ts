@@ -5,6 +5,7 @@ export { UrlBuilder } from './UrlBuilder'
 
 export type {
 	HttpClientInstance,
+	HttpClientInstanceOptions,
 	HttpClientOptions,
 	HttpClientRequestOptions,
 	HttpClientInput,

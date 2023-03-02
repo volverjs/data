@@ -80,6 +80,10 @@ export interface HttpClientInstance {
 		options?: UrlBuilderOptions,
 	) => HttpClientInput
 }
+export type HttpClientInstanceOptions = HttpClientOptions & {
+	client?: KyInstance
+	urlBuilder?: UrlBuilderInstance
+}
 
 export { HTTPError, TimeoutError }
 
@@ -87,12 +91,7 @@ export class HttpClient implements HttpClientInstance {
 	private _client: KyInstance
 	private _urlBuilder: UrlBuilderInstance
 
-	constructor(
-		options: HttpClientOptions & {
-			client?: KyInstance
-			urlBuilder?: UrlBuilderInstance
-		} = {},
-	) {
+	constructor(options: HttpClientInstanceOptions = {}) {
 		const { client, urlBuilder, searchParams, ...clientOptions } = options
 		this._client = client ?? ky.create(clientOptions)
 		this._urlBuilder = urlBuilder ?? new UrlBuilder(searchParams)
