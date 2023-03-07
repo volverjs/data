@@ -137,6 +137,67 @@ const getAdminUsers: User[] = async () => {
 
 Please refer to the `RepositoryHttp` [`docs`](/docs/RepositoryHttp.md) for more informations.
 
+## Vue
+
+You can use this library with Vue 3 with `@volverjs/data/vue`.
+
+```typescript
+import { createApp } from 'vue'
+import { createHttpClient } from '@volverjs/data/vue'
+
+const httpClient = createHttpClient({
+  prefixUrl: 'https://api.com'
+})
+
+const app = createApp(App)
+app.use(httpClient, {
+  global: true // default: false
+})
+```
+
+With `global` option set to `true`, the `HttpClient` instance will be available in all components as `$vvHttp`.
+
+Alternatively, you can use the `useHttpClient` function to inject the `HttpClient` instance in a specific component.
+
+```vue
+<script lang="ts" setup>
+  import { useHttpClient } from '@volverjs/data/vue'
+
+  const httpClient = useHttpClient()
+  const response = await httpClient.get({
+    template: 'users/:id',
+    params: {
+      id: 1
+    }
+  })
+</script>
+```
+
+To use the `RepositoryHttp` class, you can use the `useRepositoryHttp` function.
+
+```vue
+<script lang="ts" setup>
+  import { useRepositoryHttp } from '@volverjs/data/vue'
+
+  class User {
+    id: number
+    name: string
+    constructor(data: { id: number; name: string }) {
+      this.id = data.id
+      this.name = data.name
+    }
+  }
+
+  const repository = useRepositoryHttp<User>('users/:id?', {
+    class: User
+  })
+  const { response } = repository.read({
+    id: 1
+  })
+  const { data } = await response
+</script>
+```
+
 ## Acknoledgements
 
 The `UrlBuilder` class is inspired by [`urlcat`](https://github.com/balazsbotond/urlcat).
