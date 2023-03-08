@@ -190,10 +190,13 @@ export class HttpClient implements HttpClientInstance {
 		})
 	}
 
-	public setBearerToken = (token: string | undefined | null) => {
+	public setBearerToken = (
+		token: string | undefined | null,
+		{ headerName = 'Authorization', prefix = 'Bearer' } = {},
+	) => {
 		this.extend({
 			headers: {
-				Authorization: token ? `bearer ${token}` : undefined,
+				[headerName]: token ? `${prefix} ${token}` : undefined,
 			},
 		})
 	}
