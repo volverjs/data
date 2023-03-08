@@ -90,11 +90,13 @@ export { HTTPError, TimeoutError }
 export class HttpClient implements HttpClientInstance {
 	private _client: KyInstance
 	private _urlBuilder: UrlBuilderInstance
+	private _prefixUrl: string | URL | undefined
 
 	constructor(options: HttpClientInstanceOptions = {}) {
 		const { client, urlBuilder, searchParams, ...clientOptions } = options
 		this._client = client ?? ky.create(clientOptions)
 		this._urlBuilder = urlBuilder ?? new UrlBuilder(searchParams)
+		this._prefixUrl = clientOptions.prefixUrl
 	}
 
 	public get = (
@@ -179,6 +181,7 @@ export class HttpClient implements HttpClientInstance {
 	public extend = (options: HttpClientOptions = {}) => {
 		const { searchParams, ...clientOptions } = options
 		this._client = this._client.extend(clientOptions)
+		this._prefixUrl = clientOptions.prefixUrl ?? this._prefixUrl
 		this._urlBuilder.extend(searchParams ?? {})
 	}
 
@@ -209,7 +212,15 @@ export class HttpClient implements HttpClientInstance {
 		url: HttpClientInputTemplate,
 		options?: UrlBuilderOptions,
 	): HttpClientInput {
-		return HttpClient.buildUrl(url, options, this._urlBuilder)
+		const toReturn = HttpClient.buildUrl(url, options, this._urlBuilder)
+		if (
+			this._prefixUrl &&
+			typeof toReturn === 'string' &&
+			toReturn?.[0] === '/'
+		) {
+			return toReturn.slice(1)
+		}
+		return toReturn
 	}
 
 	public static buildUrl = (
