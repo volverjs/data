@@ -7,6 +7,8 @@ export interface Repository<Type> {
 	): {
 		response: Promise<{
 			ok: boolean
+			aborted?: boolean
+			abortReason?: string
 			data?: Type[]
 			metadata?: ParamMap
 		}>
@@ -20,6 +22,8 @@ export interface Repository<Type> {
 	): {
 		response: Promise<{
 			ok: boolean
+			aborted?: boolean
+			abortReason?: string
 			data?: Type
 			metadata?: ParamMap
 		}>
@@ -33,6 +37,8 @@ export interface Repository<Type> {
 	): {
 		response: Promise<{
 			ok: boolean
+			aborted?: boolean
+			abortReason?: string
 			data?: Type
 			metadata?: ParamMap
 		}>
@@ -45,6 +51,8 @@ export interface Repository<Type> {
 	): {
 		response: Promise<{
 			ok: boolean
+			aborted?: boolean
+			abortReason?: string
 		}>
 		abort?: (reason?: string) => void
 	}

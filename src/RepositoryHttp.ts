@@ -12,9 +12,10 @@ import type { ParamMap } from './types'
 type ReadPendingRequest<Type> = {
 	response: Promise<{
 		ok: boolean
+		aborted?: boolean
+		abortReason?: string
 		data?: Type[]
 		metadata?: ParamMap
-		abortReason?: string
 	}>
 	abort: (reason?: string) => void
 	count: number
@@ -119,10 +120,10 @@ export class RepositoryHttp<Type> implements Repository<Type> {
 				if (key !== false) {
 					this._deleteReadPendingRequest(key)
 				}
-				if (!signal?.aborted) {
+				if (!signal.aborted) {
 					throw error as HTTPError
 				}
-				return { ok: false, abortReason: signal?.reason }
+				return { ok: false, aborted: true, abortReason: signal.reason }
 			}
 		})()
 		if (key === false) {
@@ -149,10 +150,10 @@ export class RepositoryHttp<Type> implements Repository<Type> {
 				const metadata = this._metadataAdapter(httpResponse)
 				return { data, metadata, ok: httpResponse.ok }
 			} catch (error) {
-				if (!signal?.aborted) {
+				if (!signal.aborted) {
 					throw error
 				}
-				return { ok: false, error }
+				return { ok: false, aborted: true, abortReason: signal.reason }
 			}
 		})()
 		return { abort, response }
@@ -176,10 +177,10 @@ export class RepositoryHttp<Type> implements Repository<Type> {
 				const metadata = this._metadataAdapter(httpResponse)
 				return { data, metadata, ok: httpResponse.ok }
 			} catch (error) {
-				if (!signal?.aborted) {
+				if (!signal.aborted) {
 					throw error
 				}
-				return { ok: false, error }
+				return { ok: false, aborted: true, abortReason: signal.reason }
 			}
 		})()
 		return { abort, response }
@@ -196,10 +197,10 @@ export class RepositoryHttp<Type> implements Repository<Type> {
 				const httpResponse = await responsePromise
 				return { ok: httpResponse.ok }
 			} catch (error) {
-				if (!signal?.aborted) {
+				if (!signal.aborted) {
 					throw error
 				}
-				return { ok: false, error }
+				return { ok: false, aborted: true, abortReason: signal.reason }
 			}
 		})()
 		return { abort, response }
@@ -230,6 +231,7 @@ export class RepositoryHttp<Type> implements Repository<Type> {
 					}
 					resolve({
 						ok: false,
+						aborted: true,
 						abortReason: controller.signal.reason,
 					})
 				})
