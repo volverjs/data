@@ -1,0 +1,59 @@
+import type { ParamMap } from './types'
+
+export interface Repository<Type> {
+	read(
+		params: ParamMap,
+		options?: { key?: string | number | boolean; [string]: unknown },
+	): {
+		response: Promise<{
+			ok: boolean
+			aborted?: boolean
+			abortReason?: string
+			data?: Type[]
+			metadata?: ParamMap
+		}>
+		abort?: (reason?: string) => void
+	}
+
+	create(
+		params: ParamMap,
+		item: Type,
+		options?: { [string]: unknown },
+	): {
+		response: Promise<{
+			ok: boolean
+			aborted?: boolean
+			abortReason?: string
+			data?: Type
+			metadata?: ParamMap
+		}>
+		abort?: (reason?: string) => void
+	}
+
+	update(
+		params: ParamMap,
+		item: Type,
+		options?: { [string]: unknown },
+	): {
+		response: Promise<{
+			ok: boolean
+			aborted?: boolean
+			abortReason?: string
+			data?: Type
+			metadata?: ParamMap
+		}>
+		abort?: (reason?: string) => void
+	}
+
+	delete(
+		params: ParamMap,
+		options?: { [string]: unknown },
+	): {
+		response: Promise<{
+			ok: boolean
+			aborted?: boolean
+			abortReason?: string
+		}>
+		abort?: (reason?: string) => void
+	}
+}
