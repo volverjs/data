@@ -36,8 +36,7 @@ export class RepositoryHttp<Type> implements Repository<Type> {
 	private _template: string
 	private _responseAdapter = (raw: unknown) =>
 		Array.isArray(raw) ? raw : ([raw] as Type[])
-	private _requestAdapter = (item: Type): unknown =>
-		structuredClone(item) as unknown
+	private _requestAdapter = (item: Type): unknown => item
 	private _metadataAdapter = (response: Response): ParamMap | undefined => {
 		if (response.headers.has('X-Total-Count')) {
 			return { total: response.headers.get('X-Total-Count') }
