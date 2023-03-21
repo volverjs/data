@@ -1,5 +1,8 @@
-import fetchMock from 'jest-fetch-mock'
+import createFetchMock from 'vitest-fetch-mock'
+import { describe, beforeEach, vi, it, expect } from 'vitest'
 import { RepositoryHttp, HttpClient } from '../node'
+
+const fetchMock = createFetchMock(vi)
 
 describe('RepositoryHttp', () => {
 	beforeEach(() => {
@@ -21,7 +24,8 @@ describe('RepositoryHttp', () => {
 		expect(ok).toBe(true)
 		expect(data[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
-		expect(fetchMock.mock.calls[0][0].url).toEqual(
+		const request = fetchMock.mock.calls[0][0] as Request
+		expect(request.url).toEqual(
 			'https://myapi.com/v1/alpha?codes=col,pe,at',
 		)
 	})
@@ -57,7 +61,8 @@ describe('RepositoryHttp', () => {
 		expect(data1[0].id).toBe('12345')
 		expect(data2[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
-		expect(fetchMock.mock.calls[0][0].url).toEqual(
+		const request = fetchMock.mock.calls[0][0] as Request
+		expect(request.url).toEqual(
 			'https://myapi.com/v1/alpha?codes=col,pe,at',
 		)
 	})
@@ -82,7 +87,8 @@ describe('RepositoryHttp', () => {
 		expect(ok2).toBe(true)
 		expect(data2[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
-		expect(fetchMock.mock.calls[0][0].url).toEqual(
+		const request = fetchMock.mock.calls[0][0] as Request
+		expect(request.url).toEqual(
 			'https://myapi.com/v1/alpha?codes=col,pe,at',
 		)
 	})
@@ -107,7 +113,8 @@ describe('RepositoryHttp', () => {
 		expect(ok2).toBe(false)
 		expect(data1[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
-		expect(fetchMock.mock.calls[0][0].url).toEqual(
+		const request = fetchMock.mock.calls[0][0] as Request
+		expect(request.url).toEqual(
 			'https://myapi.com/v1/alpha?codes=col,pe,at',
 		)
 	})

@@ -1,5 +1,8 @@
-import fetchMock from 'jest-fetch-mock'
+import createFetchMock from 'vitest-fetch-mock'
+import { describe, beforeEach, vi, it, expect } from 'vitest'
 import { HttpClient } from '../node'
+
+const fetchMock = createFetchMock(vi)
 
 describe('HttpClient', () => {
 	beforeEach(() => {
@@ -13,8 +16,9 @@ describe('HttpClient', () => {
 		const data = await client.get('https://myapi.com/v1').json()
 		expect(data[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
-		expect(fetchMock.mock.calls[0][0].method).toEqual('GET')
-		expect(fetchMock.mock.calls[0][0].url).toEqual('https://myapi.com/v1')
+		const request = fetchMock.mock.calls[0][0] as Request
+		expect(request.method).toEqual('GET')
+		expect(request.url).toEqual('https://myapi.com/v1')
 	})
 	it('Should make a GET request with template parameters', async () => {
 		fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
@@ -27,9 +31,8 @@ describe('HttpClient', () => {
 			.json()
 		expect(data[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
-		expect(fetchMock.mock.calls[0][0].url).toEqual(
-			'https://myapi.com/v1/example',
-		)
+		const request = fetchMock.mock.calls[0][0] as Request
+		expect(request.url).toEqual('https://myapi.com/v1/example')
 	})
 	it('Should make a GET request with template and query parameters', async () => {
 		fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
@@ -42,7 +45,8 @@ describe('HttpClient', () => {
 			.json()
 		expect(data[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
-		expect(fetchMock.mock.calls[0][0].url).toEqual(
+		const request = fetchMock.mock.calls[0][0] as Request
+		expect(request.url).toEqual(
 			'https://myapi.com/v1/alpha?codes=col,pe,at',
 		)
 	})
@@ -59,7 +63,8 @@ describe('HttpClient', () => {
 			.json()
 		expect(data[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
-		expect(fetchMock.mock.calls[0][0].url).toEqual(
+		const request = fetchMock.mock.calls[0][0] as Request
+		expect(request.url).toEqual(
 			'https://myapi.com/v1/alpha?codes=col,pe,at',
 		)
 	})
