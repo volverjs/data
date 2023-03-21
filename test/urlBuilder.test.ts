@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest'
 import { UrlBuilder } from '../src/UrlBuilder'
 
 describe('UrlBuilder', () => {
