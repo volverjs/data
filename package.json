@@ -1,128 +1,129 @@
 {
-    "name": "@volverjs/data",
-    "description": "Repository pattern implementation with a tiny HttpClient based on Fetch API.",
-    "author": "24/Consulting",
-    "license": "MIT",
-    "keywords": [
-        "repository",
-        "http-client",
-        "http",
-        "url-builder",
-        "fetch"
-    ],
-    "homepage": "https://github.com/volverjs/data",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/volverjs/data"
-    },
-    "bugs": {
-        "url": "https://github.com/volverjs/data/issues"
-    },
-    "version": "0.0.0",
-    "engines": {
-        "node": ">= 16.x"
-    },
-    "packageManager": "pnpm@7.8.0",
-    "scripts": {
-        "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-        "type-check": "tsc --noEmit",
-        "build": "vite build && vue-tsc --declaration --emitDeclarationOnly && copy src/**/*.d.ts dist",
-        "test": "vitest",
-        "credits": "npx @opengovsg/credits-generator"
-    },
-    "type": "module",
-    "sideEffects": false,
-    "main": "./dist/index.js",
-    "module": "./dist/index.js",
-    "types": "./dist/index.d.ts",
-    "files": [
-        "dist",
-        "src",
-        "node",
-        "*.d.ts"
-    ],
-    "dependencies": {
-        "abort-controller": "^3.0.0",
-        "ky": "^0.33.3",
-        "node-fetch": "^3.3.1",
-        "qs": "^6.11.1"
-    },
-    "devDependencies": {
-        "@types/qs": "^6.9.7",
-        "@typescript-eslint/eslint-plugin": "^5.56.0",
-        "@typescript-eslint/parser": "^5.56.0",
-        "copy": "^0.3.2",
-        "eslint": "^8.36.0",
-        "eslint-config-prettier": "^8.8.0",
-        "eslint-plugin-prettier": "^4.2.1",
-        "happy-dom": "^8.9.0",
-        "prettier": "^2.8.6",
-        "typescript": "^5.0.2",
-        "vite": "^4.2.1",
-        "vite-plugin-eslint": "^1.8.1",
-        "vite-plugin-externalize-deps": "^0.5.0",
-        "vitest": "^0.29.7",
-        "vitest-fetch-mock": "^0.2.2",
-        "vue-tsc": "^1.2.0"
-    },
-    "typesVersions": {
-        "*": {
-            "*": [
-                "dist/index.d.ts"
-            ],
-            "hash": [
-                "dist/Hash.d.ts"
-            ],
-            "http-client": [
-                "dist/HttpClient.d.ts"
-            ],
-            "repository": [
-                "dist/Repository.d.ts"
-            ],
-            "repository-http": [
-                "dist/RepositoryHttp.d.ts"
-            ],
-            "url-builder": [
-                "dist/UrlBuilder.d.ts"
-            ],
-            "vue": [
-                "dist/vue/index.d.ts"
-            ]
-        }
-    },
-    "exports": {
-        ".": {
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.js",
-            "node": "./node/index.js"
-        },
-        "./src/*": "./src/*",
-        "./dist/*": "./dist/*",
-        "./hash": {
-            "types": "./dist/Hash.d.ts",
-            "import": "./dist/Hash.js"
-        },
-        "./http-client": {
-            "types": "./dist/HttpClient.d.ts",
-            "import": "./dist/HttpClient.js"
-        },
-        "./repository": {
-            "types": "./dist/Repository.d.ts"
-        },
-        "./repository-http": {
-            "types": "./dist/RepositoryHttp.d.ts",
-            "import": "./dist/RepositoryHttp.js"
-        },
-        "./url-builder": {
-            "types": "./dist/UrlBuilder.d.ts",
-            "import": "./dist/UrlBuilder.js"
-        },
-        "./vue": {
-            "types": "./dist/vue/index.d.ts",
-            "import": "./dist/vue/index.js"
-        }
-    },
-    "optionalDependencies": {
-        "vue": "^3.2.47"
+  "name": "@volverjs/data",
+  "description": "Repository pattern implementation with a tiny HttpClient based on Fetch API.",
+  "author": "24/Consulting",
+  "license": "MIT",
+  "keywords": [
+    "repository",
+    "http-client",
+    "http",
+    "url-builder",
+    "fetch"
+  ],
+  "homepage": "https://github.com/volverjs/data",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/volverjs/data"
+  },
+  "bugs": {
+    "url": "https://github.com/volverjs/data/issues"
+  },
+  "version": "0.0.0",
+  "engines": {
+    "node": ">= 16.x"
+  },
+  "packageManager": "pnpm@7.8.0",
+  "scripts": {
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "type-check": "tsc --noEmit",
+    "build": "vite build && vue-tsc --declaration --emitDeclarationOnly && copy src/**/*.d.ts dist",
+    "test-vitest": "vitest run",
+    "test-vitest-watch": "vitest",
+    "credits": "npx @opengovsg/credits-generator"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "node",
+    "*.d.ts"
+  ],
+  "dependencies": {
+    "abort-controller": "^3.0.0",
+    "ky": "^0.33.3",
+    "node-fetch": "^3.3.1",
+    "qs": "^6.11.1"
+  },
+  "devDependencies": {
+    "@types/qs": "^6.9.7",
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
+    "@typescript-eslint/parser": "^5.56.0",
+    "copy": "^0.3.2",
+    "eslint": "^8.36.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "happy-dom": "^8.9.0",
+    "prettier": "^2.8.6",
+    "typescript": "^5.0.2",
+    "vite": "^4.2.1",
+    "vite-plugin-eslint": "^1.8.1",
+    "vite-plugin-externalize-deps": "^0.5.0",
+    "vitest": "^0.29.7",
+    "vitest-fetch-mock": "^0.2.2",
+    "vue-tsc": "^1.2.0"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/index.d.ts"
+      ],
+      "hash": [
+        "dist/Hash.d.ts"
+      ],
+      "http-client": [
+        "dist/HttpClient.d.ts"
+      ],
+      "repository": [
+        "dist/Repository.d.ts"
+      ],
+      "repository-http": [
+        "dist/RepositoryHttp.d.ts"
+      ],
+      "url-builder": [
+        "dist/UrlBuilder.d.ts"
+      ],
+      "vue": [
+        "dist/vue/index.d.ts"
+      ]
     }
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "node": "./node/index.js"
+    },
+    "./src/*": "./src/*",
+    "./dist/*": "./dist/*",
+    "./hash": {
+      "types": "./dist/Hash.d.ts",
+      "import": "./dist/Hash.js"
+    },
+    "./http-client": {
+      "types": "./dist/HttpClient.d.ts",
+      "import": "./dist/HttpClient.js"
+    },
+    "./repository": {
+      "types": "./dist/Repository.d.ts"
+    },
+    "./repository-http": {
+      "types": "./dist/RepositoryHttp.d.ts",
+      "import": "./dist/RepositoryHttp.js"
+    },
+    "./url-builder": {
+      "types": "./dist/UrlBuilder.d.ts",
+      "import": "./dist/UrlBuilder.js"
+    },
+    "./vue": {
+      "types": "./dist/vue/index.d.ts",
+      "import": "./dist/vue/index.js"
+    }
+  },
+  "optionalDependencies": {
+    "vue": "^3.2.47"
+  }
 }
