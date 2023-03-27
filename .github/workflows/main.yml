@@ -1,4 +1,4 @@
-name: Publish on NPM and GitHub Packages
+name: Main pipeline
 
 on:
     # Runs on release publish
@@ -6,33 +6,16 @@ on:
         types: [published]
 
 jobs:
+    # build
     build:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v3
-            - uses: pnpm/action-setup@v2.2.2
-              with:
-                  version: 7
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ matrix.node-version }}
-                  cache: 'pnpm'
-            - name: Install dependencies
-              run: pnpm install
-            - name: Build release
-              run: pnpm build
-            - name: Bump version with release tag name
-              run: pnpm version --no-git-tag-version ${{ github.event.release.tag_name }}
-            - name: Pack package
-              run: pnpm pack
-            - name: Upload artifact
-              uses: actions/upload-artifact@v3
-              with:
-                  name: package
-                  path: '*.tgz'
-    publish-npm:
+        uses: ./.github/workflows/build.yml
+
+    test:
         needs: build
+        uses: ./.github/workflows/test.yml
+
+    publish-npm:
+        needs: test
         runs-on: ubuntu-latest
         steps:
             - name: Download artifact
@@ -48,7 +31,7 @@ jobs:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
     publish-gpr:
-        needs: build
+        needs: test
         runs-on: ubuntu-latest
         permissions:
             contents: read
