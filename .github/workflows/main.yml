@@ -15,7 +15,7 @@ jobs:
         uses: ./.github/workflows/test.yml
 
     publish-npm:
-        needs: build
+        needs: test
         runs-on: ubuntu-latest
         steps:
             - name: Download artifact
@@ -31,7 +31,7 @@ jobs:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
     publish-gpr:
-        needs: build
+        needs: test
         runs-on: ubuntu-latest
         permissions:
             contents: read
