@@ -307,8 +307,8 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
   const execute = async () => {
     isLoading.value = true
     try {
-      const { request } = repository.read({ id: 1 })
-      const response = await request
+      const { responsePromise } = repository.read({ id: 1 })
+      const response = await responsePromise
       data.value = response.data
     } catch (e) {
       error.value = e.message
