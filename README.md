@@ -58,12 +58,12 @@ import { UrlBuilder } from '@volverjs/data'
 const urlBuilder = new UrlBuilder({
   encodeValuesOnly: false
 })
-const url = urlBuilder.build('https://api.com/:endpoint', {
+const url = urlBuilder.build('https://my.api.com/:endpoint', {
   endpoint: 'users',
   _limit: 10,
   _page: 1
 })
-// url = 'https://api.com/users?_limit=10&_page=1'
+// url = 'https://my.api.com/users?_limit=10&_page=1'
 ```
 
 Instead of `URLSearchParams`, the query parameters are automatically encoded using [`qs`](https://github.com/ljharb/qs) library.
@@ -77,7 +77,7 @@ The `HttpClient` class is a wrapper around [`ky`](https://github.com/sindresorhu
 import { HttpClient } from '@volverjs/data'
 
 const client = new HttpClient({
-  prefixUrl: 'https://api.com'
+  prefixUrl: 'https://my.api.com'
 })
 const response = await client.get({
   template: ':endpoint/:action?/:id',
@@ -88,7 +88,7 @@ const response = await client.get({
     _page: 1
   }
 })
-// fetch('https://api.com/users/1?_limit=10&_page=1', { method: 'GET' })
+// fetch('https://my.api.com/users/1?_limit=10&_page=1', { method: 'GET' })
 ```
 
 Please refer to the `HttpClient` [`docs`](/docs/HttpClient.md) for more informations.
@@ -115,7 +115,7 @@ class User {
 }
 
 const client = new HttpClient({
-  prefixUrl: 'https://api.com'
+  prefixUrl: 'https://my.api.com'
 })
 
 const repository = new RepositoryHttp<User>(client, 'users/:group?/:id?', {
@@ -124,10 +124,10 @@ const repository = new RepositoryHttp<User>(client, 'users/:group?/:id?', {
 
 const getAdminUsers: User[] = async () => {
   try {
-    const { response } = repository.read({
+    const { responsePromise } = repository.read({
       group: 'admin'
     })
-    const { data } = await response
+    const { data } = await responsePromise
     return data
   } catch (error) {
     throw error
@@ -141,62 +141,276 @@ Please refer to the `RepositoryHttp` [`docs`](/docs/RepositoryHttp.md) for more 
 
 You can use this library with Vue 3 with `@volverjs/data/vue`.
 
+### Plugin
+
+The `createHttpClient` function returns a plugin that can be installed in a Vue app.
+
 ```typescript
 import { createApp } from 'vue'
 import { createHttpClient } from '@volverjs/data/vue'
-
-const httpClient = createHttpClient({
-  prefixUrl: 'https://api.com'
-})
+import App from './App.vue'
 
 const app = createApp(App)
+const httpClient = createHttpClient({
+  prefixUrl: 'https://my.api.com'
+})
+
 app.use(httpClient, {
   global: true // default: false
 })
 ```
 
-With `global` option set to `true`, the `HttpClient` instance will be available in all components as `$vvHttp`.
+With `global` option set to `true`, the `HttpClient` instance will be available in all components as `$vvHttp` with Options API.
 
-Alternatively, you can use the `useHttpClient` function to inject the `HttpClient` instance in a specific component.
+### Composition API
+
+Alternatively, you can use the `useHttpClient()` and `useRepositoryHttp()` composables to inject the `HttpClient` instance in a specific component.
+
+#### `useHttpClient()`
+
+If `useHttpClient()` is not called in the `setup()` function or if the `HttpClient` instance has not been installed, a new instance will be created.
 
 ```vue
+<template>
+  <div>
+    <button @click="execute()">Execute</button>
+    <div v-if="isLoading">Loading...</div>
+    <div v-if="isError">{{ error }}</div>
+    <div v-if="data">{{ data.name }}</div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+  import { ref, computed } from 'vue'
+  import { useHttpClient } from '@volverjs/data/vue'
+
+  const { client } = useHttpClient({
+    prefixUrl: 'https://my.api.com/v1'
+  })
+  const isLoading = ref(false)
+  const isError = computed(() => error.value !== undefined)
+  const error = ref()
+  const data = ref<Data>()
+
+  type User = {
+    id: number
+    name: string
+  }
+
+  const execute = async () => {
+    isLoading.value = true
+    try {
+      const response = await client.get('users/1')
+      data.value = await response.json<User>()
+    } catch (e) {
+      error.value = e.message
+    } finally {
+      isLoading.value = false
+    }
+  }
+</script>
+```
+
+`useHttpClient()` also exposes `request()`, `get()`, `post()`, `put()`, `patch()` and `delete()` methods. These methods are wrappers around the `HttpClient` methods with reactivity.
+
+```vue
+<template>
+  <div>
+    <button @click="execute()">Execute</button>
+    <div v-if="isLoading">Loading...</div>
+    <div v-if="isError">{{ error }}</div>
+    <div v-if="data">{{ data.name }}</div>
+  </div>
+</template>
+
 <script lang="ts" setup>
   import { useHttpClient } from '@volverjs/data/vue'
 
-  const httpClient = useHttpClient()
-  const response = await httpClient.get({
-    template: 'users/:id',
-    params: {
-      id: 1
-    }
+  type User = {
+    id: number
+    name: string
+  }
+  const { get } = useHttpClient({
+    prefixUrl: 'https://my.api.com/v1'
+  })
+  const { isLoading, isError, error, data, execute } = get<User>('users/1', {
+    immediate: false
   })
 </script>
 ```
 
-To use the `RepositoryHttp` class, you can use the `useRepositoryHttp` function.
+Each method returns an object with the following properties:
+
+- `isLoading`: a `ref` that indicates if the request is loading;
+- `isError`: a `computed` that indicates if the request has failed;
+- `error`: a `ref` that contains the error message;
+- `response`: a `ref` that contains the response;
+- `data`: a `ref` that contains the response data (`.json()` function);
+- `execute()`: a function that executes the request.
+
+The request can be executed later by setting the `immediate` option to `false` (default: `true`).
 
 ```vue
+<template>
+  <form @submit.prevent="execute()">
+    <div v-if="isLoading">Loading...</div>
+    <div v-if="isError">{{ error }}</div>
+    <input type="text" v-model="data.name" />
+    <button type="submit">Submit</button>
+  </form>
+</template>
+
+<script lang="ts" setup>
+  import { useHttpClient } from '@volverjs/data/vue'
+
+  type User = {
+    id: number
+    name: string
+  }
+
+  const data = ref<Partial<User>>({ name: '' })
+
+  const { post } = useHttpClient()
+  const { isLoading, isError, error, execute } = post<User>(
+    'users',
+    computed(() => ({ immediate: false, json: data.value }))
+  )
+</script>
+```
+
+The `execute()` function returns an object with the following properties:
+
+- `responsePromise`: a `Promise` that resolves with the response;
+- `abort`: a function that aborts the request;
+- `signal`: an `AbortSignal` that can be used to check if the request has been aborted.
+
+#### `useRepositoryHttp()`
+
+To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` composable.
+
+```vue
+<template>
+  <div>
+    <button @click="execute">Execute</button>
+    <div v-if="isLoading">Loading...</div>
+    <div v-if="isError">{{ error }}</div>
+    <div v-if="data">{{ data.name }}</div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+  import { ref, computed } from 'vue'
+  import { useRepositoryHttp } from '@volverjs/data/vue'
+
+  type User = {
+    id: number
+    name: string
+  }
+
+  const { repository } = useRepositoryHttp<User>('users/:id')
+  const isLoading = ref(false)
+  const isError = computed(() => error.value !== undefined)
+  const error = ref()
+  const data = ref()
+
+  const execute = async () => {
+    isLoading.value = true
+    try {
+      const { request } = repository.read({ id: 1 })
+      const response = await request
+      data.value = response.data
+    } catch (e) {
+      error.value = e.message
+    } finally {
+      isLoading.value = false
+    }
+  }
+</script>
+```
+
+`useRepositoryHttp()` also exposes `create()`, `read()`, `update()` and `delete()` methods. These methods are wrappers around the `RepositoryHttp` methods with reactivity.
+
+```vue
+<template>
+  <div>
+    <button @click="execute">Execute</button>
+    <div v-if="isLoading">Loading...</div>
+    <div v-if="isError">{{ error }}</div>
+    <div v-if="data">{{ data.name }}</div>
+  </div>
+</template>
+
 <script lang="ts" setup>
   import { useRepositoryHttp } from '@volverjs/data/vue'
 
-  class User {
+  type User = {
     id: number
     name: string
-    constructor(data: { id: number; name: string }) {
-      this.id = data.id
-      this.name = data.name
-    }
   }
 
-  const repository = useRepositoryHttp<User>('users/:id?', {
-    class: User
-  })
-  const { response } = repository.read({
-    id: 1
-  })
-  const { data } = await response
+  const { read } = useRepositoryHttp<User>('users/:id')
+  const { isLoading, isError, error, data, execute } = read(
+    { id: 1 },
+    { immediate: false }
+  )
 </script>
 ```
+
+Each method returns an object with the following properties:
+
+- `isLoading`: a `ref` that indicates if the request is loading;
+- `isError`: a `computed` that indicates if the request has failed;
+- `error`: a `ref` that contains the error message;
+- `execute()`: a function that executes the request.
+
+`create()`, `read()`, `update()` also return:
+
+- `data` a `ref` that contains the response data;
+- `metadata` a `ref` that contains the response metadata;
+
+The request can be executed later by setting the `immediate` option to `false` (default: `true`).
+
+```vue
+<template>
+  <form @submit.prevent="execute()">
+    <div v-if="isLoading">Loading...</div>
+    <div v-if="error">{{ error }}</div>
+    <input type="text" v-model="data.name" />
+    <button :disabled="isLoading" type="submit">Submit</button>
+  </form>
+</template>
+
+<script lang="ts" setup>
+  import { useRepositoryHttp } from '@volverjs/data/vue'
+  import { computed } from 'vue'
+
+  type User = {
+    id: number
+    name: string
+  }
+
+  const { read, update, data } = useRepositoryHttp<User>('users/:id?')
+  const { isLoading: isReading, error: readError } = read({ id: 1 })
+  const {
+    isLoading: isUpdating,
+    error: updateError,
+    execute
+  } = update(
+    data,
+    { id: 1 }
+    { immediate: false }
+  )
+
+  const isLoading = computed(() => isReading.value || isUpdating.value)
+  const error = computed(() => updateError.value || readError.value)
+</script>
+```
+
+The `execute()` function returns an object with the following properties:
+
+- `responsePromise`: a `Promise` that resolves with the response;
+- `abort`: a function that aborts the request;
+- `signal`: an `AbortSignal` that can be used to check if the request has been aborted.
 
 ## Acknoledgements
 

@@ -15,12 +15,12 @@ describe('RepositoryHttp', () => {
 		const client = new HttpClient({
 			prefixUrl: 'https://myapi.com/v1',
 		})
-		const repository = new RepositoryHttp(client, ':type')
-		const { response } = repository.read({
+		const repository = new RepositoryHttp<{ id: string }>(client, ':type')
+		const { responsePromise } = repository.read({
 			type: 'alpha',
 			codes: ['col', 'pe', 'at'],
 		})
-		const { data, ok } = await response
+		const { data, ok } = await responsePromise
 		expect(ok).toBe(true)
 		expect(data[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
@@ -34,9 +34,9 @@ describe('RepositoryHttp', () => {
 			prefixUrl: 'https://myapi.com/v1',
 		})
 		const repository = new RepositoryHttp(client, ':type?')
-		const { response, abort } = repository.read({})
+		const { responsePromise, abort } = repository.read({})
 		abort('Aborted')
-		const { ok, abortReason } = await response
+		const { ok, abortReason } = await responsePromise
 		expect(ok).toBe(false)
 		expect(abortReason).toBe('Aborted')
 	})
@@ -45,17 +45,17 @@ describe('RepositoryHttp', () => {
 		const client = new HttpClient({
 			prefixUrl: 'https://myapi.com/v1',
 		})
-		const repository = new RepositoryHttp(client, ':type')
-		const { response: response1 } = repository.read({
+		const repository = new RepositoryHttp<{ id: string }>(client, ':type')
+		const { responsePromise: responsePromise1 } = repository.read({
 			type: 'alpha',
 			codes: ['col', 'pe', 'at'],
 		})
-		const { response: response2 } = repository.read({
+		const { responsePromise: responsePromise2 } = repository.read({
 			type: 'alpha',
 			codes: ['col', 'pe', 'at'],
 		})
-		const { data: data1, ok: ok1 } = await response1
-		const { data: data2, ok: ok2 } = await response2
+		const { data: data1, ok: ok1 } = await responsePromise1
+		const { data: data2, ok: ok2 } = await responsePromise2
 		expect(ok1).toBe(true)
 		expect(ok2).toBe(true)
 		expect(data1[0].id).toBe('12345')
@@ -71,18 +71,18 @@ describe('RepositoryHttp', () => {
 		const client = new HttpClient({
 			prefixUrl: 'https://myapi.com/v1',
 		})
-		const repository = new RepositoryHttp(client, ':type')
-		const { response: response1, abort } = repository.read({
+		const repository = new RepositoryHttp<{ id: string }>(client, ':type')
+		const { responsePromise: responsePromise1, abort } = repository.read({
 			type: 'alpha',
 			codes: ['col', 'pe', 'at'],
 		})
-		const { response: response2 } = repository.read({
+		const { responsePromise: responsePromise2 } = repository.read({
 			type: 'alpha',
 			codes: ['col', 'pe', 'at'],
 		})
 		abort('Aborted')
-		const { ok: ok1 } = await response1
-		const { data: data2, ok: ok2 } = await response2
+		const { ok: ok1 } = await responsePromise1
+		const { data: data2, ok: ok2 } = await responsePromise2
 		expect(ok1).toBe(false)
 		expect(ok2).toBe(true)
 		expect(data2[0].id).toBe('12345')
@@ -97,18 +97,18 @@ describe('RepositoryHttp', () => {
 		const client = new HttpClient({
 			prefixUrl: 'https://myapi.com/v1',
 		})
-		const repository = new RepositoryHttp(client, ':type')
-		const { response: response1 } = repository.read({
+		const repository = new RepositoryHttp<{ id: string }>(client, ':type')
+		const { responsePromise: responsePromise1 } = repository.read({
 			type: 'alpha',
 			codes: ['col', 'pe', 'at'],
 		})
-		const { response: response2, abort } = repository.read({
+		const { responsePromise: responsePromise2, abort } = repository.read({
 			type: 'alpha',
 			codes: ['col', 'pe', 'at'],
 		})
 		abort('Aborted')
-		const { data: data1, ok: ok1 } = await response1
-		const { ok: ok2 } = await response2
+		const { data: data1, ok: ok1 } = await responsePromise1
+		const { ok: ok2 } = await responsePromise2
 		expect(ok1).toBe(true)
 		expect(ok2).toBe(false)
 		expect(data1[0].id).toBe('12345')

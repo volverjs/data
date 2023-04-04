@@ -5,7 +5,7 @@ export interface Repository<Type> {
 		params: ParamMap,
 		options?: { key?: string | number | boolean; [string]: unknown },
 	): {
-		response: Promise<{
+		responsePromise: Promise<{
 			ok: boolean
 			aborted?: boolean
 			abortReason?: string
@@ -13,14 +13,15 @@ export interface Repository<Type> {
 			metadata?: ParamMap
 		}>
 		abort?: (reason?: string) => void
+		signal?: AbortSignal
 	}
 
 	create(
-		params: ParamMap,
 		item: Type,
+		params?: ParamMap,
 		options?: { [string]: unknown },
 	): {
-		response: Promise<{
+		responsePromise: Promise<{
 			ok: boolean
 			aborted?: boolean
 			abortReason?: string
@@ -28,14 +29,15 @@ export interface Repository<Type> {
 			metadata?: ParamMap
 		}>
 		abort?: (reason?: string) => void
+		signal?: AbortSignal
 	}
 
 	update(
-		params: ParamMap,
 		item: Type,
+		params?: ParamMap,
 		options?: { [string]: unknown },
 	): {
-		response: Promise<{
+		responsePromise: Promise<{
 			ok: boolean
 			aborted?: boolean
 			abortReason?: string
@@ -43,17 +45,19 @@ export interface Repository<Type> {
 			metadata?: ParamMap
 		}>
 		abort?: (reason?: string) => void
+		signal?: AbortSignal
 	}
 
 	delete(
 		params: ParamMap,
 		options?: { [string]: unknown },
 	): {
-		response: Promise<{
+		responsePromise: Promise<{
 			ok: boolean
 			aborted?: boolean
 			abortReason?: string
 		}>
 		abort?: (reason?: string) => void
+		signal?: AbortSignal
 	}
 }
