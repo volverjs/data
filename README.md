@@ -171,15 +171,6 @@ Alternatively, you can use the `useHttpClient()` and `useRepositoryHttp()` compo
 If `useHttpClient()` is not called in the `setup()` function or if the `HttpClient` instance has not been installed, a new instance will be created.
 
 ```vue
-<template>
-  <div>
-    <button @click="execute()">Execute</button>
-    <div v-if="isLoading">Loading...</div>
-    <div v-if="isError">{{ error }}</div>
-    <div v-if="data">{{ data.name }}</div>
-  </div>
-</template>
-
 <script lang="ts" setup>
   import { ref, computed } from 'vue'
   import { useHttpClient } from '@volverjs/data/vue'
@@ -209,11 +200,7 @@ If `useHttpClient()` is not called in the `setup()` function or if the `HttpClie
     }
   }
 </script>
-```
 
-`useHttpClient()` also exposes `request()`, `get()`, `post()`, `put()`, `patch()` and `delete()` methods. These methods are wrappers around the `HttpClient` methods with reactivity.
-
-```vue
 <template>
   <div>
     <button @click="execute()">Execute</button>
@@ -222,7 +209,11 @@ If `useHttpClient()` is not called in the `setup()` function or if the `HttpClie
     <div v-if="data">{{ data.name }}</div>
   </div>
 </template>
+```
 
+`useHttpClient()` also exposes `request()`, `get()`, `post()`, `put()`, `patch()` and `delete()` methods. These methods are wrappers around the `HttpClient` methods with reactivity.
+
+```vue
 <script lang="ts" setup>
   import { useHttpClient } from '@volverjs/data/vue'
 
@@ -237,6 +228,15 @@ If `useHttpClient()` is not called in the `setup()` function or if the `HttpClie
     immediate: false
   })
 </script>
+
+<template>
+  <div>
+    <button @click="execute()">Execute</button>
+    <div v-if="isLoading">Loading...</div>
+    <div v-if="isError">{{ error }}</div>
+    <div v-if="data">{{ data.name }}</div>
+  </div>
+</template>
 ```
 
 Each method returns an object with the following properties:
@@ -251,15 +251,6 @@ Each method returns an object with the following properties:
 The request can be executed later by setting the `immediate` option to `false` (default: `true`).
 
 ```vue
-<template>
-  <form @submit.prevent="execute()">
-    <div v-if="isLoading">Loading...</div>
-    <div v-if="isError">{{ error }}</div>
-    <input type="text" v-model="data.name" />
-    <button type="submit">Submit</button>
-  </form>
-</template>
-
 <script lang="ts" setup>
   import { useHttpClient } from '@volverjs/data/vue'
 
@@ -276,6 +267,15 @@ The request can be executed later by setting the `immediate` option to `false` (
     computed(() => ({ immediate: false, json: data.value }))
   )
 </script>
+
+<template>
+  <form @submit.prevent="execute()">
+    <div v-if="isLoading">Loading...</div>
+    <div v-if="isError">{{ error }}</div>
+    <input type="text" v-model="data.name" />
+    <button type="submit">Submit</button>
+  </form>
+</template>
 ```
 
 The `execute()` function returns an object with the following properties:
@@ -289,15 +289,6 @@ The `execute()` function returns an object with the following properties:
 To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` composable.
 
 ```vue
-<template>
-  <div>
-    <button @click="execute">Execute</button>
-    <div v-if="isLoading">Loading...</div>
-    <div v-if="isError">{{ error }}</div>
-    <div v-if="data">{{ data.name }}</div>
-  </div>
-</template>
-
 <script lang="ts" setup>
   import { ref, computed } from 'vue'
   import { useRepositoryHttp } from '@volverjs/data/vue'
@@ -326,11 +317,7 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
     }
   }
 </script>
-```
 
-`useRepositoryHttp()` also exposes `create()`, `read()`, `update()` and `delete()` methods. These methods are wrappers around the `RepositoryHttp` methods with reactivity.
-
-```vue
 <template>
   <div>
     <button @click="execute">Execute</button>
@@ -339,7 +326,11 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
     <div v-if="data">{{ data.name }}</div>
   </div>
 </template>
+```
 
+`useRepositoryHttp()` also exposes `create()`, `read()`, `update()` and `delete()` methods. These methods are wrappers around the `RepositoryHttp` methods with reactivity.
+
+```vue
 <script lang="ts" setup>
   import { useRepositoryHttp } from '@volverjs/data/vue'
 
@@ -354,6 +345,15 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
     { immediate: false }
   )
 </script>
+
+<template>
+  <div>
+    <button @click="execute">Execute</button>
+    <div v-if="isLoading">Loading...</div>
+    <div v-if="isError">{{ error }}</div>
+    <div v-if="data">{{ data.name }}</div>
+  </div>
+</template>
 ```
 
 Each method returns an object with the following properties:
@@ -368,18 +368,13 @@ Each method returns an object with the following properties:
 - `data` a `ref` that contains the response data;
 - `metadata` a `ref` that contains the response metadata;
 
+`read()` also returns:
+
+- `item` a `ref` that contains the first item of the response data;
+
 The request can be executed later by setting the `immediate` option to `false` (default: `true`).
 
 ```vue
-<template>
-  <form @submit.prevent="execute()">
-    <div v-if="isLoading">Loading...</div>
-    <div v-if="error">{{ error }}</div>
-    <input type="text" v-model="data.name" />
-    <button :disabled="isLoading" type="submit">Submit</button>
-  </form>
-</template>
-
 <script lang="ts" setup>
   import { useRepositoryHttp } from '@volverjs/data/vue'
   import { computed } from 'vue'
@@ -389,21 +384,28 @@ The request can be executed later by setting the `immediate` option to `false` (
     name: string
   }
 
-  const { read, update, data } = useRepositoryHttp<User>('users/:id?')
-  const { isLoading: isReading, error: readError } = read({ id: 1 })
+  const { read, update } = useRepositoryHttp<User>('users/:id?')
+  const { isLoading: isReading, error: readError, item } = read({ id: 1 })
   const {
     isLoading: isUpdating,
     error: updateError,
     execute
-  } = update(
-    data,
-    { id: 1 }
-    { immediate: false }
-  )
+  } = update(item, { id: 1 }, { immediate: false })
 
   const isLoading = computed(() => isReading.value || isUpdating.value)
   const error = computed(() => updateError.value || readError.value)
 </script>
+
+<template>
+  <form @submit.prevent="execute()">
+    <div v-if="isLoading">Loading...</div>
+    <div v-if="error">{{ error }}</div>
+    <template v-if="item">
+      <input type="text" v-model="item.name" />
+      <button :disabled="isLoading" type="submit">Submit</button>
+    </template>
+  </form>
+</template>
 ```
 
 The `execute()` function returns an object with the following properties:

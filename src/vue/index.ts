@@ -399,6 +399,7 @@ export const useRepositoryHttp = <Type = unknown>(
 		const isError = computed(() => error.value !== undefined)
 		const error = ref<HTTPError>()
 		const data = ref<Type[]>()
+		const item = ref<Type>()
 		const metadata = ref<ParamMap>()
 
 		const execute = (
@@ -414,6 +415,7 @@ export const useRepositoryHttp = <Type = unknown>(
 			responsePromise
 				.then((result) => {
 					data.value = result.data
+					item.value = result.data?.[0]
 					metadata.value = result.metadata
 				})
 				.catch((e) => {
@@ -430,6 +432,7 @@ export const useRepositoryHttp = <Type = unknown>(
 			isError,
 			error: readonly(error),
 			data,
+			item,
 			metadata,
 			...(immediate ? execute() : {}),
 		}
