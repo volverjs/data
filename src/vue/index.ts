@@ -135,14 +135,14 @@ export const createHttpClient = (options?: HttpClientInstanceOptions) =>
  * 	name: string
  * }
  *
- * const { get } = useHttpClient()
+ * const { requestGet } = useHttpClient()
  * const {
  * 	isLoading,
  *	isError,
  * 	error,
  * 	data,
  * 	execute,
- * } = get<User>('user/1', { immediate: false })
+ * } = requestGet<User>('user/1', { immediate: false })
  * </script>
  * ```
  * @example
@@ -166,8 +166,8 @@ export const createHttpClient = (options?: HttpClientInstanceOptions) =>
  *
  * const data = ref<Partial<User>>({ name: '' })
  *
- * const { post } = useHttpClient()
- * const { isLoading, isError, error, execute } = post<User>(
+ * const { requestPost } = useHttpClient()
+ * const { isLoading, isError, error, execute } = requestPost<User>(
  * 	'user',
  * 	computed(() => ({ immediate: false, json: data.value })),
  * )
