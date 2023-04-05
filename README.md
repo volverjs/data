@@ -211,7 +211,7 @@ If `useHttpClient()` is not called in the `setup()` function or if the `HttpClie
 </template>
 ```
 
-`useHttpClient()` also exposes `request()`, `get()`, `post()`, `put()`, `patch()` and `delete()` methods. These methods are wrappers around the `HttpClient` methods with reactivity.
+`useHttpClient()` also exposes `request()`, `requestGet()`, `requestPost()`, `requestPut()`, `requestPatch()` and `requestDelete()` methods. These methods are wrappers around the `HttpClient` methods with reactivity.
 
 ```vue
 <script lang="ts" setup>
@@ -221,12 +221,15 @@ If `useHttpClient()` is not called in the `setup()` function or if the `HttpClie
     id: number
     name: string
   }
-  const { get } = useHttpClient({
+  const { requestGet } = useHttpClient({
     prefixUrl: 'https://my.api.com/v1'
   })
-  const { isLoading, isError, error, data, execute } = get<User>('users/1', {
-    immediate: false
-  })
+  const { isLoading, isError, error, data, execute } = requestGet<User>(
+    'users/1',
+    {
+      immediate: false
+    }
+  )
 </script>
 
 <template>
@@ -261,8 +264,8 @@ The request can be executed later by setting the `immediate` option to `false` (
 
   const data = ref<Partial<User>>({ name: '' })
 
-  const { post } = useHttpClient()
-  const { isLoading, isError, error, execute } = post<User>(
+  const { requestPost } = useHttpClient()
+  const { isLoading, isError, error, execute } = requestPost<User>(
     'users',
     computed(() => ({ immediate: false, json: data.value }))
   )
@@ -328,7 +331,7 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
 </template>
 ```
 
-`useRepositoryHttp()` also exposes `create()`, `read()`, `update()` and `delete()` methods. These methods are wrappers around the `RepositoryHttp` methods with reactivity.
+`useRepositoryHttp()` also exposes `create()`, `read()`, `update()` and `remove()` methods. These methods are wrappers around the `RepositoryHttp` methods with reactivity.
 
 ```vue
 <script lang="ts" setup>

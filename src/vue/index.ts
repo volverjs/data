@@ -232,27 +232,27 @@ export const useHttpClient = (options?: HttpClientInstanceOptions) => {
 	return {
 		client,
 		request,
-		get: <Type>(
+		requestGet: <Type>(
 			url: HttpClientComposableInputTemplate,
 			options: HttpClientComposableRequestOptions = {},
 		) => request<Type>('get', url, options),
-		post: <Type>(
+		requestPost: <Type>(
 			url: HttpClientComposableInputTemplate,
 			options: HttpClientComposableRequestOptions = {},
 		) => request<Type>('post', url, options),
-		put: <Type>(
+		requestPut: <Type>(
 			url: HttpClientComposableInputTemplate,
 			options: HttpClientComposableRequestOptions = {},
 		) => request<Type>('put', url, options),
-		delete: <Type>(
+		requestDelete: <Type>(
 			url: HttpClientComposableInputTemplate,
 			options: HttpClientComposableRequestOptions = {},
-		) => request<Type>('put', url, options),
-		head: <Type>(
+		) => request<Type>('delete', url, options),
+		requestHead: <Type>(
 			url: HttpClientComposableInputTemplate,
 			options: HttpClientComposableRequestOptions = {},
 		) => request<Type>('head', url, options),
-		patch: <Type>(
+		requestPatch: <Type>(
 			url: HttpClientComposableInputTemplate,
 			options: HttpClientComposableRequestOptions = {},
 		) => request<Type>('patch', url, options),
@@ -342,7 +342,7 @@ export const useRepositoryHttp = <Type = unknown>(
 	const { client } = useHttpClient(httpClientOptions)
 	const repository = new RepositoryHttp<Type>(client, template, options)
 
-	const executeCreate = (
+	const create = (
 		item: Type | Ref<Type>,
 		params: ParamMap = {},
 		options: HttpClientComposableRequestOptions = {},
@@ -390,7 +390,7 @@ export const useRepositoryHttp = <Type = unknown>(
 		}
 	}
 
-	const executeRead = (
+	const read = (
 		params: ParamMap | Ref<ParamMap>,
 		options: RepositoryHttpComposableReadOptions = {},
 	) => {
@@ -438,7 +438,7 @@ export const useRepositoryHttp = <Type = unknown>(
 		}
 	}
 
-	const executeUpdate = (
+	const update = (
 		item: Type | Ref<Type>,
 		params: ParamMap = {},
 		options: HttpClientComposableRequestOptions = {},
@@ -486,7 +486,7 @@ export const useRepositoryHttp = <Type = unknown>(
 		}
 	}
 
-	const executeDelete = (
+	const remove = (
 		params: ParamMap | Ref<ParamMap>,
 		options: HttpClientComposableRequestOptions = {},
 	) => {
@@ -501,7 +501,7 @@ export const useRepositoryHttp = <Type = unknown>(
 		) => {
 			isLoading.value = true
 			error.value = undefined
-			const { abort, responsePromise } = repository.delete(
+			const { abort, responsePromise } = repository.remove(
 				newParams,
 				newOptions,
 			)
@@ -525,9 +525,9 @@ export const useRepositoryHttp = <Type = unknown>(
 
 	return {
 		repository,
-		read: executeRead,
-		create: executeCreate,
-		update: executeUpdate,
-		delete: executeDelete,
+		read,
+		create,
+		update,
+		remove,
 	}
 }

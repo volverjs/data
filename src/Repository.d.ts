@@ -48,7 +48,7 @@ export interface Repository<Type> {
 		signal?: AbortSignal
 	}
 
-	delete(
+	remove(
 		params: ParamMap,
 		options?: { [string]: unknown },
 	): {

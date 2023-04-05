@@ -23,8 +23,8 @@ describe('HttpClient', () => {
 	})
 	it('Should make a GET request with template parameters', async () => {
 		fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
-		const { get } = useHttpClient()
-		const { data, isLoading, isError } = get({
+		const { requestGet } = useHttpClient()
+		const { data, isLoading, isError } = requestGet({
 			template: 'https://myapi.com/v1/:name',
 			params: { name: 'example' },
 		})
@@ -41,8 +41,8 @@ describe('HttpClient', () => {
 	})
 	it('Should make a GET request with template and query parameters', async () => {
 		fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
-		const { get } = useHttpClient()
-		const { data, isLoading, isError } = get({
+		const { requestGet } = useHttpClient()
+		const { data, isLoading, isError } = requestGet({
 			template: 'https://myapi.com/v1/:type',
 			params: { type: 'alpha', codes: ['col', 'pe', 'at'] },
 		})
@@ -61,10 +61,10 @@ describe('HttpClient', () => {
 	})
 	it('Should make a GET request with template and query parameters and prefix url', async () => {
 		fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
-		const { get } = useHttpClient({
+		const { requestGet } = useHttpClient({
 			prefixUrl: 'https://myapi.com/v1',
 		})
-		const { data, isLoading, isError } = get({
+		const { data, isLoading, isError } = requestGet({
 			template: ':type',
 			params: { type: 'alpha', codes: ['col', 'pe', 'at'] },
 		})
@@ -83,10 +83,10 @@ describe('HttpClient', () => {
 	})
 	it('Should make a GET request with error', async () => {
 		fetchMock.mockResponseOnce(() => ({ status: 404 }))
-		const { get } = useHttpClient({
+		const { requestGet } = useHttpClient({
 			prefixUrl: 'https://myapi.com/v1',
 		})
-		const { isLoading, isError, error } = get({
+		const { isLoading, isError, error } = requestGet({
 			template: ':type',
 			params: { type: 'alpha', codes: ['col', 'pe', 'at'] },
 		})

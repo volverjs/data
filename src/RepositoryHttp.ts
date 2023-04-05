@@ -357,7 +357,7 @@ export class RepositoryHttp<Type> implements Repository<Type> {
 	 * //=> DELETE /users/admin/1
 	 * ```
 	 */
-	public delete = (params: ParamMap, options?: HttpClientRequestOptions) => {
+	public remove = (params: ParamMap, options?: HttpClientRequestOptions) => {
 		const {
 			responsePromise: httpResponsePromise,
 			abort,

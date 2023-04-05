@@ -14,8 +14,8 @@ All notable changes to this project will be documented in this file.
 
 - `Repository` interface `create()` and `update()` methods now have the `item` as first parameter;
 - `Repository` interface methods now return the `responsePromise` instead of `response`;
-- `useHttpClient` now returns `{ client, request, get, post, put, patch, delete }` and not only `client`;
-- `useRepositoryHttp` now returns `{ repository, read, create, update, delete }` and not only `repository`;
+- `useHttpClient` now returns `{ client, request, requestGet, requestPost, requestPut, requestPatch, requestHead, requestDelete }` and not only `client`;
+- `useRepositoryHttp` now returns `{ repository, read, create, update, remove }` and not only `repository`;
 - `RepositoryHttp` constructor options now support `httpClientOptions: HttpClientOptions` and not only `prefixUrl: string`;
 - `RepositoryHttp` constructor template now support `HttpClientUrlTemplate` (`{ template, params }`) and not only `string`.
 
