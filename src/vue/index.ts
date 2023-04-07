@@ -42,12 +42,15 @@ type RepositoryHttpComposableReadOptions =
 
 export const httpClientInjectionKey = Symbol() as InjectionKey<HttpClientPlugin>
 
+const currentHttpClient = ref<HttpClientPlugin>()
+
 export class HttpClientPlugin extends HttpClient {
 	public install(app: App, { global = false } = {}) {
 		if (global) {
 			app.config.globalProperties.$vvHttp = this
 		}
 		app.provide(httpClientInjectionKey, this)
+		currentHttpClient.value = this
 	}
 }
 
@@ -76,7 +79,7 @@ export const createHttpClient = (options?: HttpClientInstanceOptions) =>
  * @remarks
  * If `useHttpClient` is not called in the setup function of a component,
  * or if the `HttpClient` instance has not been installed, a new instance will be created.
- * @param options - The options for the client {@link HttpClientInstanceOptions}
+ * @param options - Extends the options of the client {@link HttpClientInstanceOptions}
  * @example
  * ```html
  * <template>
@@ -175,7 +178,13 @@ export const createHttpClient = (options?: HttpClientInstanceOptions) =>
  * ```
  */
 export const useHttpClient = (options?: HttpClientInstanceOptions) => {
-	const client = inject(httpClientInjectionKey) ?? new HttpClientPlugin()
+	const client =
+		// inside components
+		inject(httpClientInjectionKey) ??
+		// outside components
+		currentHttpClient.value ??
+		// create a new instance (not installed)
+		new HttpClient()
 	if (options) {
 		client.extend(options)
 	}
