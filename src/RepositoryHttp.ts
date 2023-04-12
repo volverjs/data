@@ -28,6 +28,18 @@ export type RepositoryHttpReadOptions = HttpClientRequestOptions & {
 
 export type RepositoryHttpOptions<Type> = {
 	/**
+	 * The httpClient instance scope (name)
+	 * @default undefined
+	 * @example
+	 * ```typescript
+	 * addHttpClient('v2', { prefixUrl: 'https://myapi.com/v2' })
+	 * const { read } = useRepositoryHttp<{ id: string }>('users/?:id', { httpClientScope: 'v2' })
+	 * read({ id: 1 })
+	 * //=> GET https://myapi.com/v2/?id=1
+	 * ```
+	 */
+	httpClientScope?: string
+	/**
 	 * The prefix url to use for all requests.
 	 * @default undefined
 	 * @example

@@ -1,7 +1,7 @@
 import { mount, flushPromises } from '@vue/test-utils'
 import createFetchMock from 'vitest-fetch-mock'
 import { describe, beforeEach, vi, it, expect } from 'vitest'
-import { createHttpClient, useRepositoryHttp } from '../src/vue'
+import { addHttpClient, createHttpClient, useRepositoryHttp } from '../src/vue'
 import RepositoryReadUpdate from './components/RepositoryReadUpdate.vue'
 import { nextTick } from 'vue'
 
@@ -16,6 +16,24 @@ const component = {
 	template: '<div />',
 	setup: () => {
 		const { read } = useRepositoryHttp<{ id: string }>(':type')
+		const { data, execute, isLoading, isError, error, abort, metadata } =
+			read({
+				type: 'alpha',
+				codes: ['col', 'pe', 'at'],
+			})
+		return { data, execute, isLoading, isError, error, abort, metadata }
+	},
+}
+
+const componentHttpClientV2 = {
+	template: '<div />',
+	setup: () => {
+		addHttpClient('v2', {
+			prefixUrl: 'https://myapi.com/v2',
+		})
+		const { read } = useRepositoryHttp<{ id: string }>(':type', {
+			httpClientScope: 'v2',
+		})
 		const { data, execute, isLoading, isError, error, abort, metadata } =
 			read({
 				type: 'alpha',
@@ -49,6 +67,26 @@ describe('RepositoryHttp', () => {
 			'https://myapi.com/v1/alpha?codes=col,pe,at',
 		)
 	})
+
+	it('Should read with httpClient V2', async () => {
+		fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
+		const wrapper = mount(componentHttpClientV2, {
+			global: {
+				plugins: [httpClient],
+			},
+		})
+		expect(wrapper.vm.isLoading).toBe(true)
+		await flushPromises()
+		expect(wrapper.vm.isLoading).toBe(false)
+		expect(wrapper.vm.isError).toBe(false)
+		expect(wrapper.vm.data[0].id).toBe('12345')
+		expect(fetchMock.mock.calls.length).toBe(1)
+		const request = fetchMock.mock.calls[0][0] as Request
+		expect(request.url).toEqual(
+			'https://myapi.com/v2/alpha?codes=col,pe,at',
+		)
+	})
+
 	it('Should stop a read request', async () => {
 		fetchMock.mockResponseOnce(() => {
 			return {

@@ -164,20 +164,32 @@ With `global` option set to `true`, the `HttpClient` instance will be available 
 
 ### Composition API
 
-Alternatively, you can use the `useHttpClient()` and `useRepositoryHttp()` composables to inject the `HttpClient` instance in a specific component.
+Alternatively, you can use the `useHttpClient()` and `useRepositoryHttp()` composables to get the `HttpClient` instance in a specific component.
 
 #### `useHttpClient()`
 
-If `useHttpClient()` is not called in the `setup()` function or if the `HttpClient` instance has not been installed, a new instance will be created.
+If:
+
+- Plugin `HttpClientPlugin` is not installed with `createHttpClient()` and `app.use(httpClient)`
+- the `httpClient` scope requested not exist (ex: `useHttpClient('instanceNotExist')`)
+
+Then `useHttpClient()` throw the error `HttpClient instance not found`.
 
 ```vue
+<script lang="ts">
+  const app = createApp(App)
+  const httpClient = createHttpClient({
+    prefixUrl: 'https://my.api.com'
+  })
+
+  app.use(httpClient)
+</script>
+
 <script lang="ts" setup>
   import { ref, computed } from 'vue'
   import { useHttpClient } from '@volverjs/data/vue'
 
-  const { client } = useHttpClient({
-    prefixUrl: 'https://my.api.com/v1'
-  })
+  const { client } = useHttpClient()
   const isLoading = ref(false)
   const isError = computed(() => error.value !== undefined)
   const error = ref()
@@ -221,9 +233,7 @@ If `useHttpClient()` is not called in the `setup()` function or if the `HttpClie
     id: number
     name: string
   }
-  const { requestGet } = useHttpClient({
-    prefixUrl: 'https://my.api.com/v1'
-  })
+  const { requestGet } = useHttpClient()
   const { isLoading, isError, error, data, execute } = requestGet<User>(
     'users/1',
     {
@@ -290,6 +300,13 @@ The `execute()` function returns an object with the following properties:
 #### `useRepositoryHttp()`
 
 To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` composable.
+
+##### Parameters
+
+- `template`: `string | HttpClientUrlTemplate`,
+- `options?`: `RepositoryHttpOptions`<Type>
+
+##### Example
 
 ```vue
 <script lang="ts" setup>
@@ -416,6 +433,80 @@ The `execute()` function returns an object with the following properties:
 - `responsePromise`: a `Promise` that resolves with the response;
 - `abort`: a function that aborts the request;
 - `signal`: an `AbortSignal` that can be used to check if the request has been aborted.
+
+## Advanced usage
+
+Some composables exists to manage most of use cases (ex: micro-frontend with different httpClient, a SPA with authenticated API calls and public API calls, etc..).
+The `HttpClientPlugin` can manage a `Map` of `httpClient` instances.
+
+### addHttpClient( )
+
+With `addHttpClient()` a new `httpClient` instance can be added. If the `httpClient` instance already exist an error is throwed: `httpClient with scope ${scope} already exist`.
+
+##### Parameters:
+
+`scope`: `string`,
+`optionsOrInstance?`: `HttpClientInstanceOptions | HttpClient`
+
+##### Example 1:
+
+```vue
+<script lang="ts" setup>
+  import { addHttpClient } from '@volverjs/data/vue'
+
+  addHttpClient('v2Api', { prefixUrl: 'https://my.api.com/v2' })
+
+  const { requestGet } = useHttpClient('v2Api')
+
+  const { isLoading, isError, data } = requestGet<User>('users')
+</script>
+```
+
+##### Example 2:
+
+```vue
+<script lang="ts" setup>
+  import { addHttpClient } from '@volverjs/data/vue'
+  import { HttpClient } from '@volverjs/data'
+
+  const client = new HttpClient({
+    prefixUrl: 'https://my.api.com'
+  })
+
+  addHttpClient('v2Api', client)
+
+  const { requestGet } = useHttpClient('v2Api')
+
+  const { isLoading, isError, data } = requestGet<User>('users')
+</script>
+```
+
+### removeHttpClient( )
+
+With this composable the `httpClient` instance can be removed from Map instances.
+The `global` `httpClient` instance cannot be removed.
+
+##### Parameters:
+
+`scope`: `string`,
+
+##### Example:
+
+```vue
+<script lang="ts" setup>
+  import { addHttpClient, removeHttpClient } from '@volverjs/data/vue'
+
+  addHttpClient('v2Api', { prefixUrl: 'https://my.api.com/v2' })
+
+  const { requestGet } = useHttpClient('v2Api')
+
+  const { isLoading, isError, data } = requestGet<User>('users')
+
+  removeHttpClient('v2Api')
+</script>
+```
+
+Note: The `httpClient` Map instances is NOT reactive, so after the `removeHttpClient`, the `httpClient` used before will not be destroyed.
 
 ## Acknoledgements
 

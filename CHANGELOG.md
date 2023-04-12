@@ -2,18 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.0] - 2023-04-03
+## [1.0.0] - 2023-04-12
 
 ### Added
 
 - `RepositoryHttp` JSDoc comments;
 - `vue` composables return reactive methods;
 - `Hash.djb2` function to generate a hash from a string.
+- `addHttpClient()` and `removeHttpClient()` composables to manage more `httpClient` instances
+- `httpClientScope` on `RepositoryHttpOptions` to use an existing `httpClient` instance
 
 ### Changed
 
 - `Repository` interface `create()` and `update()` methods now have the `item` as first parameter;
 - `Repository` interface methods now return the `responsePromise` instead of `response`;
+- `useHttpClient` parameter is now the `httpClient` `scope` (optional `string`)
 - `useHttpClient` now returns `{ client, request, requestGet, requestPost, requestPut, requestPatch, requestHead, requestDelete }` and not only `client`;
 - `useRepositoryHttp` now returns `{ repository, read, create, update, remove }` and not only `repository`;
 - `RepositoryHttp` constructor options now support `httpClientOptions: HttpClientOptions` and not only `prefixUrl: string`;
