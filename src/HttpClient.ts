@@ -1,6 +1,7 @@
 import ky, {
 	HTTPError,
 	TimeoutError,
+	type KyResponse,
 	type Hooks,
 	type Options,
 	type ResponsePromise,
@@ -19,6 +20,7 @@ import {
 } from './UrlBuilder'
 import type { ParamMap } from './types'
 
+export type HttpClientResponse = KyResponse
 export type HttpClientResponsePromise = ResponsePromise
 export type HttpClientOptions = Omit<Options, 'searchParams'> & {
 	searchParams?: UrlBuilderOptions

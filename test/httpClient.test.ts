@@ -68,6 +68,27 @@ describe('HttpClient', () => {
 			'https://myapi.com/v1/alpha?codes=col,pe,at',
 		)
 	})
+	it('Should make a GET request with error', async () => {
+		fetchMock.mockResponseOnce(() => ({ status: 404 }))
+		const client = new HttpClient({
+			prefixUrl: 'https://myapi.com/v1',
+		})
+		try {
+			await client
+				.get({
+					template: ':type',
+					params: { type: 'alpha', codes: ['col', 'pe', 'at'] },
+				})
+				.json()
+		} catch (error) {
+			expect(error.response.status).toBe(404)
+		}
+		expect(fetchMock.mock.calls.length).toBe(1)
+		const request = fetchMock.mock.calls[0][0] as Request
+		expect(request.url).toEqual(
+			'https://myapi.com/v1/alpha?codes=col,pe,at',
+		)
+	})
 	it('Should abort a GET request', async () => {
 		fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
 		const client = new HttpClient({

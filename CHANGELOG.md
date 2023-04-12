@@ -2,11 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0] - 2023-04-12
+
+### Added
+
+- `RepositoryHttp` JSDoc comments;
+- `vue` composables return reactive methods;
+- `Hash.djb2` function to generate a hash from a string.
+- `removeHttpClient()` composables to remove a `httpClient` instances
+- `httpClientScope` on `RepositoryHttpOptions` to use an existing `httpClient` instance
+
+### Changed
+
+- `Repository` interface `create()` and `update()` methods now have the `item` as first parameter;
+- `Repository` interface methods now return the `responsePromise` instead of `response`;
+- `createHttpClient` update parameters with `HttpClientInstanceOptions & { scope?: string }` to manage multple instances
+- `useHttpClient` parameter is now the `httpClient` `scope` (optional `string`)
+- `useHttpClient` now returns `{ client, request, requestGet, requestPost, requestPut, requestPatch, requestHead, requestDelete }` and not only `client`;
+- `useRepositoryHttp` now returns `{ repository, read, create, update, remove }` and not only `repository`;
+- `RepositoryHttp` constructor options now support `httpClientOptions: HttpClientOptions` and not only `prefixUrl: string`;
+- `RepositoryHttp` constructor template now support `HttpClientUrlTemplate` (`{ template, params }`) and not only `string`.
+
 ## [0.0.4] - 2023-03-21
 
 ### Added
 
-- Pipeline with test dependency
+- Quality gate with tests in build and release pipeline;
 
 ## [0.0.3] - 2023-03-21
 
@@ -29,6 +50,7 @@ All notable changes to this project will be documented in this file.
 - `UrlBuilder` a class to build URLs through a template;
 - `RepositoryHttp` an implementation of `Repository` interface to fetch data through `HttpClient`.
 
-[0.0.3]: https://github.com/volverjs/data/compare/v0.0.3...v0.0.4
+[1.0.0]: https://github.com/volverjs/data/compare/v0.0.4...v1.0.0
+[0.0.4]: https://github.com/volverjs/data/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/volverjs/data/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/volverjs/data/compare/v0.0.1...v0.0.2
