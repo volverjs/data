@@ -34,19 +34,17 @@ const httpClientInstances: Map<string, HttpClient> = new Map()
 const GLOBAL = 'global'
 
 export class HttpClientPlugin {
-	globalOptions?: HttpClientInstanceOptions
+	globalInstance: HttpClient
 
 	constructor(options?: HttpClientInstanceOptions) {
-		this.globalOptions = options
+		this.globalInstance = new HttpClient(options)
 	}
 
 	public install(app: App, { global = false } = {}) {
-		const globalHttpClient = new HttpClient(this.globalOptions)
-
-		httpClientInstances.set(GLOBAL, globalHttpClient)
+		httpClientInstances.set(GLOBAL, this.globalInstance)
 
 		if (global) {
-			app.config.globalProperties.$vvHttp = globalHttpClient
+			app.config.globalProperties.$vvHttp = this.globalInstance
 		}
 	}
 }

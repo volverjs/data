@@ -143,7 +143,7 @@ You can use this library with Vue 3 with `@volverjs/data/vue`.
 
 ### Plugin
 
-The `createHttpClient` function returns a plugin that can be installed in a Vue app.
+The `createHttpClient` function returns a plugin that can be installed in a Vue app and has a property with the `global` `httpClient` instance: `httpClientPlugin.globalInstance`.
 
 ```typescript
 import { createApp } from 'vue'
@@ -151,13 +151,16 @@ import { createHttpClient } from '@volverjs/data/vue'
 import App from './App.vue'
 
 const app = createApp(App)
-const httpClient = createHttpClient({
+const httpClientPlugin = createHttpClient({
   prefixUrl: 'https://my.api.com'
 })
 
-app.use(httpClient, {
+app.use(httpClientPlugin, {
   global: true // default: false
 })
+
+// if needed:
+export const httpClient = httpClientPlugin.globalInstance
 ```
 
 With `global` option set to `true`, the `HttpClient` instance will be available in all components as `$vvHttp` with Options API.
