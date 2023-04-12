@@ -156,14 +156,12 @@ const httpClientPlugin = createHttpClient({
 })
 
 app.use(httpClientPlugin, {
-  global: true // default: false
+  globalName: 'vvHttp' // (optional) default: 'vvHttp'
 })
-
-// if needed:
-export const httpClient = httpClientPlugin.globalInstance
 ```
 
-With `global` option set to `true`, the `HttpClient` instance will be available in all components as `$vvHttp` with Options API.
+With `app.use(httpClientPlugin)` the `HttpClient` instance will be available in all components as `$vvHttp` with Options API.
+Use `globalName` to change the name `vvHttp`.
 
 ### Composition API
 
@@ -171,21 +169,15 @@ Alternatively, you can use the `useHttpClient()` and `useRepositoryHttp()` compo
 
 #### `useHttpClient()`
 
-If:
-
-- Plugin `HttpClientPlugin` is not installed with `createHttpClient()` and `app.use(httpClient)`
-- the `httpClient` scope requested not exist (ex: `useHttpClient('instanceNotExist')`)
-
-Then `useHttpClient()` throw the error `HttpClient instance not found`.
+If `HttpClientPlugin` is not created with `createHttpClient()` or the `httpClient` scope requested not exist (ex: `useHttpClient('instanceNotExist')`), then `useHttpClient()` throw the error `HttpClient instance not found`.
 
 ```vue
 <script lang="ts">
-  const app = createApp(App)
-  const httpClient = createHttpClient({
+  import { createHttpClient } from '@volverjs/data/vue'
+
+  createHttpClient({
     prefixUrl: 'https://my.api.com'
   })
-
-  app.use(httpClient)
 </script>
 
 <script lang="ts" setup>
@@ -439,44 +431,24 @@ The `execute()` function returns an object with the following properties:
 
 ## Advanced usage
 
-Some composables exists to manage most of use cases (ex: micro-frontend with different httpClient, a SPA with authenticated API calls and public API calls, etc..).
+`HttpClientPlugin` manage most of use cases (ex: micro-frontend with different httpClient, a SPA with authenticated API calls and public API calls, etc..).
 The `HttpClientPlugin` can manage a `Map` of `httpClient` instances.
 
-### addHttpClient( )
+### createHttpClient( ) with `scope` parameter
 
-With `addHttpClient()` a new `httpClient` instance can be added. If the `httpClient` instance already exist an error is throwed: `httpClient with scope ${scope} already exist`.
+With `scope` parameter on `createHttpClient()` multiple `httpClient` instances can be created. If the `httpClient` `scope` instance already exist an error is throwed: `httpClient with scope ${scope} already exist`.
 
 ##### Parameters:
 
-`scope`: `string`,
-`optionsOrInstance?`: `HttpClientInstanceOptions | HttpClient`
+`options?`: `HttpClientInstanceOptions & { scope: string }`
 
-##### Example 1:
-
-```vue
-<script lang="ts" setup>
-  import { addHttpClient } from '@volverjs/data/vue'
-
-  addHttpClient('v2Api', { prefixUrl: 'https://my.api.com/v2' })
-
-  const { requestGet } = useHttpClient('v2Api')
-
-  const { isLoading, isError, data } = requestGet<User>('users')
-</script>
-```
-
-##### Example 2:
+##### Example:
 
 ```vue
 <script lang="ts" setup>
-  import { addHttpClient } from '@volverjs/data/vue'
-  import { HttpClient } from '@volverjs/data'
+  import { createHttpClient } from '@volverjs/data/vue'
 
-  const client = new HttpClient({
-    prefixUrl: 'https://my.api.com'
-  })
-
-  addHttpClient('v2Api', client)
+  createHttpClient({ scope: 'v2Api', prefixUrl: 'https://my.api.com/v2' })
 
   const { requestGet } = useHttpClient('v2Api')
 
@@ -499,7 +471,7 @@ The `global` `httpClient` instance cannot be removed.
 <script lang="ts" setup>
   import { addHttpClient, removeHttpClient } from '@volverjs/data/vue'
 
-  addHttpClient('v2Api', { prefixUrl: 'https://my.api.com/v2' })
+  createHttpClient('v2Api', { prefixUrl: 'https://my.api.com/v2' })
 
   const { requestGet } = useHttpClient('v2Api')
 
@@ -509,7 +481,7 @@ The `global` `httpClient` instance cannot be removed.
 </script>
 ```
 
-Note: The `httpClient` Map instances is NOT reactive, so after the `removeHttpClient`, the `httpClient` used before will not be destroyed.
+Note: The `httpClient` Map instances is NOT reactive, so after the `removeHttpClient`, the `httpClient` used before will NOT be destroyed.
 
 ## Acknoledgements
 

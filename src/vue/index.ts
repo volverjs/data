@@ -1,4 +1,3 @@
-import type { HttpClientUrlTemplate } from '../HttpClient'
 import {
 	HTTPError,
 	HttpClient,
@@ -7,10 +6,13 @@ import {
 	type HttpClientMethod,
 	type HttpClientRequestOptions,
 	type HttpClientResponse,
+	type HttpClientUrlTemplate,
 } from '../HttpClient'
-import type { RepositoryHttpOptions } from '../RepositoryHttp'
-import type { RepositoryHttpReadOptions } from '../RepositoryHttp'
-import { RepositoryHttp } from '../RepositoryHttp'
+import {
+	RepositoryHttp,
+	type RepositoryHttpReadOptions,
+	type RepositoryHttpOptions,
+} from '../RepositoryHttp'
 import type { ParamMap } from 'src/types'
 import { type App, type Ref, ref, unref, readonly, computed } from 'vue'
 
@@ -33,25 +35,29 @@ type RepositoryHttpComposableReadOptions =
 const httpClientInstances: Map<string, HttpClient> = new Map()
 const GLOBAL = 'global'
 
-export class HttpClientPlugin {
-	globalInstance: HttpClient
+class HttpClientPlugin extends HttpClient {
+	private _scope: string
 
-	constructor(options?: HttpClientInstanceOptions) {
-		this.globalInstance = new HttpClient(options)
+	constructor(options: HttpClientInstanceOptions & { scope: string }) {
+		super(options)
+		this._scope = options.scope
 	}
 
-	public install(app: App, { global = false } = {}) {
-		httpClientInstances.set(GLOBAL, this.globalInstance)
+	get scope() {
+		return this._scope
+	}
 
-		if (global) {
-			app.config.globalProperties.$vvHttp = this.globalInstance
+	public install(app: App, { globalName = 'vvHttp' } = {}) {
+		if (app.config.globalProperties[`$${globalName}`]) {
+			throw new Error(`globalName already exist: ${globalName}`)
 		}
+		app.config.globalProperties[`$${globalName}`] = this
 	}
 }
 
 /**
  * Create a new instance of a HttpClientPlugin.
- * @param options - The options for the http client {@link HttpClientInstanceOptions}
+ * @param options - The options for the http client {@link HttpClientInstanceOptions HttpClientInstanceOptions & { scope: string }}
  * @returns The instance of the HttpClientPlugin, see {@link HttpClientPlugin}
  * @example
  * ```typescript
@@ -65,133 +71,39 @@ export class HttpClientPlugin {
  * })
  * app.use(client)
  * ```
- */
-export const createHttpClient = (options?: HttpClientInstanceOptions) =>
-	new HttpClientPlugin(options)
-
-/**
- * Use the composition API to add an HttpClient instance and get it.
- * @remarks
- * If `addHttpClient` is called on an existing scope instance an error is throwed.
- * @param optionsOrInstance - Create new instance with this options, extends the options of an existing one {@link HttpClientInstanceOptions} or could be directly an HttpClient instance {@link HttpClient}
- * @example
- * ```html
- * <template>
- *  <div>
- *  	<button @click="execute()">Execute</button>
- *   	<div v-if="isLoading">Loading...</div>
- *  	<div v-if="isError">{{ error }}</div>
- * 		<div v-if="data">{{ data.name }}</div>
- * 	</div>
- * </template>
  *
- * <script lang="ts" setup>
- * import { ref, computed } from 'vue'
- * import { addHttpClient } from '@volverjs/data/vue'
+ * Multiple instances with `scope`
+ * ```typescript
+ * import { createApp } from 'vue'
+ * import { createHttpClient } from '@volverjs/data/vue'
+ * import App from './App.vue'
  *
- * const { client } = addHttpClient('v2Api', { prefixUrl: 'https://my.api.com/v2' })
- * const isLoading = ref(false)
- * const isError = computed(() => error.value !== undefined)
- * const error = ref()
- * const data = ref<User>()
+ * const app = createApp(App)
+ * const client = createHttpClient({
+ *  prefixUrl: 'https://my.api-v2.com',
+ *  scope: 'apiV2'
+ * })
  *
- * type User = {
- * 	id: number,
- * 	name: string
- * }
+ * app.use(client, { globalName: 'httpClientV2' })
  *
- * const execute = async () => {
- * 	isLoading.value = true
- * 	try {
- * 		const response = await client.get('user/1')
- * 		data.value = await response.json<User>()
- * 	} catch (e) {
- * 		error.value = e.message
- * 	} finally {
- * 		isLoading.value = false
- * 	}
- * }
- * </script>
- * ```
- * @example
- * ```html
- * <template>
- *  <div>
- *  	<button @click="execute()">Execute</button>
- *   	<div v-if="isLoading">Loading...</div>
- *  	<div v-if="isError">{{ error }}</div>
- * 		<div v-if="data">{{ data.name }}</div>
- * 	</div>
- * </template>
- *
- * <script setup>
- * import { addHttpClient, useHttpClient } from '@volverjs/data/vue'
- *
- * type User = {
- * 	id: number,
- * 	name: string
- * }
- *
- * addHttpClient('v2Api', { prefixUrl: 'https://my.api.com/v2' })
- *
- * const { requestGet } = useHttpClient('v2Api')
- * const {
- * 	isLoading,
- *	isError,
- * 	error,
- * 	data,
- * 	execute,
- * } = requestGet<User>('user/1', { immediate: false })
- * </script>
- * ```
- * @example
- * ```html
- * <template>
- *  <form @submit.prevent="execute()">
- *   	<div v-if="isLoading">Loading...</div>
- *  	<div v-if="isError">{{ error }}</div>
- * 		<input type="text" v-model="data.name" />
- *  	<button type="submit">Submit</button>
- * 	</form>
- * </template>
- *
- * <script lang="ts" setup>
- * import { addHttpClient, useHttpClient } from '@volverjs/data/vue'
- *
- * type User = {
- * 	id: number
- * 	name: string
- * }
- *
- * const data = ref<Partial<User>>({ name: '' })
- *
- * addHttpClient('v2Api', { prefixUrl: 'https://my.api.com/v2' })
- *
- * const { requestPost } = useHttpClient('v2Api')
+ * const { requestPost } = useHttpClient('apiV2')
  * const { isLoading, isError, error, execute } = requestPost<User>(
  * 	'user',
  * 	computed(() => ({ immediate: false, json: data.value })),
  * )
- * </script>
  * ```
  */
-export const addHttpClient = (
-	scope: string,
-	optionsOrInstance?: HttpClientInstanceOptions | HttpClient,
-) => {
+export const createHttpClient = ({
+	scope = GLOBAL,
+	...options
+}: HttpClientInstanceOptions & { scope?: string } = {}) => {
 	if (httpClientInstances.has(scope)) {
 		throw new Error(`httpClient with scope ${scope} already exist`)
 	}
 
-	if (optionsOrInstance instanceof HttpClient) {
-		const client = optionsOrInstance
-		httpClientInstances.set(scope, client)
-		return { client }
-	}
-
-	const client = new HttpClient(optionsOrInstance)
+	const client = new HttpClientPlugin({ ...options, scope })
 	httpClientInstances.set(scope, client)
-	return { client }
+	return client
 }
 
 /**
@@ -202,6 +114,9 @@ export const addHttpClient = (
 export const removeHttpClient = (scope: string): boolean => {
 	if (scope === GLOBAL) {
 		throw new Error('You cannot remove httpClient global instance')
+	}
+	if (!httpClientInstances.has(scope)) {
+		throw new Error(`httpClient with scope ${scope} not exist`)
 	}
 	return httpClientInstances.delete(scope)
 }

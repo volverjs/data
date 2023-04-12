@@ -1,7 +1,7 @@
 import { mount, flushPromises } from '@vue/test-utils'
 import createFetchMock from 'vitest-fetch-mock'
 import { describe, beforeEach, vi, it, expect } from 'vitest'
-import { addHttpClient, createHttpClient, useRepositoryHttp } from '../src/vue'
+import { createHttpClient, useRepositoryHttp } from '../src/vue'
 import RepositoryReadUpdate from './components/RepositoryReadUpdate.vue'
 import { nextTick } from 'vue'
 
@@ -28,8 +28,9 @@ const component = {
 const componentHttpClientV2 = {
 	template: '<div />',
 	setup: () => {
-		addHttpClient('v2', {
+		createHttpClient({
 			prefixUrl: 'https://myapi.com/v2',
+			scope: 'v2',
 		})
 		const { read } = useRepositoryHttp<{ id: string }>(':type', {
 			httpClientScope: 'v2',
