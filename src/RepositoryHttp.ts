@@ -26,7 +26,7 @@ export type RepositoryHttpReadOptions = HttpClientRequestOptions & {
 	key?: string | number | boolean
 }
 
-export type RepositoryHttpOptions<Type> = {
+export type RepositoryHttpOptions<Type, TResponse = unknown> = {
 	/**
 	 * The httpClient instance scope (name)
 	 * @default undefined
@@ -62,7 +62,7 @@ export type RepositoryHttpOptions<Type> = {
 	 * const repository = new RepositoryHttp(client, 'users/?:id', { responseAdapter })
 	 * ```
 	 */
-	responseAdapter?: (raw: unknown) => Type[]
+	responseAdapter?: (raw: TResponse) => Type[]
 	/**
 	 * A function to transform the request data into the expected data type.
 	 * @default
@@ -131,11 +131,13 @@ export type RepositoryHttpOptions<Type> = {
 	class?: new (...args: any[]) => Type
 }
 
-export class RepositoryHttp<Type> implements Repository<Type> {
+export class RepositoryHttp<Type, TResponse = unknown>
+	implements Repository<Type>
+{
 	private _client: HttpClientInstance
 	private _template: string | HttpClientUrlTemplate
-	private _responseAdapter = (raw: unknown): Type[] =>
-		Array.isArray(raw) ? raw : [raw]
+	private _responseAdapter = (raw: TResponse): Type[] =>
+		(Array.isArray(raw) ? raw : [raw]) as Type[]
 	private _requestAdapter = (item: Type): unknown => item
 	private _metadataAdapter = (response: Response): ParamMap | undefined => {
 		let toReturn = undefined
@@ -172,7 +174,7 @@ export class RepositoryHttp<Type> implements Repository<Type> {
 	constructor(
 		client: HttpClientInstance,
 		template: string | HttpClientUrlTemplate,
-		options?: RepositoryHttpOptions<Type>,
+		options?: RepositoryHttpOptions<Type, TResponse>,
 	) {
 		this._client = client
 		this._template = template
@@ -241,7 +243,7 @@ export class RepositoryHttp<Type> implements Repository<Type> {
 		const responsePromise = (async () => {
 			try {
 				const httpResponse = await httpResponsePromise
-				const raw = await httpResponse.json()
+				const raw = await httpResponse.json<TResponse>()
 				const data = this._responseAdapter(raw)
 				const metadata = this._metadataAdapter(httpResponse)
 				if (key !== false) {
@@ -298,7 +300,7 @@ export class RepositoryHttp<Type> implements Repository<Type> {
 		const responsePromise = (async () => {
 			try {
 				const httpResponse = await httpResponsePromise
-				const raw = await httpResponse.json()
+				const raw = await httpResponse.json<TResponse>()
 				const data = this._responseAdapter(raw)?.[0]
 				const metadata = this._metadataAdapter(httpResponse)
 				return { data, metadata, ok: httpResponse.ok }
@@ -343,7 +345,7 @@ export class RepositoryHttp<Type> implements Repository<Type> {
 		const responsePromise = (async () => {
 			try {
 				const httpResponse = await httpResponsePromise
-				const raw = await httpResponse.json()
+				const raw = await httpResponse.json<TResponse>()
 				const data = this._responseAdapter(raw)?.[0]
 				const metadata = this._metadataAdapter(httpResponse)
 				return { data, metadata, ok: httpResponse.ok }

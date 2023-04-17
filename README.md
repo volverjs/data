@@ -301,7 +301,7 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
 - `template`: `string | HttpClientUrlTemplate`,
 - `options?`: `RepositoryHttpOptions`<Type>
 
-##### Example
+##### Example 1
 
 ```vue
 <script lang="ts" setup>
@@ -314,6 +314,66 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
   }
 
   const { repository } = useRepositoryHttp<User>('users/:id')
+  const isLoading = ref(false)
+  const isError = computed(() => error.value !== undefined)
+  const error = ref()
+  const data = ref()
+
+  const execute = async () => {
+    isLoading.value = true
+    try {
+      const { responsePromise } = repository.read({ id: 1 })
+      const response = await responsePromise
+      data.value = response.data
+    } catch (e) {
+      error.value = e.message
+    } finally {
+      isLoading.value = false
+    }
+  }
+</script>
+
+<template>
+  <div>
+    <button @click="execute">Execute</button>
+    <div v-if="isLoading">Loading...</div>
+    <div v-if="isError">{{ error }}</div>
+    <div v-if="data">{{ data.name }}</div>
+  </div>
+</template>
+```
+
+##### Example 2 - Typing server response for `responseAdapter`
+
+```vue
+<script lang="ts" setup>
+  import { ref, computed } from 'vue'
+  import { useRepositoryHttp } from '@volverjs/data/vue'
+
+  interface IUser {
+    id: number
+    name: string
+  }
+
+  type UserResponse = {
+    id: number
+    firtname: string
+    lastname: string
+  }
+
+  class User implements IUser {
+    id: number
+    name: string
+
+    constructor(data: UserResponse) {
+      this.id = data.id
+      this.name = `${data.firtname} ${data.lastname}`
+    }
+  }
+
+  const { repository } = useRepositoryHttp<IUser, UserResponse>('users/:id', {
+    responseAdapter: (raw) => [new User(raw)] // -----> raw is type of UserResponse instead of "unknown"
+  })
   const isLoading = ref(false)
   const isError = computed(() => error.value !== undefined)
   const error = ref()

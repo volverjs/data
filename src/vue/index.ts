@@ -384,12 +384,16 @@ export const useHttpClient = (scope = GLOBAL) => {
  * </script>
  * ```
  */
-export const useRepositoryHttp = <Type = unknown>(
+export const useRepositoryHttp = <Type = unknown, TResponse = unknown>(
 	template: string | HttpClientUrlTemplate,
-	options?: RepositoryHttpOptions<Type>,
+	options?: RepositoryHttpOptions<Type, TResponse>,
 ) => {
 	const { client } = useHttpClient(options?.httpClientScope)
-	const repository = new RepositoryHttp<Type>(client, template, options)
+	const repository = new RepositoryHttp<Type, TResponse>(
+		client,
+		template,
+		options,
+	)
 
 	const create = (
 		item: Type | Ref<Type>,
