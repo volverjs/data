@@ -15,4 +15,13 @@ export class Hash {
 			Math.imul(h1 ^ (h1 >>> 13), 3266489909)
 		return 4294967296 * (2097151 & h2) + (h1 >>> 0)
 	}
+
+	public static djb2 = (str: string, seed = 5381) => {
+		let h = seed
+
+		for (let i = 0; i < str.length; i++) {
+			h = (h * 33) ^ str.charCodeAt(i)
+		}
+		return h >>> 0
+	}
 }
