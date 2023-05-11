@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 	import { useRepositoryHttp } from '../../src/vue'
-	import { computed, watch } from 'vue'
+	import { computed } from 'vue'
 
 	type User = {
 		id: number
@@ -20,11 +20,11 @@
 </script>
 
 <template>
-	<form @submit.prevent="execute()" data-test="form">
+	<form data-test="form" @submit.prevent="execute()">
 		<div v-if="isLoading" data-test="loading">Loading...</div>
 		<div v-if="error" data-test="error">{{ error }}</div>
 		<template v-if="item">
-			<input type="text" v-model="item.name" data-test="input" />
+			<input v-model="item.name" type="text" data-test="input" />
 			<button :disabled="isLoading" type="submit" data-test="button">
 				Submit
 			</button>

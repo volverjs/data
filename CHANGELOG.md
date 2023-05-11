@@ -2,12 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.1] - 2023-04-17
+## [1.0.1] - 2023-05-11
 
 ### Added
 
-- `RepositoryHttp` second TS generic usefull for `responseAdapter`
-- `useRepositoryHttp` second TS generic for `RepositoryHttp`
+- `RepositoryHttp` second TS generic usefull for `responseAdapter`;
+- `useRepositoryHttp()` second TS generic for `RepositoryHttp`:
+- `isSuccess` computed for `useRepositoryHttp()` and `useHttpClient()` Vue composable.
 
 ## [1.0.0] - 2023-04-12
 
@@ -15,9 +16,9 @@ All notable changes to this project will be documented in this file.
 
 - `RepositoryHttp` JSDoc comments;
 - `vue` composables return reactive methods;
-- `Hash.djb2` function to generate a hash from a string.
-- `removeHttpClient()` composables to remove a `httpClient` instances
-- `httpClientScope` on `RepositoryHttpOptions` to use an existing `httpClient` instance
+- `Hash.djb2` function to generate a hash from a string;
+- `removeHttpClient()` composables to remove a `httpClient` instances;
+- `httpClientScope` on `RepositoryHttpOptions` to use an existing `httpClient` instance.
 
 ### Changed
 
