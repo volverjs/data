@@ -2,15 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2023-05-11
+
+- `isSuccess` computed for `useRepositoryHttp()` and `useHttpClient()` Vue composable.
+
+## [1.0.1] - 2023-05-11
+
+### Added
+
+- `RepositoryHttp` second TS generic usefull for `responseAdapter`;
+- `useRepositoryHttp()` second TS generic for `RepositoryHttp`.
+
 ## [1.0.0] - 2023-04-12
 
 ### Added
 
 - `RepositoryHttp` JSDoc comments;
 - `vue` composables return reactive methods;
-- `Hash.djb2` function to generate a hash from a string.
-- `removeHttpClient()` composables to remove a `httpClient` instances
-- `httpClientScope` on `RepositoryHttpOptions` to use an existing `httpClient` instance
+- `Hash.djb2` function to generate a hash from a string;
+- `removeHttpClient()` composables to remove a `httpClient` instances;
+- `httpClientScope` on `RepositoryHttpOptions` to use an existing `httpClient` instance.
 
 ### Changed
 
@@ -50,6 +61,7 @@ All notable changes to this project will be documented in this file.
 - `UrlBuilder` a class to build URLs through a template;
 - `RepositoryHttp` an implementation of `Repository` interface to fetch data through `HttpClient`.
 
+[1.0.1]: https://github.com/volverjs/data/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/volverjs/data/compare/v0.0.4...v1.0.0
 [0.0.4]: https://github.com/volverjs/data/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/volverjs/data/compare/v0.0.2...v0.0.3

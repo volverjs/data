@@ -197,6 +197,7 @@ If `HttpClientPlugin` is not created with `createHttpClient()` or the `httpClien
 
   const execute = async () => {
     isLoading.value = true
+    error.value = undefined
     try {
       const response = await client.get('users/1')
       data.value = await response.json<User>()
@@ -229,12 +230,10 @@ If `HttpClientPlugin` is not created with `createHttpClient()` or the `httpClien
     name: string
   }
   const { requestGet } = useHttpClient()
-  const { isLoading, isError, error, data, execute } = requestGet<User>(
-    'users/1',
-    {
+  const { isLoading, isError, isSuccess, error, data, execute } =
+    requestGet<User>('users/1', {
       immediate: false
-    }
-  )
+    })
 </script>
 
 <template>
@@ -242,16 +241,17 @@ If `HttpClientPlugin` is not created with `createHttpClient()` or the `httpClien
     <button @click="execute()">Execute</button>
     <div v-if="isLoading">Loading...</div>
     <div v-if="isError">{{ error }}</div>
-    <div v-if="data">{{ data.name }}</div>
+    <div v-if="isSuccess">{{ data.name }}</div>
   </div>
 </template>
 ```
 
 Each method returns an object with the following properties:
 
-- `isLoading`: a `ref` that indicates if the request is loading;
+- `isLoading`: a `computed` that indicates if the request is loading;
 - `isError`: a `computed` that indicates if the request has failed;
-- `error`: a `ref` that contains the error message;
+- `isSuccess`: a `computed` that indicates if the request has succeeded;
+- `error`: a readonly `ref` that contains the error message;
 - `response`: a `ref` that contains the response;
 - `data`: a `ref` that contains the response data (`.json()` function);
 - `execute()`: a function that executes the request.
@@ -270,7 +270,7 @@ The request can be executed later by setting the `immediate` option to `false` (
   const data = ref<Partial<User>>({ name: '' })
 
   const { requestPost } = useHttpClient()
-  const { isLoading, isError, error, execute } = requestPost<User>(
+  const { isLoading, isError, isSuccess, error, execute } = requestPost<User>(
     'users',
     computed(() => ({ immediate: false, json: data.value }))
   )
@@ -280,6 +280,7 @@ The request can be executed later by setting the `immediate` option to `false` (
   <form @submit.prevent="execute()">
     <div v-if="isLoading">Loading...</div>
     <div v-if="isError">{{ error }}</div>
+    <div v-if="isSuccess">Success!</div>
     <input type="text" v-model="data.name" />
     <button type="submit">Submit</button>
   </form>
@@ -301,7 +302,7 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
 - `template`: `string | HttpClientUrlTemplate`,
 - `options?`: `RepositoryHttpOptions`<Type>
 
-##### Example
+##### Example 1
 
 ```vue
 <script lang="ts" setup>
@@ -314,6 +315,66 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
   }
 
   const { repository } = useRepositoryHttp<User>('users/:id')
+  const isLoading = ref(false)
+  const isError = computed(() => error.value !== undefined)
+  const error = ref()
+  const data = ref()
+
+  const execute = async () => {
+    isLoading.value = true
+    try {
+      const { responsePromise } = repository.read({ id: 1 })
+      const response = await responsePromise
+      data.value = response.data
+    } catch (e) {
+      error.value = e.message
+    } finally {
+      isLoading.value = false
+    }
+  }
+</script>
+
+<template>
+  <div>
+    <button @click="execute">Execute</button>
+    <div v-if="isLoading">Loading...</div>
+    <div v-if="isError">{{ error }}</div>
+    <div v-if="data">{{ data.name }}</div>
+  </div>
+</template>
+```
+
+##### Example 2 - Typing server response for `responseAdapter`
+
+```vue
+<script lang="ts" setup>
+  import { ref, computed } from 'vue'
+  import { useRepositoryHttp } from '@volverjs/data/vue'
+
+  interface IUser {
+    id: number
+    name: string
+  }
+
+  type UserResponse = {
+    id: number
+    firtname: string
+    lastname: string
+  }
+
+  class User implements IUser {
+    id: number
+    name: string
+
+    constructor(data: UserResponse) {
+      this.id = data.id
+      this.name = `${data.firtname} ${data.lastname}`
+    }
+  }
+
+  const { repository } = useRepositoryHttp<IUser, UserResponse>('users/:id', {
+    responseAdapter: (raw) => [new User(raw)] // -----> raw is type of UserResponse instead of "unknown"
+  })
   const isLoading = ref(false)
   const isError = computed(() => error.value !== undefined)
   const error = ref()
@@ -373,9 +434,10 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
 
 Each method returns an object with the following properties:
 
-- `isLoading`: a `ref` that indicates if the request is loading;
+- `isLoading`: a `computed` that indicates if the request is loading;
+- `isSuccess`: a `computed` that indicates if the request has succeeded;
 - `isError`: a `computed` that indicates if the request has failed;
-- `error`: a `ref` that contains the error message;
+- `error`: a readonly `ref` that contains the error message;
 - `execute()`: a function that executes the request.
 
 `create()`, `read()`, `update()` also return:
