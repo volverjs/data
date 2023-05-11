@@ -2,13 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2023-05-11
+
+- `isSuccess` computed for `useRepositoryHttp()` and `useHttpClient()` Vue composable.
+
 ## [1.0.1] - 2023-05-11
 
 ### Added
 
 - `RepositoryHttp` second TS generic usefull for `responseAdapter`;
-- `useRepositoryHttp()` second TS generic for `RepositoryHttp`:
-- `isSuccess` computed for `useRepositoryHttp()` and `useHttpClient()` Vue composable.
+- `useRepositoryHttp()` second TS generic for `RepositoryHttp`.
 
 ## [1.0.0] - 2023-04-12
 
