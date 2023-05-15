@@ -61,6 +61,7 @@ All notable changes to this project will be documented in this file.
 - `UrlBuilder` a class to build URLs through a template;
 - `RepositoryHttp` an implementation of `Repository` interface to fetch data through `HttpClient`.
 
+[1.0.2]: https://github.com/volverjs/data/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/volverjs/data/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/volverjs/data/compare/v0.0.4...v1.0.0
 [0.0.4]: https://github.com/volverjs/data/compare/v0.0.3...v0.0.4
