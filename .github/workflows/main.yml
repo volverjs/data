@@ -11,6 +11,7 @@ jobs:
         secrets: inherit
 
     build:
+        needs: analysis
         uses: ./.github/workflows/build.yml
 
     test:
