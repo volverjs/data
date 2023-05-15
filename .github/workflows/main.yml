@@ -6,7 +6,10 @@ on:
         types: [published]
 
 jobs:
-    # build
+    analysis:
+        uses: ./.github/workflows/sonarcloud.yml
+        secrets: inherit
+
     build:
         uses: ./.github/workflows/build.yml
 
