@@ -4,7 +4,7 @@
 
 ## @volverjs/data
 
-`repository` `http-client` `url-builder` `fetch`<br />
+`repository` `http-client` `url-builder` `fetch`
   
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=volverjs_data&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=volverjs_data) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=volverjs_data&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=volverjs_data) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=volverjs_data&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=volverjs_data) [![Depfu](https://badges.depfu.com/badges/c83e840404329198d06ce36a5c33f9fd/status.svg)](https://depfu.com) [![Depfu](https://badges.depfu.com/badges/c83e840404329198d06ce36a5c33f9fd/overview.svg)](https://depfu.com/github/volverjs/data?project_id=38575)
 
