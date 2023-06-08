@@ -2,7 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2023-06-08
+
+### Fixed
+
+- Dependencies update.
+
+## [1.0.3] - 2023-05-15
+
+### Fixed
+
+- Dependencies update.
+
 ## [1.0.2] - 2023-05-11
+
+### Added
 
 - `isSuccess` computed for `useRepositoryHttp()` and `useHttpClient()` Vue composable.
 
@@ -61,6 +75,8 @@ All notable changes to this project will be documented in this file.
 - `UrlBuilder` a class to build URLs through a template;
 - `RepositoryHttp` an implementation of `Repository` interface to fetch data through `HttpClient`.
 
+[1.0.4]: https://github.com/volverjs/data/compare/v1.0.3...v1.0.4
+[1.0.3]: https://github.com/volverjs/data/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/volverjs/data/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/volverjs/data/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/volverjs/data/compare/v0.0.4...v1.0.0
