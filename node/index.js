@@ -24,14 +24,6 @@ if (!globalThis.AbortController) {
 	globalThis.AbortController = AbortController
 }
 
-if (!globalThis.ReadableStream) {
-	try {
-		globalThis.ReadableStream = await import(
-			'web-streams-polyfill/ponyfill/es2018'
-		)
-	} catch {}
-}
-
 const { HttpClient, HTTPError, TimeoutError } = await import(
 	'../dist/HttpClient'
 )
