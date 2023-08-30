@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.5] - 2023-08-30
+
+### Fixed
+
+- `Repository` interface options defitnition;
+- Dependencies update.
+
 ## [1.0.4] - 2023-06-08
 
 ### Fixed
