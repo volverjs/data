@@ -45,7 +45,7 @@
   ],
   "dependencies": {
     "abort-controller": "^3.0.0",
-    "ky": "^0.33.3",
+    "ky": "^1.0.0",
     "node-fetch": "^3.3.2",
     "qs": "^6.11.2",
     "web-streams-polyfill": "^3.2.1"
