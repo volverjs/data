@@ -14,13 +14,14 @@ const httpClient = createHttpClient({
 
 const component = {
 	template: '<div />',
-	setup: () => {
+	setup: (_, { expose }) => {
 		const { read } = useRepositoryHttp<{ id: string }>(':type')
 		const { data, execute, isLoading, isError, error, abort, metadata } =
 			read({
 				type: 'alpha',
 				codes: ['col', 'pe', 'at'],
 			})
+		expose({ data, execute, isLoading, isError, error, abort, metadata })
 		return { data, execute, isLoading, isError, error, abort, metadata }
 	},
 }
@@ -61,7 +62,8 @@ describe('RepositoryHttp', () => {
 		await flushPromises()
 		expect(wrapper.vm.isLoading).toBe(false)
 		expect(wrapper.vm.isError).toBe(false)
-		expect(wrapper.vm.data[0].id).toBe('12345')
+		// eslint-disable-next-line
+		expect((wrapper.vm as any).data[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
 		const request = fetchMock.mock.calls[0][0] as Request
 		expect(request.url).toEqual(
@@ -80,7 +82,8 @@ describe('RepositoryHttp', () => {
 		await flushPromises()
 		expect(wrapper.vm.isLoading).toBe(false)
 		expect(wrapper.vm.isError).toBe(false)
-		expect(wrapper.vm.data[0].id).toBe('12345')
+		// eslint-disable-next-line
+		expect((wrapper.vm as any).data[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
 		const request = fetchMock.mock.calls[0][0] as Request
 		expect(request.url).toEqual(
@@ -100,7 +103,8 @@ describe('RepositoryHttp', () => {
 				plugins: [httpClient],
 			},
 		})
-		wrapper.vm.abort('Aborted')
+		// eslint-disable-next-line
+		;(wrapper.vm as any).abort('Aborted')
 		await flushPromises()
 		expect(wrapper.vm.isLoading).toBe(false)
 		expect(wrapper.vm.isError).toBe(false)
@@ -119,11 +123,13 @@ describe('RepositoryHttp', () => {
 			},
 		})
 		expect(wrapper.vm.isLoading).toBe(true)
-		wrapper.vm.execute()
+		// eslint-disable-next-line
+		;(wrapper.vm as any).execute()
 		await flushPromises()
 		expect(wrapper.vm.isLoading).toBe(false)
 		expect(wrapper.vm.isError).toBe(false)
-		expect(wrapper.vm.data[0].id).toBe('12345')
+		// eslint-disable-next-line
+		expect((wrapper.vm as any).data[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
 		const request = fetchMock.mock.calls[0][0] as Request
 		expect(request.url).toEqual(
@@ -143,12 +149,15 @@ describe('RepositoryHttp', () => {
 			},
 		})
 		expect(wrapper.vm.isLoading).toBe(true)
-		wrapper.vm.execute()
-		wrapper.vm.abort('Aborted')
+		// eslint-disable-next-line
+		;(wrapper.vm as any).execute()
+		// eslint-disable-next-line
+		;(wrapper.vm as any).abort('Aborted')
 		await flushPromises()
 		expect(wrapper.vm.isLoading).toBe(false)
 		expect(wrapper.vm.isError).toBe(false)
-		expect(wrapper.vm.data[0].id).toBe('12345')
+		// eslint-disable-next-line
+		expect((wrapper.vm as any).data[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
 		const request = fetchMock.mock.calls[0][0] as Request
 		expect(request.url).toEqual(
@@ -168,12 +177,14 @@ describe('RepositoryHttp', () => {
 			},
 		})
 		expect(wrapper.vm.isLoading).toBe(true)
-		const { abort } = wrapper.vm.execute()
+		// eslint-disable-next-line
+		const { abort } = (wrapper.vm as any).execute()
 		abort('Aborted')
 		await flushPromises()
 		expect(wrapper.vm.isLoading).toBe(false)
 		expect(wrapper.vm.isError).toBe(false)
-		expect(wrapper.vm.data[0].id).toBe('12345')
+		// eslint-disable-next-line
+		expect((wrapper.vm as any).data[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
 		const request = fetchMock.mock.calls[0][0] as Request
 		expect(request.url).toEqual(
