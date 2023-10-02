@@ -6,12 +6,13 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- `RepositoryHttp` methods `create()` and `update()` always return te `data` property as array;
-- `RepositoryHttp` methods `remove()` has first parameter `payload` as `unknown` instead of `ParamsMap`.
+- `RepositoryHttp` methods `create()` and `update()` always return the `data` property as an array;
+- `RepositoryHttp` methods `remove()` has first parameter `payload` as `unknown` instead of `ParamsMap`;
 - `useRepositoryHttp` function `remove()` has first parameter `payload` as `unknown` instead of `ParamsMap`.
 
 ### Added
 
+- `RepositoryHttp` methods `create()` and `update()` support for an array of items;
 - `RepositoryHttp` methods `create()` and `update()` now return the `item` property as the first element of `data` array.
 
 ## [1.0.5] - 2023-08-30
