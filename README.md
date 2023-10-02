@@ -216,7 +216,7 @@ If `HttpClientPlugin` is not created with `createHttpClient()` or the `httpClien
     <button @click="execute()">Execute</button>
     <div v-if="isLoading">Loading...</div>
     <div v-if="isError">{{ error }}</div>
-    <div v-if="data">{{ data.name }}</div>
+    <div v-if="data?.[0]">{{ data?.[0].name }}</div>
   </div>
 </template>
 ```
@@ -320,14 +320,14 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
   const isLoading = ref(false)
   const isError = computed(() => error.value !== undefined)
   const error = ref()
-  const data = ref()
+  const item = ref()
 
   const execute = async () => {
     isLoading.value = true
     try {
       const { responsePromise } = repository.read({ id: 1 })
       const response = await responsePromise
-      data.value = response.data
+      item.value = response.item
     } catch (e) {
       error.value = e.message
     } finally {
@@ -341,7 +341,7 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
     <button @click="execute">Execute</button>
     <div v-if="isLoading">Loading...</div>
     <div v-if="isError">{{ error }}</div>
-    <div v-if="data">{{ data.name }}</div>
+    <div v-if="item">{{ item.name }}</div>
   </div>
 </template>
 ```
@@ -380,14 +380,14 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
   const isLoading = ref(false)
   const isError = computed(() => error.value !== undefined)
   const error = ref()
-  const data = ref()
+  const item = ref()
 
   const execute = async () => {
     isLoading.value = true
     try {
       const { responsePromise } = repository.read({ id: 1 })
       const response = await responsePromise
-      data.value = response.data
+      item.value = response.item
     } catch (e) {
       error.value = e.message
     } finally {
@@ -418,7 +418,7 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
   }
 
   const { read } = useRepositoryHttp<User>('users/:id')
-  const { isLoading, isError, error, data, execute } = read(
+  const { isLoading, isError, error, item, execute } = read(
     { id: 1 },
     { immediate: false }
   )
@@ -429,7 +429,7 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
     <button @click="execute">Execute</button>
     <div v-if="isLoading">Loading...</div>
     <div v-if="isError">{{ error }}</div>
-    <div v-if="data">{{ data.name }}</div>
+    <div v-if="item">{{ item.name }}</div>
   </div>
 </template>
 ```

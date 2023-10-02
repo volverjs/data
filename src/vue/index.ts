@@ -346,13 +346,13 @@ export const useHttpClient = (scope = GLOBAL_SCOPE) => {
  * 		<button @click="execute">Execute</button>
  * 		<div v-if="isLoading">Loading...</div>
  * 		<div v-if="isError">{{ error }}</div>
- * 		<div v-if="data">{{ data.name }}</div>
+ * 		<div v-if="data?.[0]">{{ data?.[0].name }}</div>
  * 	</div>
  * </template>
  *
  * <script lang="ts" setup>
  * import { ref, computed } from 'vue'
- * import { useRepositoryHttp } from '@volverjs/data/vue'
+ * import { useRepositoryHttp, type HTTPError } from '@volverjs/data/vue'
  *
  * type User = {
  * 	id: number,
@@ -362,15 +362,15 @@ export const useHttpClient = (scope = GLOBAL_SCOPE) => {
  * const { repository } = useRepositoryHttp<User>('users/:id')
  * const isLoading = ref(false)
  * const isError = computed(() => error.value !== undefined)
- * const error = ref()
- * const data = ref()
+ * const error = ref<HTTPError>()
+ * const item = ref<User>()
  *
  * const execute = async () => {
  * 	isLoading.value = true
  * 	try {
  * 		const { request } = repository.read({ id: 1 })
  * 		const response = await request
- * 		data.value = response.data
+ * 		item.value = response.item
  * 	} catch (e) {
  * 		error.value = e.message
  * 	} finally {
@@ -386,7 +386,7 @@ export const useHttpClient = (scope = GLOBAL_SCOPE) => {
  * 		<button @click="execute">Execute</button>
  * 		<div v-if="isLoading">Loading...</div>
  * 		<div v-if="isError">{{ error }}</div>
- * 		<div v-if="data">{{ data.name }}</div>
+ * 		<div v-if="item">{{ item.name }}</div>
  * 	</div>
  * </template>
  *
@@ -399,7 +399,7 @@ export const useHttpClient = (scope = GLOBAL_SCOPE) => {
  * }
  *
  * const { read } = useRepositoryHttp<User>('users/:id')
- * const { isLoading, isSuccess, isError, error, data, execute } = read(
+ * const { isLoading, isSuccess, isError, error, item, execute } = read(
  * 	{ id: 1 },
  * 	{ immediate: false }
  * )
@@ -418,7 +418,7 @@ export const useRepositoryHttp = <T = unknown, TResponse = unknown>(
 	)
 
 	const create = (
-		item: T | Ref<T>,
+		payload: T | Ref<T> | T[] | Ref<T[]> | undefined,
 		params: ParamMap = {},
 		options: HttpClientComposableRequestOptions = {},
 	) => {
@@ -426,24 +426,26 @@ export const useRepositoryHttp = <T = unknown, TResponse = unknown>(
 			defineHttpRequestStatus()
 		const immediate = unref(options).immediate ?? true
 		const error = ref<HTTPError>()
-		const data = ref<T>()
+		const data = ref<T[]>()
+		const item = ref<T>()
 		const metadata = ref<ParamMap>()
 
 		const execute = (
-			newItem: T = unref(item),
+			newPayload = unref(payload),
 			newParams: ParamMap = unref(params),
 			newOptions: RepositoryHttpReadOptions = unref(options),
 		) => {
 			status.value = HttpRequestStatus.loading
 			error.value = undefined
 			const { abort, responsePromise } = repository.create(
-				newItem,
+				newPayload,
 				newParams,
 				newOptions,
 			)
 			responsePromise
 				.then((result) => {
 					data.value = result.data
+					item.value = result.item
 					metadata.value = result.metadata
 					if (result.aborted) {
 						status.value = HttpRequestStatus.idle
@@ -494,7 +496,7 @@ export const useRepositoryHttp = <T = unknown, TResponse = unknown>(
 			responsePromise
 				.then((result) => {
 					data.value = result.data
-					item.value = result.data?.[0]
+					item.value = result.item
 					metadata.value = result.metadata
 					if (result.aborted) {
 						status.value = HttpRequestStatus.idle
@@ -522,7 +524,7 @@ export const useRepositoryHttp = <T = unknown, TResponse = unknown>(
 	}
 
 	const update = (
-		item: T | Ref<T>,
+		payload: T | Ref<T> | T[] | Ref<T[]> | undefined,
 		params: ParamMap = {},
 		options: HttpClientComposableRequestOptions = {},
 	) => {
@@ -530,24 +532,26 @@ export const useRepositoryHttp = <T = unknown, TResponse = unknown>(
 			defineHttpRequestStatus()
 		const immediate = unref(options).immediate ?? true
 		const error = ref<HTTPError>()
-		const data = ref<T>()
+		const data = ref<T[]>()
+		const item = ref<T>()
 		const metadata = ref<ParamMap>()
 
 		const execute = (
-			newItem: T = unref(item),
+			newPayload = unref(payload),
 			newParams: ParamMap = unref(params),
 			newOptions: RepositoryHttpReadOptions = unref(options),
 		) => {
 			status.value = HttpRequestStatus.loading
 			error.value = undefined
 			const { abort, responsePromise } = repository.update(
-				newItem,
+				newPayload,
 				newParams,
 				newOptions,
 			)
 			responsePromise
 				.then((result) => {
 					data.value = result.data
+					item.value = result.item
 					metadata.value = result.metadata
 					if (result.aborted) {
 						status.value = HttpRequestStatus.idle
@@ -574,6 +578,7 @@ export const useRepositoryHttp = <T = unknown, TResponse = unknown>(
 	}
 
 	const remove = (
+		payload: unknown | Ref<unknown>,
 		params: ParamMap | Ref<ParamMap>,
 		options: HttpClientComposableRequestOptions = {},
 	) => {
@@ -583,12 +588,14 @@ export const useRepositoryHttp = <T = unknown, TResponse = unknown>(
 		const error = ref<HTTPError>()
 
 		const execute = (
+			newPayload: unknown = unref(payload),
 			newParams: ParamMap = unref(params),
 			newOptions: RepositoryHttpReadOptions = unref(options),
 		) => {
 			status.value = HttpRequestStatus.loading
 			error.value = undefined
 			const { abort, responsePromise } = repository.remove(
+				newPayload,
 				newParams,
 				newOptions,
 			)

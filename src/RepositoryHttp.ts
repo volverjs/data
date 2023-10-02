@@ -15,6 +15,7 @@ type RepositoryHttpReadPendingRequest<Type> = {
 		aborted?: boolean
 		abortReason?: string
 		data?: Type[]
+		item?: Type
 		metadata?: ParamMap
 	}>
 	abort: (reason?: string) => void
@@ -213,7 +214,7 @@ export class RepositoryHttp<Type, TResponse = unknown>
 	 * ```typescript
 	 * const repository = new RepositoryHttp(client, 'users/:type')
 	 * const { response, abort } = repository.read({ type: 'admin', page: 1 })
-	 * const { data, metadata, ok } = await response
+	 * const { data, item, metadata, ok } = await response
 	 * //=> GET /users/admin?page=1
 	 * ```
 	 */
@@ -249,7 +250,7 @@ export class RepositoryHttp<Type, TResponse = unknown>
 				if (key !== false) {
 					this._deleteRepositoryHttpReadPendingRequest(key)
 				}
-				return { data, metadata, ok: httpResponse.ok }
+				return { data, item: data?.[0], metadata, ok: httpResponse.ok }
 			} catch (error) {
 				if (key !== false) {
 					this._deleteRepositoryHttpReadPendingRequest(key)
@@ -270,21 +271,21 @@ export class RepositoryHttp<Type, TResponse = unknown>
 	}
 
 	/**
-	 * @params item - The item to create.
+	 * @params payload - The payload to use in the request body.
 	 * @params params - The parameters to use in the request template URL or query.
 	 * @params options - The HTTP Client request options.
 	 * @returns A an object with the response promise and a function to abort the request.
 	 * @example
 	 * ```typescript
 	 * const repository = new RepositoryHttp(client, 'users/:type')
-	 * const item = { name: 'John' }
-	 * const { response, abort } = repository.create(item, { type: 'admin' })
-	 * const { data, metadata, ok } = await response
+	 * const payload = { name: 'John' }
+	 * const { response, abort } = repository.create(payload, { type: 'admin' })
+	 * const { data, item, metadata, ok } = await response
 	 * //=> POST /users/admin
 	 * ```
 	 */
 	public create = (
-		item: Type,
+		payload: Type | Type[] | undefined,
 		params?: ParamMap,
 		options?: HttpClientRequestOptions,
 	) => {
@@ -295,15 +296,15 @@ export class RepositoryHttp<Type, TResponse = unknown>
 		} = this._client.request(
 			'post',
 			this._requestUrl(params),
-			this._requestOptions(options, item),
+			this._requestOptions(options, payload),
 		)
 		const responsePromise = (async () => {
 			try {
 				const httpResponse = await httpResponsePromise
 				const raw = await httpResponse.json<TResponse>()
-				const data = this._responseAdapter(raw)?.[0]
+				const data = this._responseAdapter(raw)
 				const metadata = this._metadataAdapter(httpResponse)
-				return { data, metadata, ok: httpResponse.ok }
+				return { data, item: data?.[0], metadata, ok: httpResponse.ok }
 			} catch (error) {
 				if (!signal.aborted) {
 					throw error
@@ -315,21 +316,21 @@ export class RepositoryHttp<Type, TResponse = unknown>
 	}
 
 	/**
-	 * @params item - The item to update.
+	 * @params payload - The payload to use in the request body.
 	 * @params params - The parameters to use in the request template URL or query.
 	 * @params options - The HTTP Client request options.
 	 * @returns A an object with the response promise and a function to abort the request.
 	 * @example
 	 * ```typescript
 	 * const repository = new RepositoryHttp(client, 'users/:type/?:id')
-	 * const item = { id: 1, name: 'John' }
-	 * const { response, abort } = repository.update(item, { type: 'admin', id: 1 })
-	 * const { data, metadata, ok } = await response
+	 * const payload = { id: 1, name: 'John' }
+	 * const { response, abort } = repository.update(payload, { type: 'admin', id: 1 })
+	 * const { data, item, metadata, ok } = await response
 	 * //=> PUT /users/admin/1
 	 * ```
 	 */
 	public update = (
-		item: Type,
+		payload: Type | Type[] | undefined,
 		params?: ParamMap,
 		options?: HttpClientRequestOptions,
 	) => {
@@ -340,15 +341,15 @@ export class RepositoryHttp<Type, TResponse = unknown>
 		} = this._client.request(
 			'put',
 			this._requestUrl(params),
-			this._requestOptions(options, item),
+			this._requestOptions(options, payload),
 		)
 		const responsePromise = (async () => {
 			try {
 				const httpResponse = await httpResponsePromise
 				const raw = await httpResponse.json<TResponse>()
-				const data = this._responseAdapter(raw)?.[0]
+				const data = this._responseAdapter(raw)
 				const metadata = this._metadataAdapter(httpResponse)
-				return { data, metadata, ok: httpResponse.ok }
+				return { data, item: data?.[0], metadata, ok: httpResponse.ok }
 			} catch (error) {
 				if (!signal.aborted) {
 					throw error
@@ -360,6 +361,7 @@ export class RepositoryHttp<Type, TResponse = unknown>
 	}
 
 	/**
+	 * @params payload - The payload to use in the request body.
 	 * @params params - The parameters to use in the request template URL or query.
 	 * @params options - The HTTP Client request options.
 	 * @returns A an object with the response promise and a function to abort the request.
@@ -367,11 +369,17 @@ export class RepositoryHttp<Type, TResponse = unknown>
 	 * ```typescript
 	 * const repository = new RepositoryHttp(client, 'users/:type/?:id')
 	 * const { response, abort } = repository.delete({ type: 'admin', id: 1 })
-	 * const { data, metadata, ok } = await response
+	 * const { ok } = await response
 	 * //=> DELETE /users/admin/1
 	 * ```
 	 */
-	public remove = (params: ParamMap, options?: HttpClientRequestOptions) => {
+	public remove = (
+		payload: unknown,
+		params: ParamMap,
+		options?: HttpClientRequestOptions,
+	) => {
+		const requestOptions = this._requestOptions(options)
+		requestOptions.json = payload
 		const {
 			responsePromise: httpResponsePromise,
 			abort,
@@ -379,7 +387,7 @@ export class RepositoryHttp<Type, TResponse = unknown>
 		} = this._client.request(
 			'delete',
 			this._requestUrl(params),
-			this._requestOptions(options),
+			requestOptions,
 		)
 		const responsePromise = (async () => {
 			try {
@@ -462,15 +470,24 @@ export class RepositoryHttp<Type, TResponse = unknown>
 
 	private _requestOptions = (
 		options?: HttpClientRequestOptions,
-		item?: Type,
+		payload?: Type | Type[],
 	): HttpClientOptions => {
 		const toReturn: HttpClientOptions = {
 			...this._httpClientOptions,
 			...options,
 		}
-		if (item) {
-			toReturn.json = this._requestAdapter(item)
+		if (!payload) {
+			return toReturn
 		}
+		if (Array.isArray(payload)) {
+			if (payload.length === 1) {
+				toReturn.json = payload.map((item) =>
+					this._requestAdapter(item),
+				)
+			}
+			return toReturn
+		}
+		toReturn.json = this._requestAdapter(payload)
 		return toReturn
 	}
 }
