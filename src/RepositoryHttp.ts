@@ -474,11 +474,7 @@ export class RepositoryHttp<Type, TResponse = unknown>
 			return toReturn
 		}
 		if (Array.isArray(payload)) {
-			if (payload.length === 1) {
-				toReturn.json = payload.map((item) =>
-					this._requestAdapter(item),
-				)
-			}
+			toReturn.json = payload.map((item) => this._requestAdapter(item))
 			return toReturn
 		}
 		toReturn.json = this._requestAdapter(payload)
