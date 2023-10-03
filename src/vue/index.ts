@@ -578,7 +578,6 @@ export const useRepositoryHttp = <T = unknown, TResponse = unknown>(
 	}
 
 	const remove = (
-		payload: unknown | Ref<unknown>,
 		params: ParamMap | Ref<ParamMap>,
 		options: HttpClientComposableRequestOptions = {},
 	) => {
@@ -588,14 +587,12 @@ export const useRepositoryHttp = <T = unknown, TResponse = unknown>(
 		const error = ref<HTTPError>()
 
 		const execute = (
-			newPayload: unknown = unref(payload),
 			newParams: ParamMap = unref(params),
 			newOptions: RepositoryHttpReadOptions = unref(options),
 		) => {
 			status.value = HttpRequestStatus.loading
 			error.value = undefined
 			const { abort, responsePromise } = repository.remove(
-				newPayload,
 				newParams,
 				newOptions,
 			)

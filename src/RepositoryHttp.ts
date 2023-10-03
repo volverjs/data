@@ -361,7 +361,6 @@ export class RepositoryHttp<Type, TResponse = unknown>
 	}
 
 	/**
-	 * @params payload - The payload to use in the request body.
 	 * @params params - The parameters to use in the request template URL or query.
 	 * @params options - The HTTP Client request options.
 	 * @returns A an object with the response promise and a function to abort the request.
@@ -373,13 +372,8 @@ export class RepositoryHttp<Type, TResponse = unknown>
 	 * //=> DELETE /users/admin/1
 	 * ```
 	 */
-	public remove = (
-		payload: unknown,
-		params: ParamMap,
-		options?: HttpClientRequestOptions,
-	) => {
+	public remove = (params: ParamMap, options?: HttpClientRequestOptions) => {
 		const requestOptions = this._requestOptions(options)
-		requestOptions.json = payload
 		const {
 			responsePromise: httpResponsePromise,
 			abort,

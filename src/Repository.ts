@@ -52,7 +52,6 @@ export interface Repository<Type> {
 	}
 
 	remove(
-		payload: unknown,
 		params: ParamMap,
 		options?: Record<string, unknown>,
 	): {
