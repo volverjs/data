@@ -267,6 +267,7 @@ export const useHttpClient = (scope = GLOBAL_SCOPE) => {
 		) => {
 			status.value = HttpRequestStatus.loading
 			error.value = undefined
+			data.value = undefined
 			const { responsePromise, abort, signal } = client.request(
 				method,
 				newUrl,
@@ -437,6 +438,8 @@ export const useRepositoryHttp = <T = unknown, TResponse = unknown>(
 		) => {
 			status.value = HttpRequestStatus.loading
 			error.value = undefined
+			item.value = undefined
+			data.value = undefined
 			const { abort, responsePromise } = repository.create(
 				newPayload,
 				newParams,
@@ -489,6 +492,8 @@ export const useRepositoryHttp = <T = unknown, TResponse = unknown>(
 		) => {
 			status.value = HttpRequestStatus.loading
 			error.value = undefined
+			item.value = undefined
+			data.value = undefined
 			const { abort, responsePromise } = repository.read(
 				newParams,
 				newOptions,
@@ -543,6 +548,8 @@ export const useRepositoryHttp = <T = unknown, TResponse = unknown>(
 		) => {
 			status.value = HttpRequestStatus.loading
 			error.value = undefined
+			item.value = undefined
+			data.value = undefined
 			const { abort, responsePromise } = repository.update(
 				newPayload,
 				newParams,

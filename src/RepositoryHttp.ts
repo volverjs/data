@@ -219,7 +219,7 @@ export class RepositoryHttp<Type, TResponse = unknown>
 	 * ```
 	 */
 	public read = (
-		params: ParamMap,
+		params: ParamMap = {},
 		options: RepositoryHttpReadOptions = {},
 	) => {
 		const { key: optionsKey, ...requestOptions } = options
@@ -285,7 +285,7 @@ export class RepositoryHttp<Type, TResponse = unknown>
 	 * ```
 	 */
 	public create = (
-		payload: Type | Type[] | undefined,
+		payload?: Type | Type[],
 		params?: ParamMap,
 		options?: HttpClientRequestOptions,
 	) => {
@@ -330,7 +330,7 @@ export class RepositoryHttp<Type, TResponse = unknown>
 	 * ```
 	 */
 	public update = (
-		payload: Type | Type[] | undefined,
+		payload?: Type | Type[],
 		params?: ParamMap,
 		options?: HttpClientRequestOptions,
 	) => {
@@ -372,7 +372,7 @@ export class RepositoryHttp<Type, TResponse = unknown>
 	 * //=> DELETE /users/admin/1
 	 * ```
 	 */
-	public remove = (params: ParamMap, options?: HttpClientRequestOptions) => {
+	public remove = (params?: ParamMap, options?: HttpClientRequestOptions) => {
 		const requestOptions = this._requestOptions(options)
 		const {
 			responsePromise: httpResponsePromise,

@@ -2,7 +2,7 @@ import type { ParamMap } from './types'
 
 export interface Repository<Type> {
 	read(
-		params: ParamMap,
+		params?: ParamMap,
 		options?: { key?: string | number | boolean } & Record<string, unknown>,
 	): {
 		responsePromise: Promise<{
@@ -18,7 +18,7 @@ export interface Repository<Type> {
 	}
 
 	create(
-		payload: Type | Type[] | undefined,
+		payload?: Type | Type[],
 		params?: ParamMap,
 		options?: Record<string, unknown>,
 	): {
@@ -35,7 +35,7 @@ export interface Repository<Type> {
 	}
 
 	update(
-		payload: Type | Type[] | undefined,
+		payload?: Type | Type[],
 		params?: ParamMap,
 		options?: Record<string, unknown>,
 	): {
@@ -52,7 +52,7 @@ export interface Repository<Type> {
 	}
 
 	remove(
-		params: ParamMap,
+		params?: ParamMap,
 		options?: Record<string, unknown>,
 	): {
 		responsePromise: Promise<{
