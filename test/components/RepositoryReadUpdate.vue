@@ -1,6 +1,6 @@
 <script lang="ts" setup>
+	import { computed, type Ref } from 'vue'
 	import { useRepositoryHttp } from '../../src/vue'
-	import { computed } from 'vue'
 
 	type User = {
 		id: number
@@ -13,7 +13,7 @@
 		isLoading: isUpdating,
 		error: updateError,
 		execute,
-	} = update(item, { id: 1 }, { immediate: false })
+	} = update(item as Ref<User>, { id: 1 }, { immediate: false })
 
 	const isLoading = computed(() => isReading.value || isUpdating.value)
 	const error = computed(() => updateError.value || readError.value)

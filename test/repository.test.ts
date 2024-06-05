@@ -22,7 +22,7 @@ describe('RepositoryHttp', () => {
 		})
 		const { data, ok } = await responsePromise
 		expect(ok).toBe(true)
-		expect(data[0].id).toBe('12345')
+		expect(data?.[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
 		const request = fetchMock.mock.calls[0][0] as Request
 		expect(request.url).toEqual(
@@ -58,8 +58,8 @@ describe('RepositoryHttp', () => {
 		const { data: data2, ok: ok2 } = await responsePromise2
 		expect(ok1).toBe(true)
 		expect(ok2).toBe(true)
-		expect(data1[0].id).toBe('12345')
-		expect(data2[0].id).toBe('12345')
+		expect(data1?.[0].id).toBe('12345')
+		expect(data2?.[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
 		const request = fetchMock.mock.calls[0][0] as Request
 		expect(request.url).toEqual(
@@ -85,7 +85,7 @@ describe('RepositoryHttp', () => {
 		const { data: data2, ok: ok2 } = await responsePromise2
 		expect(ok1).toBe(false)
 		expect(ok2).toBe(true)
-		expect(data2[0].id).toBe('12345')
+		expect(data2?.[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
 		const request = fetchMock.mock.calls[0][0] as Request
 		expect(request.url).toEqual(
@@ -111,7 +111,7 @@ describe('RepositoryHttp', () => {
 		const { ok: ok2 } = await responsePromise2
 		expect(ok1).toBe(true)
 		expect(ok2).toBe(false)
-		expect(data1[0].id).toBe('12345')
+		expect(data1?.[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
 		const request = fetchMock.mock.calls[0][0] as Request
 		expect(request.url).toEqual(

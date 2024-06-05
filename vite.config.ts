@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitest/config'
 import Vue from '@vitejs/plugin-vue'
-import ESLint from 'vite-plugin-eslint'
+import ESLint from '@nabla/vite-plugin-eslint'
 import path from 'path'
 
 // https://vitejs.dev/config/
@@ -47,7 +47,7 @@ export default () => {
 			}),
 
 			// https://github.com/gxmari007/vite-plugin-eslint
-			ESLint({ exclude: ['**/node_modules/**'] }),
+			ESLint(),
 		],
 	})
 }

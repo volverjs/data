@@ -13,7 +13,9 @@ describe('HttpClient', () => {
 	it('Should make a GET request', async () => {
 		fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
 		const client = new HttpClient()
-		const data = await client.get('https://myapi.com/v1').json()
+		const data = (await client.get('https://myapi.com/v1').json()) as {
+			id: string
+		}[]
 		expect(data[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
 		const request = fetchMock.mock.calls[0][0] as Request
@@ -23,12 +25,14 @@ describe('HttpClient', () => {
 	it('Should make a GET request with template parameters', async () => {
 		fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
 		const client = new HttpClient()
-		const data = await client
+		const data = (await client
 			.get({
 				template: 'https://myapi.com/v1/:name',
 				params: { name: 'example' },
 			})
-			.json()
+			.json()) as {
+			id: string
+		}[]
 		expect(data[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
 		const request = fetchMock.mock.calls[0][0] as Request
@@ -37,12 +41,14 @@ describe('HttpClient', () => {
 	it('Should make a GET request with template and query parameters', async () => {
 		fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
 		const client = new HttpClient()
-		const data = await client
+		const data = (await client
 			.get({
 				template: 'https://myapi.com/v1/:type',
 				params: { type: 'alpha', codes: ['col', 'pe', 'at'] },
 			})
-			.json()
+			.json()) as {
+			id: string
+		}[]
 		expect(data[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
 		const request = fetchMock.mock.calls[0][0] as Request
@@ -55,12 +61,14 @@ describe('HttpClient', () => {
 		const client = new HttpClient({
 			prefixUrl: 'https://myapi.com/v1',
 		})
-		const data = await client
+		const data = (await client
 			.get({
 				template: ':type',
 				params: { type: 'alpha', codes: ['col', 'pe', 'at'] },
 			})
-			.json()
+			.json()) as {
+			id: string
+		}[]
 		expect(data[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
 		const request = fetchMock.mock.calls[0][0] as Request

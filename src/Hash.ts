@@ -1,5 +1,5 @@
 export class Hash {
-	public static cyrb53 = (str: string, seed = 0) => {
+	public static readonly cyrb53 = (str: string, seed = 0) => {
 		let h1 = 0xdeadbeef ^ seed,
 			h2 = 0x41c6ce57 ^ seed
 		for (let i = 0, ch; i < str.length; i++) {
@@ -16,7 +16,7 @@ export class Hash {
 		return 4294967296 * (2097151 & h2) + (h1 >>> 0)
 	}
 
-	public static djb2 = (str: string, seed = 5381) => {
+	public static readonly djb2 = (str: string, seed = 5381) => {
 		let h = seed
 
 		for (let i = 0; i < str.length; i++) {

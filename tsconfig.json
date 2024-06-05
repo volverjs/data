@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "dist",
-    "types": ["@types/qs", "vitest/globals", "vite/client"],
+    "types": ["@types/qs", "vitest/globals", "vite/client", "node"],
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "moduleResolution": "Node",

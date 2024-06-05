@@ -218,14 +218,14 @@ export class HttpClient implements HttpClientInstance {
 		if (
 			this._prefixUrl &&
 			typeof toReturn === 'string' &&
-			toReturn?.[0] === '/'
+			toReturn?.startsWith('/')
 		) {
 			return toReturn.slice(1)
 		}
 		return toReturn
 	}
 
-	public static buildUrl = (
+	public static readonly buildUrl = (
 		url: HttpClientInputTemplate,
 		options?: UrlBuilderOptions,
 		builder?: UrlBuilderInstance,
@@ -250,7 +250,7 @@ export class HttpClient implements HttpClientInstance {
 		)
 	}
 
-	public static createAbortController = (
+	public static readonly createAbortController = (
 		abortController?: AbortController,
 	) => {
 		const controller = abortController ?? new AbortController()

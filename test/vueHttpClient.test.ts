@@ -44,7 +44,7 @@ describe('HttpClient', () => {
 		await flushPromises()
 		expect(isLoading.value).toBe(false)
 		expect(isError.value).toBe(false)
-		expect(data.value[0].id).toBe('12345')
+		expect(data.value?.[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
 		const request = fetchMock.mock.calls[0][0] as Request
 		expect(request.method).toEqual('GET')
@@ -62,7 +62,7 @@ describe('HttpClient', () => {
 		await flushPromises()
 		expect(isLoading.value).toBe(false)
 		expect(isError.value).toBe(false)
-		expect(data.value[0].id).toBe('12345')
+		expect(data.value?.[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
 		const request = fetchMock.mock.calls[0][0] as Request
 		expect(request.method).toEqual('GET')
@@ -86,7 +86,7 @@ describe('HttpClient', () => {
 		await flushPromises()
 		expect(isLoading.value).toBe(false)
 		expect(isError.value).toBe(false)
-		expect(data.value[0].id).toBe('12345')
+		expect(data.value?.[0].id).toBe('12345')
 		expect(fetchMock.mock.calls.length).toBe(1)
 		const request = fetchMock.mock.calls[0][0] as Request
 		expect(request.method).toEqual('GET')
@@ -110,7 +110,7 @@ describe('HttpClient', () => {
 		await flushPromises()
 		expect(isLoading.value).toBe(false)
 		expect(isError.value).toBe(true)
-		expect(error.value.response.status).toBe(404)
+		expect(error.value?.response.status).toBe(404)
 		expect(fetchMock.mock.calls.length).toBe(1)
 		const request = fetchMock.mock.calls[0][0] as Request
 		expect(request.url).toEqual(
@@ -124,9 +124,9 @@ describe('HttpClient', () => {
 		try {
 			await responsePromise
 		} catch (error) {
-			signal.aborted && expect(error.message).toBe('Aborted')
+			signal?.aborted && expect(error.message).toBe('Aborted')
 		}
-		abort('Aborted')
+		abort?.('Aborted')
 	})
 
 	it('Should use a new httpClient', async () => {
