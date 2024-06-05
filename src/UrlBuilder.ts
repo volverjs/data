@@ -127,7 +127,7 @@ export class UrlBuilder implements UrlBuilderInstance {
 				}
 				delete remainingParams[key]
 				const encoded = encodeURIComponent(params[key])
-				return p?.[0] === '/' ? `/${encoded}` : encoded
+				return p?.startsWith('/') ? `/${encoded}` : encoded
 			},
 		)
 
