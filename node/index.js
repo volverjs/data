@@ -27,7 +27,7 @@ if (!globalThis.AbortController) {
 if (!globalThis.ReadableStream) {
 	try {
 		globalThis.ReadableStream = await import(
-			'web-streams-polyfill/ponyfill'
+			'web-streams-polyfill/polyfill'
 		)
 	} catch {}
 }
