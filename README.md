@@ -1,5 +1,5 @@
 <div align="center">
-  
+
 [![volverjs](docs/static/volverjs-data.svg)](https://volverjs.github.io/data)
 
 ## @volverjs/data
@@ -38,7 +38,7 @@ npm install @volverjs/data --save
 This library exports four main classes: `Hash`, `UrlBuilder`, `HttpClient` and `RepositoryHttp`.
 
 ```typescript
-import { Hash, UrlBuilder, HttpClient, RepositoryHttp } from '@volverjs/data'
+import { Hash, HttpClient, RepositoryHttp, UrlBuilder } from '@volverjs/data'
 ```
 
 ### Hash
@@ -58,12 +58,12 @@ The `UrlBuilder` class provides a way to build URLs with template parameters and
 import { UrlBuilder } from '@volverjs/data'
 
 const urlBuilder = new UrlBuilder({
-  encodeValuesOnly: false
+    encodeValuesOnly: false
 })
 const url = urlBuilder.build('https://my.api.com/:endpoint', {
-  endpoint: 'users',
-  _limit: 10,
-  _page: 1
+    endpoint: 'users',
+    _limit: 10,
+    _page: 1
 })
 // url = 'https://my.api.com/users?_limit=10&_page=1'
 ```
@@ -79,16 +79,16 @@ The `HttpClient` class is a wrapper around [`ky`](https://github.com/sindresorhu
 import { HttpClient } from '@volverjs/data'
 
 const client = new HttpClient({
-  prefixUrl: 'https://my.api.com'
+    prefixUrl: 'https://my.api.com'
 })
 const response = await client.get({
-  template: ':endpoint/:action?/:id',
-  params: {
-    endpoint: 'users',
-    id: 1,
-    _limit: 10,
-    _page: 1
-  }
+    template: ':endpoint/:action?/:id',
+    params: {
+        endpoint: 'users',
+        id: 1,
+        _limit: 10,
+        _page: 1
+    }
 })
 // fetch('https://my.api.com/users/1?_limit=10&_page=1', { method: 'GET' })
 ```
@@ -103,37 +103,34 @@ The `RepositoryHttp` class is an implementation of the `Repository` interface fo
 import { HttpClient, RepositoryHttp } from '@volverjs/data'
 
 class User {
-  id: number
-  name: string
-  surname: string
-  constructor(data: { id: number; name: string; surname: string }) {
-    this.id = data.id
-    this.name = data.name
-    this.email = data.email
-  }
-  get fullName() {
-    return `${this.name} ${this.surname}`
-  }
+    id: number
+    name: string
+    surname: string
+    constructor(data: { id: number, name: string, surname: string }) {
+        this.id = data.id
+        this.name = data.name
+        this.email = data.email
+    }
+
+    get fullName() {
+        return `${this.name} ${this.surname}`
+    }
 }
 
 const client = new HttpClient({
-  prefixUrl: 'https://my.api.com'
+    prefixUrl: 'https://my.api.com'
 })
 
 const repository = new RepositoryHttp<User>(client, 'users/:group?/:id?', {
-  class: User
+    class: User
 })
 
 const getAdminUsers: User[] = async () => {
-  try {
     const { responsePromise } = repository.read({
-      group: 'admin'
+        group: 'admin'
     })
     const { data } = await responsePromise
     return data
-  } catch (error) {
-    throw error
-  }
 }
 ```
 
@@ -154,11 +151,11 @@ import App from './App.vue'
 
 const app = createApp(App)
 const httpClientPlugin = createHttpClient({
-  prefixUrl: 'https://my.api.com'
+    prefixUrl: 'https://my.api.com'
 })
 
 app.use(httpClientPlugin, {
-  globalName: 'vvHttp' // (optional) default: 'vvHttp'
+    globalName: 'vvHttp' // (optional) default: 'vvHttp'
 })
 ```
 
@@ -175,49 +172,58 @@ If `HttpClientPlugin` is not created with `createHttpClient()` or the `httpClien
 
 ```vue
 <script lang="ts">
-  import { createHttpClient } from '@volverjs/data/vue'
-
-  createHttpClient({
-    prefixUrl: 'https://my.api.com'
-  })
+import { createHttpClient, useHttpClient } from '@volverjs/data/vue'
 </script>
 
 <script lang="ts" setup>
-  import { ref, computed } from 'vue'
-  import { useHttpClient } from '@volverjs/data/vue'
+import { computed, ref } from 'vue'
 
-  const { client } = useHttpClient()
-  const isLoading = ref(false)
-  const isError = computed(() => error.value !== undefined)
-  const error = ref()
-  const data = ref<Data>()
+createHttpClient({
+    prefixUrl: 'https://my.api.com'
+})
 
-  type User = {
+const { client } = useHttpClient()
+const isLoading = ref(false)
+const isError = computed(() => error.value !== undefined)
+const error = ref()
+const data = ref<Data>()
+
+interface User {
     id: number
     name: string
-  }
+}
 
-  const execute = async () => {
+async function execute() {
     isLoading.value = true
     error.value = undefined
     try {
-      const response = await client.get('users/1')
-      data.value = await response.json<User>()
-    } catch (e) {
-      error.value = e.message
-    } finally {
-      isLoading.value = false
+        const response = await client.get('users/1')
+        data.value = await response.json<User>()
     }
-  }
+    catch (e) {
+        error.value = e.message
+    }
+    finally {
+        isLoading.value = false
+    }
+}
 </script>
 
 <template>
-  <div>
-    <button @click="execute()">Execute</button>
-    <div v-if="isLoading">Loading...</div>
-    <div v-if="isError">{{ error }}</div>
-    <div v-if="data?.[0]">{{ data?.[0].name }}</div>
-  </div>
+    <div>
+        <button @click="execute()">
+            Execute
+        </button>
+        <div v-if="isLoading">
+            Loading...
+        </div>
+        <div v-if="isError">
+            {{ error }}
+        </div>
+        <div v-if="data?.[0]">
+            {{ data?.[0].name }}
+        </div>
+    </div>
 </template>
 ```
 
@@ -225,26 +231,34 @@ If `HttpClientPlugin` is not created with `createHttpClient()` or the `httpClien
 
 ```vue
 <script lang="ts" setup>
-  import { useHttpClient } from '@volverjs/data/vue'
+import { useHttpClient } from '@volverjs/data/vue'
 
-  type User = {
+interface User {
     id: number
     name: string
-  }
-  const { requestGet } = useHttpClient()
-  const { isLoading, isError, isSuccess, error, data, execute } =
-    requestGet<User>('users/1', {
-      immediate: false
+}
+const { requestGet } = useHttpClient()
+const { isLoading, isError, isSuccess, error, data, execute }
+    = requestGet<User>('users/1', {
+        immediate: false
     })
 </script>
 
 <template>
-  <div>
-    <button @click="execute()">Execute</button>
-    <div v-if="isLoading">Loading...</div>
-    <div v-if="isError">{{ error }}</div>
-    <div v-if="isSuccess">{{ data.name }}</div>
-  </div>
+    <div>
+        <button @click="execute()">
+            Execute
+        </button>
+        <div v-if="isLoading">
+            Loading...
+        </div>
+        <div v-if="isError">
+            {{ error }}
+        </div>
+        <div v-if="isSuccess">
+            {{ data.name }}
+        </div>
+    </div>
 </template>
 ```
 
@@ -262,30 +276,38 @@ The request can be executed later by setting the `immediate` option to `false` (
 
 ```vue
 <script lang="ts" setup>
-  import { useHttpClient } from '@volverjs/data/vue'
+import { useHttpClient } from '@volverjs/data/vue'
 
-  type User = {
+interface User {
     id: number
     name: string
-  }
+}
 
-  const data = ref<Partial<User>>({ name: '' })
+const data = ref<Partial<User>>({ name: '' })
 
-  const { requestPost } = useHttpClient()
-  const { isLoading, isError, isSuccess, error, execute } = requestPost<User>(
+const { requestPost } = useHttpClient()
+const { isLoading, isError, isSuccess, error, execute } = requestPost<User>(
     'users',
     computed(() => ({ immediate: false, json: data.value }))
-  )
+)
 </script>
 
 <template>
-  <form @submit.prevent="execute()">
-    <div v-if="isLoading">Loading...</div>
-    <div v-if="isError">{{ error }}</div>
-    <div v-if="isSuccess">Success!</div>
-    <input type="text" v-model="data.name" />
-    <button type="submit">Submit</button>
-  </form>
+    <form @submit.prevent="execute()">
+        <div v-if="isLoading">
+            Loading...
+        </div>
+        <div v-if="isError">
+            {{ error }}
+        </div>
+        <div v-if="isSuccess">
+            Success!
+        </div>
+        <input v-model="data.name" type="text">
+        <button type="submit">
+            Submit
+        </button>
+    </form>
 </template>
 ```
 
@@ -308,41 +330,51 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
 
 ```vue
 <script lang="ts" setup>
-  import { ref, computed } from 'vue'
-  import { useRepositoryHttp } from '@volverjs/data/vue'
+import { computed, ref } from 'vue'
+import { useRepositoryHttp } from '@volverjs/data/vue'
 
-  type User = {
+interface User {
     id: number
     name: string
-  }
+}
 
-  const { repository } = useRepositoryHttp<User>('users/:id')
-  const isLoading = ref(false)
-  const isError = computed(() => error.value !== undefined)
-  const error = ref()
-  const item = ref()
+const { repository } = useRepositoryHttp<User>('users/:id')
+const isLoading = ref(false)
+const isError = computed(() => error.value !== undefined)
+const error = ref()
+const item = ref()
 
-  const execute = async () => {
+async function execute() {
     isLoading.value = true
     try {
-      const { responsePromise } = repository.read({ id: 1 })
-      const response = await responsePromise
-      item.value = response.item
-    } catch (e) {
-      error.value = e.message
-    } finally {
-      isLoading.value = false
+        const { responsePromise } = repository.read({ id: 1 })
+        const response = await responsePromise
+        item.value = response.item
     }
-  }
+    catch (e) {
+        error.value = e.message
+    }
+    finally {
+        isLoading.value = false
+    }
+}
 </script>
 
 <template>
-  <div>
-    <button @click="execute">Execute</button>
-    <div v-if="isLoading">Loading...</div>
-    <div v-if="isError">{{ error }}</div>
-    <div v-if="item">{{ item.name }}</div>
-  </div>
+    <div>
+        <button @click="execute">
+            Execute
+        </button>
+        <div v-if="isLoading">
+            Loading...
+        </div>
+        <div v-if="isError">
+            {{ error }}
+        </div>
+        <div v-if="item">
+            {{ item.name }}
+        </div>
+    </div>
 </template>
 ```
 
@@ -350,59 +382,69 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
 
 ```vue
 <script lang="ts" setup>
-  import { ref, computed } from 'vue'
-  import { useRepositoryHttp } from '@volverjs/data/vue'
+import { computed, ref } from 'vue'
+import { useRepositoryHttp } from '@volverjs/data/vue'
 
-  interface IUser {
+interface IUser {
     id: number
     name: string
-  }
+}
 
-  type UserResponse = {
+interface UserResponse {
     id: number
     firtname: string
     lastname: string
-  }
+}
 
-  class User implements IUser {
+class User implements IUser {
     id: number
     name: string
 
     constructor(data: UserResponse) {
-      this.id = data.id
-      this.name = `${data.firtname} ${data.lastname}`
+        this.id = data.id
+        this.name = `${data.firtname} ${data.lastname}`
     }
-  }
+}
 
-  const { repository } = useRepositoryHttp<IUser, UserResponse>('users/:id', {
-    responseAdapter: (raw) => [new User(raw)] // -----> raw is type of UserResponse instead of "unknown"
-  })
-  const isLoading = ref(false)
-  const isError = computed(() => error.value !== undefined)
-  const error = ref()
-  const item = ref()
+const { repository } = useRepositoryHttp<IUser, UserResponse>('users/:id', {
+    responseAdapter: raw => [new User(raw)] // -----> raw is type of UserResponse instead of "unknown"
+})
+const isLoading = ref(false)
+const isError = computed(() => error.value !== undefined)
+const error = ref()
+const item = ref()
 
-  const execute = async () => {
+async function execute() {
     isLoading.value = true
     try {
-      const { responsePromise } = repository.read({ id: 1 })
-      const response = await responsePromise
-      item.value = response.item
-    } catch (e) {
-      error.value = e.message
-    } finally {
-      isLoading.value = false
+        const { responsePromise } = repository.read({ id: 1 })
+        const response = await responsePromise
+        item.value = response.item
     }
-  }
+    catch (e) {
+        error.value = e.message
+    }
+    finally {
+        isLoading.value = false
+    }
+}
 </script>
 
 <template>
-  <div>
-    <button @click="execute">Execute</button>
-    <div v-if="isLoading">Loading...</div>
-    <div v-if="isError">{{ error }}</div>
-    <div v-if="data">{{ data.name }}</div>
-  </div>
+    <div>
+        <button @click="execute">
+            Execute
+        </button>
+        <div v-if="isLoading">
+            Loading...
+        </div>
+        <div v-if="isError">
+            {{ error }}
+        </div>
+        <div v-if="data">
+            {{ data.name }}
+        </div>
+    </div>
 </template>
 ```
 
@@ -410,27 +452,35 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
 
 ```vue
 <script lang="ts" setup>
-  import { useRepositoryHttp } from '@volverjs/data/vue'
+import { useRepositoryHttp } from '@volverjs/data/vue'
 
-  type User = {
+interface User {
     id: number
     name: string
-  }
+}
 
-  const { read } = useRepositoryHttp<User>('users/:id')
-  const { isLoading, isError, error, item, execute } = read(
+const { read } = useRepositoryHttp<User>('users/:id')
+const { isLoading, isError, error, item, execute } = read(
     { id: 1 },
     { immediate: false }
-  )
+)
 </script>
 
 <template>
-  <div>
-    <button @click="execute">Execute</button>
-    <div v-if="isLoading">Loading...</div>
-    <div v-if="isError">{{ error }}</div>
-    <div v-if="item">{{ item.name }}</div>
-  </div>
+    <div>
+        <button @click="execute">
+            Execute
+        </button>
+        <div v-if="isLoading">
+            Loading...
+        </div>
+        <div v-if="isError">
+            {{ error }}
+        </div>
+        <div v-if="item">
+            {{ item.name }}
+        </div>
+    </div>
 </template>
 ```
 
@@ -455,35 +505,41 @@ The request can be executed later by setting the `immediate` option to `false` (
 
 ```vue
 <script lang="ts" setup>
-  import { useRepositoryHttp } from '@volverjs/data/vue'
-  import { computed } from 'vue'
+import { useRepositoryHttp } from '@volverjs/data/vue'
+import { computed } from 'vue'
 
-  type User = {
+interface User {
     id: number
     name: string
-  }
+}
 
-  const { read, update } = useRepositoryHttp<User>('users/:id?')
-  const { isLoading: isReading, error: readError, item } = read({ id: 1 })
-  const {
+const { read, update } = useRepositoryHttp<User>('users/:id?')
+const { isLoading: isReading, error: readError, item } = read({ id: 1 })
+const {
     isLoading: isUpdating,
     error: updateError,
     execute
-  } = update(item, { id: 1 }, { immediate: false })
+} = update(item, { id: 1 }, { immediate: false })
 
-  const isLoading = computed(() => isReading.value || isUpdating.value)
-  const error = computed(() => updateError.value || readError.value)
+const isLoading = computed(() => isReading.value || isUpdating.value)
+const error = computed(() => updateError.value || readError.value)
 </script>
 
 <template>
-  <form @submit.prevent="execute()">
-    <div v-if="isLoading">Loading...</div>
-    <div v-if="error">{{ error }}</div>
-    <template v-if="item">
-      <input type="text" v-model="item.name" />
-      <button :disabled="isLoading" type="submit">Submit</button>
-    </template>
-  </form>
+    <form @submit.prevent="execute()">
+        <div v-if="isLoading">
+            Loading...
+        </div>
+        <div v-if="error">
+            {{ error }}
+        </div>
+        <template v-if="item">
+            <input v-model="item.name" type="text">
+            <button :disabled="isLoading" type="submit">
+                Submit
+            </button>
+        </template>
+    </form>
 </template>
 ```
 
@@ -510,13 +566,13 @@ With `scope` parameter on `createHttpClient()` multiple `httpClient` instances c
 
 ```vue
 <script lang="ts" setup>
-  import { createHttpClient } from '@volverjs/data/vue'
+import { createHttpClient } from '@volverjs/data/vue'
 
-  createHttpClient({ scope: 'v2Api', prefixUrl: 'https://my.api.com/v2' })
+createHttpClient({ scope: 'v2Api', prefixUrl: 'https://my.api.com/v2' })
 
-  const { requestGet } = useHttpClient('v2Api')
+const { requestGet } = useHttpClient('v2Api')
 
-  const { isLoading, isError, data } = requestGet<User>('users')
+const { isLoading, isError, data } = requestGet<User>('users')
 </script>
 ```
 
@@ -533,15 +589,15 @@ The `global` `httpClient` instance cannot be removed.
 
 ```vue
 <script lang="ts" setup>
-  import { addHttpClient, removeHttpClient } from '@volverjs/data/vue'
+import { addHttpClient, removeHttpClient } from '@volverjs/data/vue'
 
-  createHttpClient('v2Api', { prefixUrl: 'https://my.api.com/v2' })
+createHttpClient('v2Api', { prefixUrl: 'https://my.api.com/v2' })
 
-  const { requestGet } = useHttpClient('v2Api')
+const { requestGet } = useHttpClient('v2Api')
 
-  const { isLoading, isError, data } = requestGet<User>('users')
+const { isLoading, isError, data } = requestGet<User>('users')
 
-  removeHttpClient('v2Api')
+removeHttpClient('v2Api')
 </script>
 ```
 

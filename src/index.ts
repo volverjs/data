@@ -4,18 +4,18 @@ export { RepositoryHttp } from './RepositoryHttp'
 export { UrlBuilder } from './UrlBuilder'
 
 export type {
-	HttpClientInstance,
-	HttpClientInstanceOptions,
-	HttpClientOptions,
-	HttpClientRequestOptions,
-	HttpClientInput,
-	HttpClientInputTemplate,
-	HttpClientUrlTemplate,
-	HttpClientMethod,
-	HttpClientResponsePromise,
-	HttpClientHeaders,
-	HttpClientRetryOptions,
-	HttpClientHooks,
+    HttpClientInstance,
+    HttpClientInstanceOptions,
+    HttpClientOptions,
+    HttpClientRequestOptions,
+    HttpClientInput,
+    HttpClientInputTemplate,
+    HttpClientUrlTemplate,
+    HttpClientMethod,
+    HttpClientResponsePromise,
+    HttpClientHeaders,
+    HttpClientRetryOptions,
+    HttpClientHooks,
 } from './HttpClient'
 export type { Repository } from './Repository'
 export type { RepositoryHttpOptions } from './RepositoryHttp'

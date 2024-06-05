@@ -1,84 +1,84 @@
 import { type App, type Ref, ref, unref, readonly, computed } from 'vue'
+import type { ParamMap } from 'src/types'
 import {
-	HTTPError,
-	HttpClient,
-	type HttpClientInputTemplate,
-	type HttpClientInstanceOptions,
-	type HttpClientMethod,
-	type HttpClientRequestOptions,
-	type HttpClientResponse,
-	type HttpClientUrlTemplate,
+    HttpClient,
+    type HTTPError,
+    type HttpClientInputTemplate,
+    type HttpClientInstanceOptions,
+    type HttpClientMethod,
+    type HttpClientRequestOptions,
+    type HttpClientResponse,
+    type HttpClientUrlTemplate,
 } from '../HttpClient'
 import {
-	RepositoryHttp,
-	type RepositoryHttpReadOptions,
-	type RepositoryHttpOptions,
+    RepositoryHttp,
+    type RepositoryHttpReadOptions,
+    type RepositoryHttpOptions,
 } from '../RepositoryHttp'
-import type { ParamMap } from 'src/types'
 
-const HttpRequestStatus = {
-	loading: 'loading',
-	error: 'error',
-	success: 'success',
-	idle: 'idle',
-} as const
-type HttpRequestStatus =
-	(typeof HttpRequestStatus)[keyof typeof HttpRequestStatus]
-const defineHttpRequestStatus = () => {
-	const status = ref<HttpRequestStatus>(HttpRequestStatus.idle)
-	const isLoading = computed(() => status.value === HttpRequestStatus.loading)
-	const isError = computed(() => status.value === HttpRequestStatus.error)
-	const isSuccess = computed(() => status.value === HttpRequestStatus.success)
-	return {
-		status,
-		isLoading,
-		isError,
-		isSuccess,
-	}
+export enum HttpRequestStatus {
+    loading = 'loading',
+    error = 'error',
+    success = 'success',
+    idle = 'idle',
+}
+
+function defineHttpRequestStatus() {
+    const status = ref<HttpRequestStatus>(HttpRequestStatus.idle)
+    const isLoading = computed(() => status.value === HttpRequestStatus.loading)
+    const isError = computed(() => status.value === HttpRequestStatus.error)
+    const isSuccess = computed(() => status.value === HttpRequestStatus.success)
+    return {
+        status,
+        isLoading,
+        isError,
+        isSuccess,
+    }
 }
 
 type HttpClientRequestOptionsWithImmediate = HttpClientRequestOptions & {
-	immediate?: boolean
+    immediate?: boolean
 }
 type HttpClientComposableRequestOptions =
-	| HttpClientRequestOptionsWithImmediate
-	| Ref<HttpClientRequestOptionsWithImmediate>
+    | HttpClientRequestOptionsWithImmediate
+    | Ref<HttpClientRequestOptionsWithImmediate>
 type HttpClientComposableInputTemplate =
-	| HttpClientInputTemplate
-	| Ref<HttpClientInputTemplate>
+    | HttpClientInputTemplate
+    | Ref<HttpClientInputTemplate>
 type RepositoryHttpReadOptionsWithImmediate = RepositoryHttpReadOptions & {
-	immediate?: boolean
+    immediate?: boolean
 }
 type RepositoryHttpComposableReadOptions =
-	| RepositoryHttpReadOptionsWithImmediate
-	| Ref<RepositoryHttpReadOptionsWithImmediate>
+    | RepositoryHttpReadOptionsWithImmediate
+    | Ref<RepositoryHttpReadOptionsWithImmediate>
 
 const httpClientInstances: Map<string, HttpClient> = new Map()
 const GLOBAL_SCOPE = 'global'
 
 class HttpClientPlugin extends HttpClient {
-	private _scope: string
+    private _scope: string
 
-	constructor(options: HttpClientInstanceOptions & { scope: string }) {
-		super(options)
-		this._scope = options.scope
-	}
+    constructor(options: HttpClientInstanceOptions & { scope: string }) {
+        super(options)
+        this._scope = options.scope
+    }
 
-	get scope() {
-		return this._scope
-	}
+    get scope() {
+        return this._scope
+    }
 
-	public install(app: App, { globalName = 'vvHttp' } = {}) {
-		if (app.config.globalProperties[`$${globalName}`]) {
-			throw new Error(`globalName already exist: ${globalName}`)
-		}
-		app.config.globalProperties[`$${globalName}`] = this
-	}
+    public install(app: App, { globalName = 'vvHttp' } = {}) {
+        if (app.config.globalProperties[`$${globalName}`]) {
+            throw new Error(`globalName already exist: ${globalName}`)
+        }
+        app.config.globalProperties[`$${globalName}`] = this
+    }
 }
 
 /**
  * Create a new instance of a HttpClientPlugin.
  * @param options - The options for the http client {@link HttpClientInstanceOptions HttpClientInstanceOptions & { scope: string }}
+ * @param options.scope - The scope (name) of the HttpClient instance
  * @returns The instance of the HttpClientPlugin, see {@link HttpClientPlugin}
  * @example
  * ```typescript
@@ -114,17 +114,17 @@ class HttpClientPlugin extends HttpClient {
  * )
  * ```
  */
-export const createHttpClient = ({
-	scope = GLOBAL_SCOPE,
-	...options
-}: HttpClientInstanceOptions & { scope?: string } = {}) => {
-	if (httpClientInstances.has(scope)) {
-		throw new Error(`httpClient with scope ${scope} already exist`)
-	}
+export function createHttpClient({
+    scope = GLOBAL_SCOPE,
+    ...options
+}: HttpClientInstanceOptions & { scope?: string } = {}) {
+    if (httpClientInstances.has(scope)) {
+        throw new Error(`httpClient with scope ${scope} already exist`)
+    }
 
-	const client = new HttpClientPlugin({ ...options, scope })
-	httpClientInstances.set(scope, client)
-	return client
+    const client = new HttpClientPlugin({ ...options, scope })
+    httpClientInstances.set(scope, client)
+    return client
 }
 
 /**
@@ -132,21 +132,21 @@ export const createHttpClient = ({
  * @param scope - The scope (name) of the HttpClient instance to remove
  * @returns - Boolean success or not
  */
-export const removeHttpClient = (scope: string): boolean => {
-	if (scope === GLOBAL_SCOPE) {
-		throw new Error('You cannot remove httpClient global instance')
-	}
-	if (!httpClientInstances.has(scope)) {
-		throw new Error(`httpClient with scope ${scope} not exist`)
-	}
-	return httpClientInstances.delete(scope)
+export function removeHttpClient(scope: string): boolean {
+    if (scope === GLOBAL_SCOPE) {
+        throw new Error('You cannot remove httpClient global instance')
+    }
+    if (!httpClientInstances.has(scope)) {
+        throw new Error(`httpClient with scope ${scope} not exist`)
+    }
+    return httpClientInstances.delete(scope)
 }
 
 /**
  * Use the composition API to get the HttpClient instance and reactive methods.
  * @remarks
  * If `HttpClientPlugin` is not created with `createHttpClient` and installed first, `useHttpClient` throw the error "HttpClient instance not found".
- * @param options - Extends the options of the client {@link HttpClientInstanceOptions}
+ * @param scope - The scope (name) of the HttpClient instance
  * @example
  * ```html
  * <template>
@@ -244,93 +244,93 @@ export const removeHttpClient = (scope: string): boolean => {
  * </script>
  * ```
  */
-export const useHttpClient = (scope = GLOBAL_SCOPE) => {
-	const client = httpClientInstances.get(scope)
+export function useHttpClient(scope = GLOBAL_SCOPE) {
+    const client = httpClientInstances.get(scope)
 
-	if (!client) {
-		throw new Error('HttpClient instance not found')
-	}
-	const request = <T = unknown>(
-		method: HttpClientMethod,
-		url: HttpClientComposableInputTemplate,
-		options: HttpClientComposableRequestOptions = {},
-	) => {
-		const { status, isLoading, isError, isSuccess } =
-			defineHttpRequestStatus()
-		const immediate = unref(options).immediate ?? true
-		const error = ref<HTTPError>()
-		const data = ref<T>()
-		const response = ref<HttpClientResponse>()
-		const execute = (
-			newUrl: HttpClientInputTemplate = unref(url),
-			newOptions: HttpClientRequestOptions = unref(options),
-		) => {
-			status.value = HttpRequestStatus.loading
-			error.value = undefined
-			data.value = undefined
-			const { responsePromise, abort, signal } = client.request(
-				method,
-				newUrl,
-				newOptions,
-			)
-			responsePromise
-				.then((result) => {
-					response.value = result
-					return result.json<T>()
-				})
-				.then((parsed) => {
-					data.value = parsed
-					status.value = HttpRequestStatus.success
-				})
-				.catch((e) => {
-					if (!signal.aborted) {
-						error.value = e as HTTPError
-						status.value = HttpRequestStatus.error
-						return
-					}
-					status.value = HttpRequestStatus.idle
-				})
-			return { responsePromise, abort, signal }
-		}
-		return {
-			execute,
-			isLoading,
-			isSuccess,
-			isError,
-			error: readonly(error),
-			data,
-			response,
-			...(immediate ? execute() : {}),
-		}
-	}
-	return {
-		client,
-		request,
-		requestGet: <T>(
-			url: HttpClientComposableInputTemplate,
-			options: HttpClientComposableRequestOptions = {},
-		) => request<T>('get', url, options),
-		requestPost: <T>(
-			url: HttpClientComposableInputTemplate,
-			options: HttpClientComposableRequestOptions = {},
-		) => request<T>('post', url, options),
-		requestPut: <T>(
-			url: HttpClientComposableInputTemplate,
-			options: HttpClientComposableRequestOptions = {},
-		) => request<T>('put', url, options),
-		requestDelete: <T>(
-			url: HttpClientComposableInputTemplate,
-			options: HttpClientComposableRequestOptions = {},
-		) => request<T>('delete', url, options),
-		requestHead: <T>(
-			url: HttpClientComposableInputTemplate,
-			options: HttpClientComposableRequestOptions = {},
-		) => request<T>('head', url, options),
-		requestPatch: <T>(
-			url: HttpClientComposableInputTemplate,
-			options: HttpClientComposableRequestOptions = {},
-		) => request<T>('patch', url, options),
-	}
+    if (!client) {
+        throw new Error('HttpClient instance not found')
+    }
+    const request = <T = unknown>(
+        method: HttpClientMethod,
+        url: HttpClientComposableInputTemplate,
+        options: HttpClientComposableRequestOptions = {},
+    ) => {
+        const { status, isLoading, isError, isSuccess }
+			= defineHttpRequestStatus()
+        const immediate = unref(options).immediate ?? true
+        const error = ref<HTTPError>()
+        const data = ref<T>()
+        const response = ref<HttpClientResponse>()
+        const execute = (
+            newUrl: HttpClientInputTemplate = unref(url),
+            newOptions: HttpClientRequestOptions = unref(options),
+        ) => {
+            status.value = HttpRequestStatus.loading
+            error.value = undefined
+            data.value = undefined
+            const { responsePromise, abort, signal } = client.request(
+                method,
+                newUrl,
+                newOptions,
+            )
+            responsePromise
+                .then((result) => {
+                    response.value = result
+                    return result.json<T>()
+                })
+                .then((parsed) => {
+                    data.value = parsed
+                    status.value = HttpRequestStatus.success
+                })
+                .catch((e) => {
+                    if (!signal.aborted) {
+                        error.value = e as HTTPError
+                        status.value = HttpRequestStatus.error
+                        return
+                    }
+                    status.value = HttpRequestStatus.idle
+                })
+            return { responsePromise, abort, signal }
+        }
+        return {
+            execute,
+            isLoading,
+            isSuccess,
+            isError,
+            error: readonly(error),
+            data,
+            response,
+            ...(immediate ? execute() : {}),
+        }
+    }
+    return {
+        client,
+        request,
+        requestGet: <T>(
+            url: HttpClientComposableInputTemplate,
+            options: HttpClientComposableRequestOptions = {},
+        ) => request<T>('get', url, options),
+        requestPost: <T>(
+            url: HttpClientComposableInputTemplate,
+            options: HttpClientComposableRequestOptions = {},
+        ) => request<T>('post', url, options),
+        requestPut: <T>(
+            url: HttpClientComposableInputTemplate,
+            options: HttpClientComposableRequestOptions = {},
+        ) => request<T>('put', url, options),
+        requestDelete: <T>(
+            url: HttpClientComposableInputTemplate,
+            options: HttpClientComposableRequestOptions = {},
+        ) => request<T>('delete', url, options),
+        requestHead: <T>(
+            url: HttpClientComposableInputTemplate,
+            options: HttpClientComposableRequestOptions = {},
+        ) => request<T>('head', url, options),
+        requestPatch: <T>(
+            url: HttpClientComposableInputTemplate,
+            options: HttpClientComposableRequestOptions = {},
+        ) => request<T>('patch', url, options),
+    }
 }
 
 /**
@@ -407,231 +407,228 @@ export const useHttpClient = (scope = GLOBAL_SCOPE) => {
  * </script>
  * ```
  */
-export const useRepositoryHttp = <T = unknown, TResponse = unknown>(
-	template: string | HttpClientUrlTemplate,
-	options?: RepositoryHttpOptions<T, TResponse>,
-) => {
-	const { client } = useHttpClient(options?.httpClientScope)
-	const repository = new RepositoryHttp<T, TResponse>(
-		client,
-		template,
-		options,
-	)
+export function useRepositoryHttp<T = unknown, TResponse = unknown>(template: string | HttpClientUrlTemplate,	options?: RepositoryHttpOptions<T, TResponse>) {
+    const { client } = useHttpClient(options?.httpClientScope)
+    const repository = new RepositoryHttp<T, TResponse>(
+        client,
+        template,
+        options,
+    )
 
-	const create = (
-		payload: T | Ref<T> | T[] | Ref<T[]> | undefined,
-		params: ParamMap = {},
-		options: HttpClientComposableRequestOptions = {},
-	) => {
-		const { status, isLoading, isError, isSuccess } =
-			defineHttpRequestStatus()
-		const immediate = unref(options).immediate ?? true
-		const error = ref<HTTPError>()
-		const data = ref<T[]>()
-		const item = ref<T>()
-		const metadata = ref<ParamMap>()
+    const create = (
+        payload: T | Ref<T> | T[] | Ref<T[]> | undefined,
+        params: ParamMap = {},
+        options: HttpClientComposableRequestOptions = {},
+    ) => {
+        const { status, isLoading, isError, isSuccess }
+			= defineHttpRequestStatus()
+        const immediate = unref(options).immediate ?? true
+        const error = ref<HTTPError>()
+        const data = ref<T[]>()
+        const item = ref<T>()
+        const metadata = ref<ParamMap>()
 
-		const execute = (
-			newPayload = unref(payload),
-			newParams: ParamMap = unref(params),
-			newOptions: RepositoryHttpReadOptions = unref(options),
-		) => {
-			status.value = HttpRequestStatus.loading
-			error.value = undefined
-			item.value = undefined
-			data.value = undefined
-			const { abort, responsePromise } = repository.create(
-				newPayload,
-				newParams,
-				newOptions,
-			)
-			responsePromise
-				.then((result) => {
-					data.value = result.data
-					item.value = result.item
-					metadata.value = result.metadata
-					if (result.aborted) {
-						status.value = HttpRequestStatus.idle
-						return
-					}
-					status.value = HttpRequestStatus.success
-				})
-				.catch((e) => {
-					error.value = e as HTTPError
-					status.value = HttpRequestStatus.error
-				})
-			return { abort, responsePromise }
-		}
-		return {
-			execute,
-			isLoading,
-			isSuccess,
-			isError,
-			error: readonly(error),
-			data,
-			metadata,
-			...(immediate ? execute() : {}),
-		}
-	}
+        const execute = (
+            newPayload = unref(payload),
+            newParams: ParamMap = unref(params),
+            newOptions: RepositoryHttpReadOptions = unref(options),
+        ) => {
+            status.value = HttpRequestStatus.loading
+            error.value = undefined
+            item.value = undefined
+            data.value = undefined
+            const { abort, responsePromise } = repository.create(
+                newPayload,
+                newParams,
+                newOptions,
+            )
+            responsePromise
+                .then((result) => {
+                    data.value = result.data
+                    item.value = result.item
+                    metadata.value = result.metadata
+                    if (result.aborted) {
+                        status.value = HttpRequestStatus.idle
+                        return
+                    }
+                    status.value = HttpRequestStatus.success
+                })
+                .catch((e) => {
+                    error.value = e as HTTPError
+                    status.value = HttpRequestStatus.error
+                })
+            return { abort, responsePromise }
+        }
+        return {
+            execute,
+            isLoading,
+            isSuccess,
+            isError,
+            error: readonly(error),
+            data,
+            metadata,
+            ...(immediate ? execute() : {}),
+        }
+    }
 
-	const read = (
-		params: ParamMap | Ref<ParamMap>,
-		options: RepositoryHttpComposableReadOptions = {},
-	) => {
-		const { status, isLoading, isError, isSuccess } =
-			defineHttpRequestStatus()
-		const immediate = unref(options).immediate ?? true
-		const error = ref<HTTPError>()
-		const data = ref<T[]>()
-		const item = ref<T>()
-		const metadata = ref<ParamMap>()
+    const read = (
+        params: ParamMap | Ref<ParamMap>,
+        options: RepositoryHttpComposableReadOptions = {},
+    ) => {
+        const { status, isLoading, isError, isSuccess }
+			= defineHttpRequestStatus()
+        const immediate = unref(options).immediate ?? true
+        const error = ref<HTTPError>()
+        const data = ref<T[]>()
+        const item = ref<T>()
+        const metadata = ref<ParamMap>()
 
-		const execute = (
-			newParams: ParamMap = unref(params),
-			newOptions: RepositoryHttpReadOptions = unref(options),
-		) => {
-			status.value = HttpRequestStatus.loading
-			error.value = undefined
-			item.value = undefined
-			data.value = undefined
-			const { abort, responsePromise } = repository.read(
-				newParams,
-				newOptions,
-			)
-			responsePromise
-				.then((result) => {
-					data.value = result.data
-					item.value = result.item
-					metadata.value = result.metadata
-					if (result.aborted) {
-						status.value = HttpRequestStatus.idle
-						return
-					}
-					status.value = HttpRequestStatus.success
-				})
-				.catch((e) => {
-					error.value = e as HTTPError
-					status.value = HttpRequestStatus.error
-				})
-			return { abort, responsePromise }
-		}
-		return {
-			execute,
-			isLoading,
-			isSuccess,
-			isError,
-			error: readonly(error),
-			data,
-			item,
-			metadata,
-			...(immediate ? execute() : {}),
-		}
-	}
+        const execute = (
+            newParams: ParamMap = unref(params),
+            newOptions: RepositoryHttpReadOptions = unref(options),
+        ) => {
+            status.value = HttpRequestStatus.loading
+            error.value = undefined
+            item.value = undefined
+            data.value = undefined
+            const { abort, responsePromise } = repository.read(
+                newParams,
+                newOptions,
+            )
+            responsePromise
+                .then((result) => {
+                    data.value = result.data
+                    item.value = result.item
+                    metadata.value = result.metadata
+                    if (result.aborted) {
+                        status.value = HttpRequestStatus.idle
+                        return
+                    }
+                    status.value = HttpRequestStatus.success
+                })
+                .catch((e) => {
+                    error.value = e as HTTPError
+                    status.value = HttpRequestStatus.error
+                })
+            return { abort, responsePromise }
+        }
+        return {
+            execute,
+            isLoading,
+            isSuccess,
+            isError,
+            error: readonly(error),
+            data,
+            item,
+            metadata,
+            ...(immediate ? execute() : {}),
+        }
+    }
 
-	const update = (
-		payload: T | Ref<T> | T[] | Ref<T[]> | undefined,
-		params: ParamMap = {},
-		options: HttpClientComposableRequestOptions = {},
-	) => {
-		const { status, isLoading, isError, isSuccess } =
-			defineHttpRequestStatus()
-		const immediate = unref(options).immediate ?? true
-		const error = ref<HTTPError>()
-		const data = ref<T[]>()
-		const item = ref<T>()
-		const metadata = ref<ParamMap>()
+    const update = (
+        payload: T | Ref<T> | T[] | Ref<T[]> | undefined,
+        params: ParamMap = {},
+        options: HttpClientComposableRequestOptions = {},
+    ) => {
+        const { status, isLoading, isError, isSuccess }
+			= defineHttpRequestStatus()
+        const immediate = unref(options).immediate ?? true
+        const error = ref<HTTPError>()
+        const data = ref<T[]>()
+        const item = ref<T>()
+        const metadata = ref<ParamMap>()
 
-		const execute = (
-			newPayload = unref(payload),
-			newParams: ParamMap = unref(params),
-			newOptions: RepositoryHttpReadOptions = unref(options),
-		) => {
-			status.value = HttpRequestStatus.loading
-			error.value = undefined
-			item.value = undefined
-			data.value = undefined
-			const { abort, responsePromise } = repository.update(
-				newPayload,
-				newParams,
-				newOptions,
-			)
-			responsePromise
-				.then((result) => {
-					data.value = result.data
-					item.value = result.item
-					metadata.value = result.metadata
-					if (result.aborted) {
-						status.value = HttpRequestStatus.idle
-						return
-					}
-					status.value = HttpRequestStatus.success
-				})
-				.catch((e) => {
-					error.value = e as HTTPError
-					status.value = HttpRequestStatus.error
-				})
-			return { abort, responsePromise }
-		}
-		return {
-			execute,
-			isLoading,
-			isSuccess,
-			isError,
-			error: readonly(error),
-			data,
-			metadata,
-			...(immediate ? execute() : {}),
-		}
-	}
+        const execute = (
+            newPayload = unref(payload),
+            newParams: ParamMap = unref(params),
+            newOptions: RepositoryHttpReadOptions = unref(options),
+        ) => {
+            status.value = HttpRequestStatus.loading
+            error.value = undefined
+            item.value = undefined
+            data.value = undefined
+            const { abort, responsePromise } = repository.update(
+                newPayload,
+                newParams,
+                newOptions,
+            )
+            responsePromise
+                .then((result) => {
+                    data.value = result.data
+                    item.value = result.item
+                    metadata.value = result.metadata
+                    if (result.aborted) {
+                        status.value = HttpRequestStatus.idle
+                        return
+                    }
+                    status.value = HttpRequestStatus.success
+                })
+                .catch((e) => {
+                    error.value = e as HTTPError
+                    status.value = HttpRequestStatus.error
+                })
+            return { abort, responsePromise }
+        }
+        return {
+            execute,
+            isLoading,
+            isSuccess,
+            isError,
+            error: readonly(error),
+            data,
+            metadata,
+            ...(immediate ? execute() : {}),
+        }
+    }
 
-	const remove = (
-		params: ParamMap | Ref<ParamMap>,
-		options: HttpClientComposableRequestOptions = {},
-	) => {
-		const { status, isLoading, isError, isSuccess } =
-			defineHttpRequestStatus()
-		const immediate = unref(options).immediate ?? true
-		const error = ref<HTTPError>()
+    const remove = (
+        params: ParamMap | Ref<ParamMap>,
+        options: HttpClientComposableRequestOptions = {},
+    ) => {
+        const { status, isLoading, isError, isSuccess }
+			= defineHttpRequestStatus()
+        const immediate = unref(options).immediate ?? true
+        const error = ref<HTTPError>()
 
-		const execute = (
-			newParams: ParamMap = unref(params),
-			newOptions: RepositoryHttpReadOptions = unref(options),
-		) => {
-			status.value = HttpRequestStatus.loading
-			error.value = undefined
-			const { abort, responsePromise } = repository.remove(
-				newParams,
-				newOptions,
-			)
-			responsePromise
-				.then((result) => {
-					if (result.aborted) {
-						status.value = HttpRequestStatus.idle
-						return
-					}
-					status.value = HttpRequestStatus.success
-				})
-				.catch((e) => {
-					error.value = e as HTTPError
-					status.value = HttpRequestStatus.error
-				})
-			return { abort, responsePromise }
-		}
-		return {
-			execute,
-			isLoading,
-			isSuccess,
-			isError,
-			error: readonly(error),
-			...(immediate ? execute() : {}),
-		}
-	}
+        const execute = (
+            newParams: ParamMap = unref(params),
+            newOptions: RepositoryHttpReadOptions = unref(options),
+        ) => {
+            status.value = HttpRequestStatus.loading
+            error.value = undefined
+            const { abort, responsePromise } = repository.remove(
+                newParams,
+                newOptions,
+            )
+            responsePromise
+                .then((result) => {
+                    if (result.aborted) {
+                        status.value = HttpRequestStatus.idle
+                        return
+                    }
+                    status.value = HttpRequestStatus.success
+                })
+                .catch((e) => {
+                    error.value = e as HTTPError
+                    status.value = HttpRequestStatus.error
+                })
+            return { abort, responsePromise }
+        }
+        return {
+            execute,
+            isLoading,
+            isSuccess,
+            isError,
+            error: readonly(error),
+            ...(immediate ? execute() : {}),
+        }
+    }
 
-	return {
-		repository,
-		read,
-		create,
-		update,
-		remove,
-	}
+    return {
+        repository,
+        read,
+        create,
+        update,
+        remove,
+    }
 }
