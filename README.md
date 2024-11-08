@@ -145,8 +145,8 @@ You can use this library with Vue 3 with `@volverjs/data/vue`.
 The `createHttpClient` function returns a plugin that can be installed in a Vue app and has a property with the `global` `httpClient` instance: `httpClientPlugin.globalInstance`.
 
 ```typescript
-import { createApp } from 'vue'
 import { createHttpClient } from '@volverjs/data/vue'
+import { createApp } from 'vue'
 import App from './App.vue'
 
 const app = createApp(App)
@@ -330,8 +330,8 @@ To create a `RepositoryHttp` instance, you can use the `useRepositoryHttp()` com
 
 ```vue
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
 import { useRepositoryHttp } from '@volverjs/data/vue'
+import { computed, ref } from 'vue'
 
 interface User {
     id: number
@@ -382,8 +382,8 @@ async function execute() {
 
 ```vue
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
 import { useRepositoryHttp } from '@volverjs/data/vue'
+import { computed, ref } from 'vue'
 
 interface IUser {
     id: number

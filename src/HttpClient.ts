@@ -1,24 +1,24 @@
-import ky, {
-    HTTPError,
-    TimeoutError,
-    type KyResponse,
-    type Hooks,
-    type Options,
-    type ResponsePromise,
-} from 'ky'
 import type { KyInstance } from 'ky/distribution/types/ky'
 import type {
-    Input,
     HttpMethod,
+    Input,
     KyHeadersInit,
     RetryOptions,
 } from 'ky/distribution/types/options'
+import type { ParamMap } from './types'
+import ky, {
+    type Hooks,
+    HTTPError,
+    type KyResponse,
+    type Options,
+    type ResponsePromise,
+    TimeoutError,
+} from 'ky'
 import {
     UrlBuilder,
     type UrlBuilderInstance,
     type UrlBuilderOptions,
 } from './UrlBuilder'
-import type { ParamMap } from './types'
 
 export type HttpClientResponse = KyResponse
 export type HttpClientResponsePromise = ResponsePromise
@@ -244,9 +244,9 @@ export class HttpClient implements HttpClientInstance {
             typeof url === 'object'
             && url !== null
             && ((arrayOfKeys: string[]) =>
-			    ['template', 'params'].every(key =>
-			        arrayOfKeys.includes(key),
-			    ))(Object.keys(url))
+                ['template', 'params'].every(key =>
+                    arrayOfKeys.includes(key),
+                ))(Object.keys(url))
         )
     }
 

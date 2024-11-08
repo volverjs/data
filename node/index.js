@@ -1,5 +1,5 @@
-import fetch, { Headers, Request, Response } from 'node-fetch'
 import AbortController from 'abort-controller'
+import fetch, { Headers, Request, Response } from 'node-fetch'
 
 const TEN_MEGABYTES = 1000 * 1000 * 10
 
@@ -41,4 +41,4 @@ const { Hash } = await import('../dist/Hash')
 const { RepositoryHttp } = await import('../dist/RepositoryHttp')
 const { UrlBuilder } = await import('../dist/UrlBuilder')
 
-export { HttpClient, Hash, RepositoryHttp, UrlBuilder, HTTPError, TimeoutError }
+export { Hash, HttpClient, HTTPError, RepositoryHttp, TimeoutError, UrlBuilder }
