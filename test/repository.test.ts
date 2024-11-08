@@ -1,6 +1,6 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import createFetchMock from 'vitest-fetch-mock'
-import { describe, beforeEach, vi, it, expect } from 'vitest'
-import { RepositoryHttp, HttpClient } from '../node'
+import { HttpClient, RepositoryHttp } from '../node'
 
 const fetchMock = createFetchMock(vi)
 

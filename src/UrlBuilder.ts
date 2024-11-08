@@ -1,5 +1,5 @@
-import qs, { type IStringifyOptions } from 'qs'
 import type { ParamMap } from './types'
+import qs, { type IStringifyOptions } from 'qs'
 
 export type UrlBuilderOptions = IStringifyOptions
 
@@ -91,7 +91,7 @@ export class UrlBuilder implements UrlBuilderInstance {
                 valid: false,
                 message:
 					`Path parameter ${key} cannot be of type ${typeof params[
-						key
+					    key
 					]}. ` + `Allowed types are: ${allowedTypes.join(', ')}.`,
             }
         }

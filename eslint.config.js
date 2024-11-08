@@ -1,8 +1,10 @@
 import antfu from '@antfu/eslint-config'
 
 export default antfu({
+    type: 'lib',
     typescript: {
         overrides: {
+            'ts/explicit-function-return-type': 'off',
             'ts/consistent-type-definitions': 'off',
         },
     },
@@ -15,6 +17,7 @@ export default antfu({
         semi: false,
     },
     rules: {
+        'antfu/no-top-level-await': 'off',
         'style/no-tabs': 'off',
         'style/no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
         'sort-imports': 'off',

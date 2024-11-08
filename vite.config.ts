@@ -1,7 +1,7 @@
 import path from 'node:path'
-import { defineConfig } from 'vitest/config'
-import Vue from '@vitejs/plugin-vue'
 import ESLint from '@nabla/vite-plugin-eslint'
+import Vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vitest/config'
 
 // https://vitejs.dev/config/
 export default () => {

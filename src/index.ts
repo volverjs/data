@@ -1,22 +1,22 @@
 export { Hash } from './Hash'
 export { HttpClient, HTTPError, TimeoutError } from './HttpClient'
-export { RepositoryHttp } from './RepositoryHttp'
-export { UrlBuilder } from './UrlBuilder'
-
 export type {
-    HttpClientInstance,
-    HttpClientInstanceOptions,
-    HttpClientOptions,
-    HttpClientRequestOptions,
+    HttpClientHeaders,
+    HttpClientHooks,
     HttpClientInput,
     HttpClientInputTemplate,
-    HttpClientUrlTemplate,
+    HttpClientInstance,
+    HttpClientInstanceOptions,
     HttpClientMethod,
+    HttpClientOptions,
+    HttpClientRequestOptions,
     HttpClientResponsePromise,
-    HttpClientHeaders,
     HttpClientRetryOptions,
-    HttpClientHooks,
+    HttpClientUrlTemplate,
 } from './HttpClient'
 export type { Repository } from './Repository'
+
+export { RepositoryHttp } from './RepositoryHttp'
 export type { RepositoryHttpOptions } from './RepositoryHttp'
-export type { UrlBuilderOptions, UrlBuilderInstance } from './UrlBuilder'
+export { UrlBuilder } from './UrlBuilder'
+export type { UrlBuilderInstance, UrlBuilderOptions } from './UrlBuilder'

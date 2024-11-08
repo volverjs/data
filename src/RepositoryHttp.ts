@@ -1,3 +1,6 @@
+import type { Repository } from './Repository'
+import type { ParamMap } from './types'
+import { Hash } from './Hash'
 import {
     type HttpClientInstance,
     type HttpClientOptions,
@@ -5,9 +8,6 @@ import {
     type HttpClientUrlTemplate,
     HTTPError,
 } from './HttpClient'
-import type { Repository } from './Repository'
-import { Hash } from './Hash'
-import type { ParamMap } from './types'
 
 type RepositoryHttpReadPendingRequest<Type> = {
     responsePromise: Promise<{
@@ -163,8 +163,8 @@ implements Repository<Type> {
     private _hashFunction: (str: string) => number = Hash.cyrb53
     private _readPendingRequests: Map<
 		string | number,
-		Omit<RepositoryHttpReadPendingRequest<Type>, 'signal'>
-	> = new Map()
+        Omit<RepositoryHttpReadPendingRequest<Type>, 'signal'>
+    > = new Map()
 
     private _httpClientOptions?: HttpClientRequestOptions
 

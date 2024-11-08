@@ -1,7 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import createFetchMock from 'vitest-fetch-mock'
-import { describe, beforeEach, vi, it, expect } from 'vitest'
-import { useHttpClient, createHttpClient, removeHttpClient } from '../src/vue'
+import { createHttpClient, removeHttpClient, useHttpClient } from '../src/vue'
 
 const fetchMock = createFetchMock(vi)
 const httpClient = createHttpClient()

@@ -1,6 +1,6 @@
-import { mount, flushPromises } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import createFetchMock from 'vitest-fetch-mock'
-import { describe, beforeEach, vi, it, expect } from 'vitest'
 import { nextTick } from 'vue'
 import { createHttpClient, useRepositoryHttp } from '../src/vue'
 import RepositoryReadUpdate from './components/RepositoryReadUpdate.vue'
