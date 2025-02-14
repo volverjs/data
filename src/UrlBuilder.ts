@@ -1,5 +1,6 @@
+import type { IStringifyOptions } from 'qs'
 import type { ParamMap } from './types'
-import qs, { type IStringifyOptions } from 'qs'
+import qs from 'qs'
 
 export type UrlBuilderOptions = IStringifyOptions
 

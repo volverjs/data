@@ -1,3 +1,4 @@
+import type { Hooks, KyResponse, Options, ResponsePromise } from 'ky'
 import type { KyInstance } from 'ky/distribution/types/ky'
 import type {
     HttpMethod,
@@ -6,18 +7,16 @@ import type {
     RetryOptions,
 } from 'ky/distribution/types/options'
 import type { ParamMap } from './types'
+import type { UrlBuilderInstance, UrlBuilderOptions } from './UrlBuilder'
 import ky, {
-    type Hooks,
+
     HTTPError,
-    type KyResponse,
-    type Options,
-    type ResponsePromise,
+
     TimeoutError,
 } from 'ky'
 import {
     UrlBuilder,
-    type UrlBuilderInstance,
-    type UrlBuilderOptions,
+
 } from './UrlBuilder'
 
 export type HttpClientResponse = KyResponse

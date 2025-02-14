@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { computed, type Ref } from 'vue'
+import type { Ref } from 'vue'
+import { computed } from 'vue'
 import { useRepositoryHttp } from '../../src/vue'
 
 	type User = {
