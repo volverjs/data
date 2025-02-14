@@ -1,19 +1,15 @@
 import type { ParamMap } from 'src/types'
-import { type App, computed, readonly, type Ref, ref, unref } from 'vue'
+import type { App, Ref } from 'vue'
+import type { HttpClientInputTemplate, HttpClientInstanceOptions, HttpClientMethod, HttpClientRequestOptions, HttpClientResponse, HttpClientUrlTemplate, HTTPError } from '../HttpClient'
+import type { RepositoryHttpOptions, RepositoryHttpReadOptions } from '../RepositoryHttp'
+import { computed, readonly, ref, unref } from 'vue'
 import {
     HttpClient,
-    type HttpClientInputTemplate,
-    type HttpClientInstanceOptions,
-    type HttpClientMethod,
-    type HttpClientRequestOptions,
-    type HttpClientResponse,
-    type HttpClientUrlTemplate,
-    type HTTPError,
+
 } from '../HttpClient'
 import {
     RepositoryHttp,
-    type RepositoryHttpOptions,
-    type RepositoryHttpReadOptions,
+
 } from '../RepositoryHttp'
 
 export enum HttpRequestStatus {

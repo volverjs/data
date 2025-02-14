@@ -1,11 +1,8 @@
+import type { HttpClientInstance, HttpClientOptions, HttpClientRequestOptions, HttpClientUrlTemplate } from './HttpClient'
 import type { Repository } from './Repository'
 import type { ParamMap } from './types'
 import { Hash } from './Hash'
 import {
-    type HttpClientInstance,
-    type HttpClientOptions,
-    type HttpClientRequestOptions,
-    type HttpClientUrlTemplate,
     HTTPError,
 } from './HttpClient'
 
