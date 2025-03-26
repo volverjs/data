@@ -9,6 +9,7 @@ export default () => {
         test: {
             globals: true,
             environment: 'happy-dom',
+            pool: 'forks',
         },
         build: {
             lib: {

@@ -45,7 +45,7 @@ const componentHttpClientV2 = {
     },
 }
 
-describe('repositoryHttp', () => {
+describe('vue useRepositoryHttp', () => {
     beforeEach(() => {
         fetchMock.enableMocks()
         fetchMock.resetMocks()

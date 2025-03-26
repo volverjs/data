@@ -99,7 +99,7 @@
         "build": "vite build && vue-tsc --declaration --emitDeclarationOnly && copy src/**/*.d.ts dist",
         "test": "pnpm run test-vitest",
         "test-vitest": "vitest run",
-        "test-vitest-watch": "vitest",
+        "test-vitest-watch": "vitest watch",
         "credits": "npx @opengovsg/credits-generator"
     },
     "dependencies": {
