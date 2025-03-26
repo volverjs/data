@@ -10,7 +10,7 @@ const component = {
     template: '<div />',
 }
 
-describe('httpClient', () => {
+describe('vue useHttpClient', () => {
     beforeEach(() => {
         fetchMock.enableMocks()
         fetchMock.resetMocks()
@@ -119,7 +119,11 @@ describe('httpClient', () => {
     })
     it('should abort a GET request', async () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
-        const { request } = useHttpClient()
+        createHttpClient({
+            prefixUrl: 'https://myapi.com/v3',
+            scope: 'myApi3',
+        })
+        const { request } = useHttpClient('myApi3')
         const { responsePromise, abort, signal } = request('get', 'alpha')
         try {
             await responsePromise
@@ -134,28 +138,28 @@ describe('httpClient', () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
 
         createHttpClient({
-            prefixUrl: 'https://myapi.com/v2',
-            scope: 'myApiV2',
+            prefixUrl: 'https://myapi.com/v4',
+            scope: 'myApi4',
         })
 
-        const { requestGet } = useHttpClient('myApiV2')
+        const { requestGet } = useHttpClient('myApi4')
         requestGet('alpha')
         await flushPromises()
         const request = fetchMock.mock.calls[0][0] as Request
 
-        expect(request.url).toEqual('https://myapi.com/v2/alpha')
+        expect(request.url).toEqual('https://myapi.com/v4/alpha')
     })
 
     it('should catch error httpClient instance not found', async () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
 
         createHttpClient({
-            prefixUrl: 'https://myapi.com/v3',
-            scope: 'myApiV3',
+            prefixUrl: 'https://myapi.com/v5',
+            scope: 'myApi5',
         })
 
         try {
-            const { requestGet } = useHttpClient('myApiV4')
+            const { requestGet } = useHttpClient('myApi5')
             requestGet('alpha')
         }
         catch (error) {
@@ -167,27 +171,27 @@ describe('httpClient', () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
 
         createHttpClient({
-            prefixUrl: 'https://myapi.com/v4',
-            scope: 'myApiV4',
+            prefixUrl: 'https://myapi.com/v6',
+            scope: 'myApi6',
         })
 
-        const { requestGet } = useHttpClient('myApiV4')
+        const { requestGet } = useHttpClient('myApi6')
         requestGet('alpha')
 
         await flushPromises()
         const request = fetchMock.mock.calls[0][0] as Request
 
-        expect(request.url).toEqual('https://myapi.com/v4/alpha')
+        expect(request.url).toEqual('https://myapi.com/v6/alpha')
 
         try {
             createHttpClient({
-                prefixUrl: 'https://myapi.com/v5',
-                scope: 'myApiV4',
+                prefixUrl: 'https://myapi.com/v6',
+                scope: 'myApi6',
             })
         }
         catch (error) {
             expect(error.message).toBe(
-                'httpClient with scope myApiV4 already exist',
+                'httpClient with scope myApi6 already exist',
             )
         }
     })
@@ -196,21 +200,21 @@ describe('httpClient', () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
 
         createHttpClient({
-            prefixUrl: 'https://myapi.com/v6',
-            scope: 'myApiV6',
+            prefixUrl: 'https://myapi.com/v7',
+            scope: 'myApi7',
         })
 
-        const { requestGet } = useHttpClient('myApiV6')
+        const { requestGet } = useHttpClient('myApi7')
         requestGet('alpha')
 
         await flushPromises()
         const request = fetchMock.mock.calls[0][0] as Request
 
-        expect(request.url).toEqual('https://myapi.com/v6/alpha')
+        expect(request.url).toEqual('https://myapi.com/v7/alpha')
 
-        removeHttpClient('myApiV6')
+        removeHttpClient('myApi7')
         try {
-            useHttpClient('myApiV6')
+            useHttpClient('myApi7')
         }
         catch (error) {
             expect(error.message).toBe('HttpClient instance not found')
@@ -221,6 +225,6 @@ describe('httpClient', () => {
         await flushPromises()
         const request2 = fetchMock.mock.calls[1][0] as Request
 
-        expect(request2.url).toEqual('https://myapi.com/v6/alpha')
+        expect(request2.url).toEqual('https://myapi.com/v7/alpha')
     })
 })
