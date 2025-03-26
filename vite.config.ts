@@ -8,8 +8,7 @@ export default () => {
     return defineConfig({
         test: {
             globals: true,
-            environment: 'happy-dom',
-            pool: 'forks',
+            environment: 'jsdom',
         },
         build: {
             lib: {
