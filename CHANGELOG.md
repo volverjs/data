@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2025-03-26
+
+### Changed
+
+- `RepositoryHttp` methods `create()` and `update()` always return the `data` property as an array;
+
+### Added
+
+- `RepositoryHttp` methods `create()` and `update()` support for an array of items;
+- `RepositoryHttp` methods `create()` and `update()` now return the `item` property as the first element of `data` array.
+
 ## [1.0.5] - 2023-08-30
 
 ### Fixed
@@ -82,6 +93,8 @@ All notable changes to this project will be documented in this file.
 - `UrlBuilder` a class to build URLs through a template;
 - `RepositoryHttp` an implementation of `Repository` interface to fetch data through `HttpClient`.
 
+[2.0.0]: https://github.com/volverjs/data/compare/v1.0.5...v2.0.0
+[1.0.5]: https://github.com/volverjs/data/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/volverjs/data/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/volverjs/data/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/volverjs/data/compare/v1.0.1...v1.0.2
