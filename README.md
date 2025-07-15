@@ -47,6 +47,7 @@ The `Hash` class provides some static functions to generate hashes.
 
 ```typescript
 import { Hash } from '@volverjs/data'
+
 const hash = Hash.cyrb53('hello world')
 ```
 

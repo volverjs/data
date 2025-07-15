@@ -1,6 +1,6 @@
 import type { ParamMap } from './types'
 
-export interface Repository<Type, TResponse = Type> {
+export interface Repository<TRequest, TResponse = TRequest> {
     read: (
         params?: ParamMap,
         options?: { key?: string | number | boolean } & Record<string, unknown>,
@@ -18,7 +18,7 @@ export interface Repository<Type, TResponse = Type> {
     }
 
     create: (
-        payload?: Type | Type[],
+        payload?: TRequest | TRequest[],
         params?: ParamMap,
         options?: Record<string, unknown>,
     ) => {
@@ -35,7 +35,7 @@ export interface Repository<Type, TResponse = Type> {
     }
 
     update: (
-        payload?: Type | Type[],
+        payload?: TRequest | TRequest[],
         params?: ParamMap,
         options?: Record<string, unknown>,
     ) => {

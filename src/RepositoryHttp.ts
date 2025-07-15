@@ -24,7 +24,7 @@ export type RepositoryHttpReadOptions = HttpClientRequestOptions & {
     key?: string | number | boolean
 }
 
-export type RepositoryHttpOptions<Type, TResponse = Type> = {
+export type RepositoryHttpOptions<TRequest, TResponse = TRequest> = {
     /**
      * The httpClient instance scope (name)
      * @default undefined
@@ -53,10 +53,10 @@ export type RepositoryHttpOptions<Type, TResponse = Type> = {
      * @remarks
      * Must return an array of items.
      * @default
-     * `(raw: unknown) => Array.isArray(raw) ? raw : ([raw] as Type[])`
+     * `(raw: unknown) => Array.isArray(raw) ? raw : ([raw] as TRequest[])`
      * @example
      * ```typescript
-     * const responseAdapter = (raw) => [new Type(raw)]
+     * const responseAdapter = (raw) => [new TRequest(raw)]
      * const repository = new RepositoryHttp(client, 'users/?:id', { responseAdapter })
      * ```
      */
@@ -64,14 +64,14 @@ export type RepositoryHttpOptions<Type, TResponse = Type> = {
     /**
      * A function to transform the request data into the expected data type.
      * @default
-     * `(item: Type): unknown => item`
+     * `(item: TRequest): unknown => item`
      * @example
      * ```typescript
      * const requestAdapter = (item) => ({ ...item, foo: 'bar' })
      * const repository = new RepositoryHttp(client, 'users/?:id', { requestAdapter })
      * ```
      */
-    requestAdapter?: (item: Type) => unknown
+    requestAdapter?: (item: TRequest) => unknown
     /**
      * A function to extract metadata from the response.
      * @default
@@ -122,20 +122,20 @@ export type RepositoryHttpOptions<Type, TResponse = Type> = {
      * @default undefined
      * @example
      * ```typescript
-     * const repository = new RepositoryHttp(client, 'users/?:id', { class: Type })
+     * const repository = new RepositoryHttp(client, 'users/?:id', { class: TRequest })
      * ```
      */
     class?: new (...args: any[]) => TResponse
 }
 
-export class RepositoryHttp<Type, TResponse = Type>
-implements Repository<Type, TResponse> {
+export class RepositoryHttp<TRequest, TResponse = TRequest>
+implements Repository<TRequest, TResponse> {
     private _client: HttpClientInstance
     private _template: string | HttpClientUrlTemplate
     private _responseAdapter = (raw: TResponse): TResponse[] =>
         (Array.isArray(raw) ? raw : [raw]) as TResponse[]
 
-    private _requestAdapter = (item: Type): unknown => item
+    private _requestAdapter = (item: TRequest): unknown => item
     private _metadataAdapter = (response: Response): ParamMap | undefined => {
         let toReturn
         if (response.headers.has('Content-Language')) {
@@ -173,7 +173,7 @@ implements Repository<Type, TResponse> {
     constructor(
         client: HttpClientInstance,
         template: string | HttpClientUrlTemplate,
-        options?: RepositoryHttpOptions<Type, TResponse>,
+        options?: RepositoryHttpOptions<TRequest, TResponse>,
     ) {
         this._client = client
         this._template = template
@@ -283,7 +283,7 @@ implements Repository<Type, TResponse> {
      * ```
      */
     public create = (
-        payload?: Type | Type[],
+        payload?: TRequest | TRequest[],
         params?: ParamMap,
         options?: HttpClientRequestOptions,
     ) => {
@@ -329,7 +329,7 @@ implements Repository<Type, TResponse> {
      * ```
      */
     public update = (
-        payload?: Type | Type[],
+        payload?: TRequest | TRequest[],
         params?: ParamMap,
         options?: HttpClientRequestOptions,
     ) => {
@@ -467,7 +467,7 @@ implements Repository<Type, TResponse> {
 
     private _requestOptions = (
         options?: HttpClientRequestOptions,
-        payload?: Type | Type[],
+        payload?: TRequest | TRequest[],
     ): HttpClientOptions => {
         const toReturn: HttpClientOptions = {
             ...this._httpClientOptions,
