@@ -35,18 +35,18 @@ function defineHttpRequestStatus() {
 type HttpClientRequestOptionsWithImmediate = HttpClientRequestOptions & {
     immediate?: boolean
 }
-type HttpClientComposableRequestOptions =
-    | HttpClientRequestOptionsWithImmediate
-    | Ref<HttpClientRequestOptionsWithImmediate>
-type HttpClientComposableInputTemplate =
-    | HttpClientInputTemplate
-    | Ref<HttpClientInputTemplate>
+type HttpClientComposableRequestOptions
+    = | HttpClientRequestOptionsWithImmediate
+        | Ref<HttpClientRequestOptionsWithImmediate>
+type HttpClientComposableInputTemplate
+    = | HttpClientInputTemplate
+        | Ref<HttpClientInputTemplate>
 type RepositoryHttpReadOptionsWithImmediate = RepositoryHttpReadOptions & {
     immediate?: boolean
 }
-type RepositoryHttpComposableReadOptions =
-    | RepositoryHttpReadOptionsWithImmediate
-    | Ref<RepositoryHttpReadOptionsWithImmediate>
+type RepositoryHttpComposableReadOptions
+    = | RepositoryHttpReadOptionsWithImmediate
+        | Ref<RepositoryHttpReadOptionsWithImmediate>
 
 const httpClientInstances: Map<string, HttpClient> = new Map()
 const GLOBAL_SCOPE = 'global'
@@ -246,7 +246,7 @@ export function useHttpClient(scope = GLOBAL_SCOPE) {
     if (!client) {
         throw new Error('HttpClient instance not found')
     }
-    const request = <T = unknown>(
+    const request = <TRequest = unknown>(
         method: HttpClientMethod,
         url: HttpClientComposableInputTemplate,
         options: HttpClientComposableRequestOptions = {},
@@ -255,7 +255,7 @@ export function useHttpClient(scope = GLOBAL_SCOPE) {
 			= defineHttpRequestStatus()
         const immediate = unref(options).immediate ?? true
         const error = ref<HTTPError>()
-        const data = ref<T>()
+        const data = ref<TRequest>()
         const response = ref<HttpClientResponse>()
         const execute = (
             newUrl: HttpClientInputTemplate = unref(url),
@@ -272,7 +272,7 @@ export function useHttpClient(scope = GLOBAL_SCOPE) {
             responsePromise
                 .then((result) => {
                     response.value = result
-                    return result.json<T>()
+                    return result.json<TRequest>()
                 })
                 .then((parsed) => {
                     data.value = parsed
@@ -302,30 +302,30 @@ export function useHttpClient(scope = GLOBAL_SCOPE) {
     return {
         client,
         request,
-        requestGet: <T>(
+        requestGet: <TRequest>(
             url: HttpClientComposableInputTemplate,
             options: HttpClientComposableRequestOptions = {},
-        ) => request<T>('get', url, options),
-        requestPost: <T>(
+        ) => request<TRequest>('get', url, options),
+        requestPost: <TRequest>(
             url: HttpClientComposableInputTemplate,
             options: HttpClientComposableRequestOptions = {},
-        ) => request<T>('post', url, options),
-        requestPut: <T>(
+        ) => request<TRequest>('post', url, options),
+        requestPut: <TRequest>(
             url: HttpClientComposableInputTemplate,
             options: HttpClientComposableRequestOptions = {},
-        ) => request<T>('put', url, options),
-        requestDelete: <T>(
+        ) => request<TRequest>('put', url, options),
+        requestDelete: <TRequest>(
             url: HttpClientComposableInputTemplate,
             options: HttpClientComposableRequestOptions = {},
-        ) => request<T>('delete', url, options),
-        requestHead: <T>(
+        ) => request<TRequest>('delete', url, options),
+        requestHead: <TRequest>(
             url: HttpClientComposableInputTemplate,
             options: HttpClientComposableRequestOptions = {},
-        ) => request<T>('head', url, options),
-        requestPatch: <T>(
+        ) => request<TRequest>('head', url, options),
+        requestPatch: <TRequest>(
             url: HttpClientComposableInputTemplate,
             options: HttpClientComposableRequestOptions = {},
-        ) => request<T>('patch', url, options),
+        ) => request<TRequest>('patch', url, options),
     }
 }
 
@@ -403,16 +403,16 @@ export function useHttpClient(scope = GLOBAL_SCOPE) {
  * </script>
  * ```
  */
-export function useRepositoryHttp<T = unknown, TResponse = unknown>(template: string | HttpClientUrlTemplate,	options?: RepositoryHttpOptions<T, TResponse>) {
+export function useRepositoryHttp<TRequest = unknown, TResponse = TRequest>(template: string | HttpClientUrlTemplate,	options?: RepositoryHttpOptions<TRequest, TResponse>) {
     const { client } = useHttpClient(options?.httpClientScope)
-    const repository = new RepositoryHttp<T, TResponse>(
+    const repository = new RepositoryHttp<TRequest, TResponse>(
         client,
         template,
         options,
     )
 
     const create = (
-        payload: T | Ref<T> | T[] | Ref<T[]> | undefined,
+        payload: TRequest | Ref<TRequest> | TRequest[] | Ref<TRequest[]> | undefined,
         params: ParamMap = {},
         options: HttpClientComposableRequestOptions = {},
     ) => {
@@ -420,8 +420,8 @@ export function useRepositoryHttp<T = unknown, TResponse = unknown>(template: st
 			= defineHttpRequestStatus()
         const immediate = unref(options).immediate ?? true
         const error = ref<HTTPError>()
-        const data = ref<T[]>()
-        const item = ref<T>()
+        const data = ref<TResponse[]>()
+        const item = ref<TResponse>()
         const metadata = ref<ParamMap>()
 
         const execute = (
@@ -475,8 +475,8 @@ export function useRepositoryHttp<T = unknown, TResponse = unknown>(template: st
 			= defineHttpRequestStatus()
         const immediate = unref(options).immediate ?? true
         const error = ref<HTTPError>()
-        const data = ref<T[]>()
-        const item = ref<T>()
+        const data = ref<TResponse[]>()
+        const item = ref<TResponse>()
         const metadata = ref<ParamMap>()
 
         const execute = (
@@ -522,7 +522,7 @@ export function useRepositoryHttp<T = unknown, TResponse = unknown>(template: st
     }
 
     const update = (
-        payload: T | Ref<T> | T[] | Ref<T[]> | undefined,
+        payload: TRequest | Ref<TRequest> | TRequest[] | Ref<TRequest[]> | undefined,
         params: ParamMap = {},
         options: HttpClientComposableRequestOptions = {},
     ) => {
@@ -530,8 +530,8 @@ export function useRepositoryHttp<T = unknown, TResponse = unknown>(template: st
 			= defineHttpRequestStatus()
         const immediate = unref(options).immediate ?? true
         const error = ref<HTTPError>()
-        const data = ref<T[]>()
-        const item = ref<T>()
+        const data = ref<TResponse[]>()
+        const item = ref<TResponse>()
         const metadata = ref<ParamMap>()
 
         const execute = (
