@@ -1,6 +1,6 @@
 import type { ParamMap } from './types'
 
-export interface Repository<Type> {
+export interface Repository<Type, TResponse = Type> {
     read: (
         params?: ParamMap,
         options?: { key?: string | number | boolean } & Record<string, unknown>,
@@ -9,8 +9,8 @@ export interface Repository<Type> {
             ok: boolean
             aborted?: boolean
             abortReason?: string
-            data?: Type[]
-            item?: Type
+            data?: TResponse[]
+            item?: TResponse
             metadata?: ParamMap
         }>
         abort?: (reason?: string) => void
@@ -26,8 +26,8 @@ export interface Repository<Type> {
             ok: boolean
             aborted?: boolean
             abortReason?: string
-            data?: Type[]
-            item?: Type
+            data?: TResponse[]
+            item?: TResponse
             metadata?: ParamMap
         }>
         abort?: (reason?: string) => void
@@ -43,8 +43,8 @@ export interface Repository<Type> {
             ok: boolean
             aborted?: boolean
             abortReason?: string
-            data?: Type[]
-            item?: Type
+            data?: TResponse[]
+            item?: TResponse
             metadata?: ParamMap
         }>
         abort?: (reason?: string) => void

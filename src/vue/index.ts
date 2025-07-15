@@ -403,7 +403,7 @@ export function useHttpClient(scope = GLOBAL_SCOPE) {
  * </script>
  * ```
  */
-export function useRepositoryHttp<T = unknown, TResponse = unknown>(template: string | HttpClientUrlTemplate,	options?: RepositoryHttpOptions<T, TResponse>) {
+export function useRepositoryHttp<T = unknown, TResponse = T>(template: string | HttpClientUrlTemplate,	options?: RepositoryHttpOptions<T, TResponse>) {
     const { client } = useHttpClient(options?.httpClientScope)
     const repository = new RepositoryHttp<T, TResponse>(
         client,
@@ -420,8 +420,8 @@ export function useRepositoryHttp<T = unknown, TResponse = unknown>(template: st
 			= defineHttpRequestStatus()
         const immediate = unref(options).immediate ?? true
         const error = ref<HTTPError>()
-        const data = ref<T[]>()
-        const item = ref<T>()
+        const data = ref<TResponse[]>()
+        const item = ref<TResponse>()
         const metadata = ref<ParamMap>()
 
         const execute = (
@@ -475,8 +475,8 @@ export function useRepositoryHttp<T = unknown, TResponse = unknown>(template: st
 			= defineHttpRequestStatus()
         const immediate = unref(options).immediate ?? true
         const error = ref<HTTPError>()
-        const data = ref<T[]>()
-        const item = ref<T>()
+        const data = ref<TResponse[]>()
+        const item = ref<TResponse>()
         const metadata = ref<ParamMap>()
 
         const execute = (
@@ -530,8 +530,8 @@ export function useRepositoryHttp<T = unknown, TResponse = unknown>(template: st
 			= defineHttpRequestStatus()
         const immediate = unref(options).immediate ?? true
         const error = ref<HTTPError>()
-        const data = ref<T[]>()
-        const item = ref<T>()
+        const data = ref<TResponse[]>()
+        const item = ref<TResponse>()
         const metadata = ref<ParamMap>()
 
         const execute = (
