@@ -6,13 +6,13 @@ import {
     HTTPError,
 } from './HttpClient'
 
-type RepositoryHttpReadPendingRequest<Type> = {
+type RepositoryHttpReadPendingRequest<TResponse> = {
     responsePromise: Promise<{
         ok: boolean
         aborted?: boolean
         abortReason?: string
-        data?: Type[]
-        item?: Type
+        data?: TResponse[]
+        item?: TResponse
         metadata?: ParamMap
     }>
     abort: (reason?: string) => void
@@ -24,7 +24,7 @@ export type RepositoryHttpReadOptions = HttpClientRequestOptions & {
     key?: string | number | boolean
 }
 
-export type RepositoryHttpOptions<Type, TResponse = unknown> = {
+export type RepositoryHttpOptions<Type, TResponse = Type> = {
     /**
      * The httpClient instance scope (name)
      * @default undefined
@@ -60,7 +60,7 @@ export type RepositoryHttpOptions<Type, TResponse = unknown> = {
      * const repository = new RepositoryHttp(client, 'users/?:id', { responseAdapter })
      * ```
      */
-    responseAdapter?: (raw: TResponse) => Type[]
+    responseAdapter?: (raw: TResponse) => TResponse[]
     /**
      * A function to transform the request data into the expected data type.
      * @default
@@ -125,15 +125,15 @@ export type RepositoryHttpOptions<Type, TResponse = unknown> = {
      * const repository = new RepositoryHttp(client, 'users/?:id', { class: Type })
      * ```
      */
-    class?: new (...args: any[]) => Type
+    class?: new (...args: any[]) => TResponse
 }
 
-export class RepositoryHttp<Type, TResponse = unknown>
-implements Repository<Type> {
+export class RepositoryHttp<Type, TResponse = Type>
+implements Repository<Type, TResponse> {
     private _client: HttpClientInstance
     private _template: string | HttpClientUrlTemplate
-    private _responseAdapter = (raw: TResponse): Type[] =>
-        (Array.isArray(raw) ? raw : [raw]) as Type[]
+    private _responseAdapter = (raw: TResponse): TResponse[] =>
+        (Array.isArray(raw) ? raw : [raw]) as TResponse[]
 
     private _requestAdapter = (item: Type): unknown => item
     private _metadataAdapter = (response: Response): ParamMap | undefined => {
@@ -160,7 +160,7 @@ implements Repository<Type> {
     private _hashFunction: (str: string) => number = Hash.cyrb53
     private _readPendingRequests: Map<
 		string | number,
-        Omit<RepositoryHttpReadPendingRequest<Type>, 'signal'>
+        Omit<RepositoryHttpReadPendingRequest<TResponse>, 'signal'>
     > = new Map()
 
     private _httpClientOptions?: HttpClientRequestOptions
@@ -182,7 +182,7 @@ implements Repository<Type> {
             this._httpClientOptions = options.httpClientOptions
         }
         if (options?.class && !options?.responseAdapter) {
-            const OptionsClass = options.class as new (...args: any[]) => Type
+            const OptionsClass = options.class as new (...args: any[]) => TResponse
             this._responseAdapter = (raw) => {
                 return Array.isArray(raw)
                     ? raw.map(rawItem => new OptionsClass(rawItem))
@@ -410,11 +410,11 @@ implements Repository<Type> {
 
     private _cloneRepositoryHttpReadPendingRequest = (
         key: string | number,
-    ): Omit<RepositoryHttpReadPendingRequest<Type>, 'count'> => {
+    ): Omit<RepositoryHttpReadPendingRequest<TResponse>, 'count'> => {
         const controller = new AbortController()
         const pendingRequest = this._readPendingRequests.get(
             key,
-        ) as RepositoryHttpReadPendingRequest<Type>
+        ) as RepositoryHttpReadPendingRequest<TResponse>
         pendingRequest.count++
         return {
             responsePromise: new Promise((resolve, reject) => {
@@ -449,8 +449,8 @@ implements Repository<Type> {
         {
             abort,
             responsePromise,
-        }: Omit<RepositoryHttpReadPendingRequest<Type>, 'count' | 'signal'>,
-    ): Omit<RepositoryHttpReadPendingRequest<Type>, 'count'> => {
+        }: Omit<RepositoryHttpReadPendingRequest<TResponse>, 'count' | 'signal'>,
+    ): Omit<RepositoryHttpReadPendingRequest<TResponse>, 'count'> => {
         this._readPendingRequests.set(key, { abort, responsePromise, count: 0 })
         return this._cloneRepositoryHttpReadPendingRequest(key)
     }
