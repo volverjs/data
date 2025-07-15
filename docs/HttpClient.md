@@ -1,6 +1,6 @@
 # HttpClient
 
-##  Usage
+## Usage
 
 ```typescript
 import { HttpClient } from '@volverjs/data'
