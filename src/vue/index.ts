@@ -252,7 +252,7 @@ export function useHttpClient(scope = GLOBAL_SCOPE) {
         options: HttpClientComposableRequestOptions = {},
     ) => {
         const { status, isLoading, isError, isSuccess }
-			= defineHttpRequestStatus()
+            = defineHttpRequestStatus()
         const immediate = unref(options).immediate ?? true
         const error = ref<HTTPError>()
         const data = ref<TRequest>()
@@ -417,7 +417,7 @@ export function useRepositoryHttp<TRequest = unknown, TResponse = TRequest>(temp
         options: HttpClientComposableRequestOptions = {},
     ) => {
         const { status, isLoading, isError, isSuccess }
-			= defineHttpRequestStatus()
+            = defineHttpRequestStatus()
         const immediate = unref(options).immediate ?? true
         const error = ref<HTTPError>()
         const data = ref<TResponse[]>()
@@ -472,7 +472,7 @@ export function useRepositoryHttp<TRequest = unknown, TResponse = TRequest>(temp
         options: RepositoryHttpComposableReadOptions = {},
     ) => {
         const { status, isLoading, isError, isSuccess }
-			= defineHttpRequestStatus()
+            = defineHttpRequestStatus()
         const immediate = unref(options).immediate ?? true
         const error = ref<HTTPError>()
         const data = ref<TResponse[]>()
@@ -527,7 +527,7 @@ export function useRepositoryHttp<TRequest = unknown, TResponse = TRequest>(temp
         options: HttpClientComposableRequestOptions = {},
     ) => {
         const { status, isLoading, isError, isSuccess }
-			= defineHttpRequestStatus()
+            = defineHttpRequestStatus()
         const immediate = unref(options).immediate ?? true
         const error = ref<HTTPError>()
         const data = ref<TResponse[]>()
@@ -582,7 +582,7 @@ export function useRepositoryHttp<TRequest = unknown, TResponse = TRequest>(temp
         options: HttpClientComposableRequestOptions = {},
     ) => {
         const { status, isLoading, isError, isSuccess }
-			= defineHttpRequestStatus()
+            = defineHttpRequestStatus()
         const immediate = unref(options).immediate ?? true
         const error = ref<HTTPError>()
 
