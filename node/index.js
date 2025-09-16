@@ -27,14 +27,14 @@ if (!globalThis.AbortController) {
 if (!globalThis.ReadableStream) {
     try {
         globalThis.ReadableStream = await import(
-            'web-streams-polyfill/polyfill'
+            'web-streams-polyfill/polyfill',
         )
     }
     catch {}
 }
 
 const { HttpClient, HTTPError, TimeoutError } = await import(
-    '../dist/HttpClient'
+    '../dist/HttpClient',
 )
 
 const { Hash } = await import('../dist/Hash')
