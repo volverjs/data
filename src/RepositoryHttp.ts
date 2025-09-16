@@ -160,7 +160,7 @@ implements Repository<TRequest, TResponse> {
     private _hashFunction: (str: string) => number = Hash.cyrb53
     private _readPendingRequests: Map<
 		string | number,
-        Omit<RepositoryHttpReadPendingRequest<TResponse>, 'signal'>
+		Omit<RepositoryHttpReadPendingRequest<TResponse>, 'signal'>
     > = new Map()
 
     private _httpClientOptions?: HttpClientRequestOptions

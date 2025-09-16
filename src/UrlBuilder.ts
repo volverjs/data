@@ -47,8 +47,8 @@ export class UrlBuilder implements UrlBuilderInstance {
 
     public static build(
         template: string,
-		params: ParamMap = {},
-		options?: UrlBuilderOptions,
+        params: ParamMap = {},
+        options?: UrlBuilderOptions,
     ): string {
         const cleanParams = Object.keys(params)
             .filter(k => params[k] !== undefined)

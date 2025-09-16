@@ -17,10 +17,10 @@ const component = {
     setup: (_, { expose }) => {
         const { read } = useRepositoryHttp<{ id: string }>(':type')
         const { data, execute, isLoading, isError, error, abort, metadata }
-			= read({
-			    type: 'alpha',
-			    codes: ['col', 'pe', 'at'],
-			})
+            = read({
+                type: 'alpha',
+                codes: ['col', 'pe', 'at'],
+            })
         expose({ data, execute, isLoading, isError, error, abort, metadata })
         return { data, execute, isLoading, isError, error, abort, metadata }
     },
@@ -37,10 +37,10 @@ const componentHttpClientV2 = {
             httpClientScope: 'v2',
         })
         const { data, execute, isLoading, isError, error, abort, metadata }
-			= read({
-			    type: 'alpha',
-			    codes: ['col', 'pe', 'at'],
-			})
+            = read({
+                type: 'alpha',
+                codes: ['col', 'pe', 'at'],
+            })
         return { data, execute, isLoading, isError, error, abort, metadata }
     },
 }

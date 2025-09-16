@@ -41,7 +41,7 @@ export default defineConfig({
             include: [/\.vue$/],
         }),
 
-        // https://github.com/gxmari007/vite-plugin-eslint
+        // https://github.com/nabla/vite-plugin-eslint
         ESLint(),
     ],
 })

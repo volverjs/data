@@ -3,10 +3,10 @@ import type { Ref } from 'vue'
 import { computed } from 'vue'
 import { useRepositoryHttp } from '../../src/vue'
 
-	type User = {
-	    id: number
-	    name: string
-	}
+type User = {
+    id: number
+    name: string
+}
 
 const { read, update } = useRepositoryHttp<User>('users/:id?')
 const { isLoading: isReading, error: readError, item } = read({ id: 1 })
