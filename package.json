@@ -2,7 +2,7 @@
     "name": "@volverjs/data",
     "type": "module",
     "version": "0.0.0",
-    "packageManager": "pnpm@10.18.1",
+    "packageManager": "pnpm@10.33.0",
     "description": "Repository pattern implementation with a tiny HttpClient based on Fetch API.",
     "author": "8 Wave S.r.l.",
     "license": "MIT",
@@ -104,32 +104,32 @@
     },
     "dependencies": {
         "abort-controller": "^3.0.0",
-        "ky": "^1.11.0",
+        "ky": "^1.14.3",
         "node-fetch": "^3.3.2",
-        "qs": "^6.14.0",
+        "qs": "^6.15.0",
         "web-streams-polyfill": "^4.2.0"
     },
     "optionalDependencies": {
-        "vue": "^3.5.22"
+        "vue": "^3.5.31"
     },
     "devDependencies": {
-        "@antfu/eslint-config": "^7.0.0",
-        "@nabla/vite-plugin-eslint": "^3.0.0",
-        "@types/node": "^25.0.0",
-        "@types/qs": "^6.14.0",
-        "@vitejs/plugin-vue": "^6.0.1",
+        "@antfu/eslint-config": "^7.7.3",
+        "@nabla/vite-plugin-eslint": "^3.0.1",
+        "@types/node": "^25.5.0",
+        "@types/qs": "^6.15.0",
+        "@vitejs/plugin-vue": "^6.0.5",
         "@vue/test-utils": "^2.4.6",
         "copy": "^0.3.2",
-        "eslint": "^10.0.0",
-        "globals": "^17.0.0",
-        "happy-dom": "^20.0.0",
-        "typescript": "^5.9.3",
-        "vite": "^8.0.0",
+        "eslint": "^10.1.0",
+        "globals": "^17.4.0",
+        "happy-dom": "^20.8.8",
+        "typescript": "^6.0.2",
+        "vite": "^8.0.3",
         "vite-plugin-externalize-deps": "^0.10.0",
-        "vitest": "^4.0.1",
+        "vitest": "^4.1.1",
         "vitest-fetch-mock": "^0.4.5",
-        "vue": "^3.5.22",
-        "vue-tsc": "^3.1.1"
+        "vue": "^3.5.31",
+        "vue-tsc": "^3.2.6"
     },
     "pnpm": {
         "onlyBuiltDependencies": [

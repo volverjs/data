@@ -110,7 +110,7 @@ class User {
     constructor(data: { id: number, name: string, surname: string }) {
         this.id = data.id
         this.name = data.name
-        this.email = data.email
+        this.surname = data.surname
     }
 
     get fullName() {
@@ -228,7 +228,7 @@ async function execute() {
 </template>
 ```
 
-`useHttpClient()` also exposes `request()`, `requestGet()`, `requestPost()`, `requestPut()`, `requestPatch()` and `requestDelete()` methods. These methods are wrappers around the `HttpClient` methods with reactivity.
+`useHttpClient()` also exposes `request()`, `requestGet()`, `requestPost()`, `requestPut()`, `requestPatch()`, `requestHead()` and `requestDelete()` methods. These methods are wrappers around the `HttpClient` methods with reactivity.
 
 ```vue
 <script lang="ts" setup>
@@ -442,8 +442,8 @@ async function execute() {
         <div v-if="isError">
             {{ error }}
         </div>
-        <div v-if="data">
-            {{ data.name }}
+        <div v-if="item">
+            {{ item?.name }}
         </div>
     </div>
 </template>
@@ -559,7 +559,7 @@ The `HttpClientPlugin` can manage a `Map` of `httpClient` instances.
 
 With `scope` parameter on `createHttpClient()` multiple `httpClient` instances can be created. If the `httpClient` `scope` instance already exist an error is throwed: `httpClient with scope ${scope} already exist`.
 
-##### Parameters:
+#### Parameters:
 
 `options?`: `HttpClientInstanceOptions & { scope: string }`
 
@@ -582,7 +582,7 @@ const { isLoading, isError, data } = requestGet<User>('users')
 With this composable the `httpClient` instance can be removed from Map instances.
 The `global` `httpClient` instance cannot be removed.
 
-##### Parameters:
+#### Parameters:
 
 `scope`: `string`,
 
@@ -590,9 +590,9 @@ The `global` `httpClient` instance cannot be removed.
 
 ```vue
 <script lang="ts" setup>
-import { addHttpClient, removeHttpClient } from '@volverjs/data/vue'
+import { createHttpClient, removeHttpClient } from '@volverjs/data/vue'
 
-createHttpClient('v2Api', { prefixUrl: 'https://my.api.com/v2' })
+createHttpClient({ scope: 'v2Api', prefixUrl: 'https://my.api.com/v2' })
 
 const { requestGet } = useHttpClient('v2Api')
 

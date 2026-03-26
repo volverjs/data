@@ -1,4 +1,4 @@
-import type { ParamMap } from 'src/types'
+import type { ParamMap } from '../types'
 import type { App, Ref } from 'vue'
 import type { HttpClientInputTemplate, HttpClientInstanceOptions, HttpClientMethod, HttpClientRequestOptions, HttpClientResponse, HttpClientUrlTemplate, HTTPError } from '../HttpClient'
 import type { RepositoryHttpOptions, RepositoryHttpReadOptions } from '../RepositoryHttp'
@@ -278,7 +278,7 @@ export function useHttpClient(scope = GLOBAL_SCOPE) {
                     data.value = parsed
                     status.value = HttpRequestStatus.success
                 })
-                .catch((e) => {
+                .catch((e: unknown) => {
                     if (!signal.aborted) {
                         error.value = e as HTTPError
                         status.value = HttpRequestStatus.error
@@ -449,7 +449,7 @@ export function useRepositoryHttp<TRequest = unknown, TResponse = TRequest>(temp
                     }
                     status.value = HttpRequestStatus.success
                 })
-                .catch((e) => {
+                .catch((e: unknown) => {
                     error.value = e as HTTPError
                     status.value = HttpRequestStatus.error
                 })
@@ -502,7 +502,7 @@ export function useRepositoryHttp<TRequest = unknown, TResponse = TRequest>(temp
                     }
                     status.value = HttpRequestStatus.success
                 })
-                .catch((e) => {
+                .catch((e: unknown) => {
                     error.value = e as HTTPError
                     status.value = HttpRequestStatus.error
                 })
@@ -559,7 +559,7 @@ export function useRepositoryHttp<TRequest = unknown, TResponse = TRequest>(temp
                     }
                     status.value = HttpRequestStatus.success
                 })
-                .catch((e) => {
+                .catch((e: unknown) => {
                     error.value = e as HTTPError
                     status.value = HttpRequestStatus.error
                 })
@@ -604,7 +604,7 @@ export function useRepositoryHttp<TRequest = unknown, TResponse = TRequest>(temp
                     }
                     status.value = HttpRequestStatus.success
                 })
-                .catch((e) => {
+                .catch((e: unknown) => {
                     error.value = e as HTTPError
                     status.value = HttpRequestStatus.error
                 })
