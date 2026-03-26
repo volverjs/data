@@ -1,11 +1,7 @@
-import type { Hooks, KyResponse, Options, ResponsePromise } from 'ky'
-import type { KyInstance } from 'ky/distribution/types/ky'
-import type {
-    HttpMethod,
-    Input,
-    KyHeadersInit,
-    RetryOptions,
-} from 'ky/distribution/types/options'
+import type { Hooks, KyInstance, KyResponse, Options, ResponsePromise, Input, RetryOptions } from 'ky'
+
+type HttpMethod = string
+type KyHeadersInit = NonNullable<RequestInit['headers']> | Record<string, string | undefined>
 import type { ParamMap } from './types'
 import type { UrlBuilderInstance, UrlBuilderOptions } from './UrlBuilder'
 import ky, {
@@ -169,7 +165,7 @@ export class HttpClient implements HttpClientInstance {
         const { controller, signal }
             = HttpClient.createAbortController(abortController)
         return {
-            responsePromise: this[method](url, { signal, ...otherOptions }),
+            responsePromise: (this as unknown as Record<string, (url: HttpClientInputTemplate, options?: HttpClientOptions) => HttpClientResponsePromise>)[method](url, { signal, ...otherOptions }),
             abort: (reason?: string) => controller.abort(reason),
             signal,
         }

@@ -1,4 +1,4 @@
-import type { HttpClientInstance, HttpClientOptions, HttpClientRequestOptions, HttpClientUrlTemplate } from './HttpClient'
+import type { HttpClientInstance, HttpClientMethod as HttpMethod, HttpClientOptions, HttpClientRequestOptions, HttpClientUrlTemplate } from './HttpClient'
 import type { Repository } from './Repository'
 import type { ParamMap } from './types'
 import { Hash } from './Hash'
@@ -234,7 +234,7 @@ implements Repository<TRequest, TResponse> {
             abort,
             signal,
         } = this._client.request(
-            'get',
+            (options?.method as HttpMethod) ?? 'get',
             this._requestUrl(params),
             this._requestOptions(requestOptions),
         )
@@ -292,7 +292,7 @@ implements Repository<TRequest, TResponse> {
             abort,
             signal,
         } = this._client.request(
-            'post',
+            (options?.method as HttpMethod) ?? 'post',
             this._requestUrl(params),
             this._requestOptions(options, payload),
         )
@@ -338,7 +338,7 @@ implements Repository<TRequest, TResponse> {
             abort,
             signal,
         } = this._client.request(
-            'put',
+            (options?.method as HttpMethod) ?? 'put',
             this._requestUrl(params),
             this._requestOptions(options, payload),
         )
@@ -379,7 +379,7 @@ implements Repository<TRequest, TResponse> {
             abort,
             signal,
         } = this._client.request(
-            'delete',
+            (options?.method as HttpMethod) ?? 'delete',
             this._requestUrl(params),
             requestOptions,
         )

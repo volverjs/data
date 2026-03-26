@@ -2,6 +2,9 @@ import type { IStringifyOptions } from 'qs'
 import type { ParamMap } from './types'
 import qs from 'qs'
 
+export const PATH_PARAM_REGEX = /\/?:[_A-Z]\w*\??/gi
+export const PATH_PARAM_KEY_REGEX = /[:?/]/g
+
 export type UrlBuilderOptions = IStringifyOptions
 
 export interface UrlBuilderInstance {
@@ -81,7 +84,7 @@ export class UrlBuilder implements UrlBuilderInstance {
     public static validatePathParam(params: ParamMap, key: string) {
         const allowedTypes = ['boolean', 'string', 'number']
 
-        if (!Object.prototype.hasOwnProperty.call(params, key)) {
+        if (!Object.hasOwn(params, key)) {
             return {
                 valid: false,
                 message: `Missing value for path parameter ${key}.`,
@@ -109,13 +112,13 @@ export class UrlBuilder implements UrlBuilderInstance {
         const remainingParams = { ...params }
 
         const renderedPath = template.replace(
-            /\/?:[_A-Z]\w*\??/gi,
+            PATH_PARAM_REGEX,
             (p) => {
                 if (p === null) {
                     return ''
                 }
                 // do not replace "::"
-                const key = p.replace(/[:?/]/g, '')
+                const key = p.replace(PATH_PARAM_KEY_REGEX, '')
                 const { valid, message } = UrlBuilder.validatePathParam(
                     params,
                     key,

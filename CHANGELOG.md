@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.5] - 2026-03-26
+
+### Fixed
+
+- TypeScript 6 compatibility: removed deprecated `baseUrl`, updated `moduleResolution` to `Bundler`, added `rootDir` in `tsconfig.json`.
+- Updated `ky` imports to use the public entry point only, removing internal path dependencies.
+- Fixed relative import paths and implicit `any` types in `src/vue/index.ts`.
+
 ## [2.0.4] - 2025-10-09
 
 ### Fixed
@@ -117,6 +125,7 @@ All notable changes to this project will be documented in this file.
 - `UrlBuilder` a class to build URLs through a template;
 - `RepositoryHttp` an implementation of `Repository` interface to fetch data through `HttpClient`.
 
+[2.0.5]: https://github.com/volverjs/data/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/volverjs/data/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/volverjs/data/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/volverjs/data/compare/v2.0.1...v2.0.2
