@@ -104,7 +104,7 @@
     },
     "dependencies": {
         "abort-controller": "^3.0.0",
-        "ky": "^1.14.3",
+        "ky": "^2.0.0",
         "node-fetch": "^3.3.2",
         "qs": "^6.15.0",
         "web-streams-polyfill": "^4.2.0"
