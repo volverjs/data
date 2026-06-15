@@ -184,7 +184,7 @@ implements Repository<TRequest, TResponse> {
             this._httpClientOptions = options.httpClientOptions
         }
         if (options?.class && !options?.responseAdapter) {
-            const OptionsClass = options.class as new (...args: any[]) => TResponse
+            const OptionsClass = options.class
             this._responseAdapter = (raw) => {
                 return Array.isArray(raw)
                     ? raw.map(rawItem => new OptionsClass(rawItem))
