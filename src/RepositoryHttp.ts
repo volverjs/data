@@ -30,7 +30,7 @@ export type RepositoryHttpOptions<TRequest, TResponse = TRequest> = {
      * @default undefined
      * @example
      * ```typescript
-     * addHttpClient('v2', { prefixUrl: 'https://myapi.com/v2' })
+     * addHttpClient('v2', { prefix: 'https://myapi.com/v2' })
      * const { read } = useRepositoryHttp<{ id: string }>('users/?:id', { httpClientScope: 'v2' })
      * read({ id: 1 })
      * //=> GET https://myapi.com/v2/?id=1
@@ -42,7 +42,7 @@ export type RepositoryHttpOptions<TRequest, TResponse = TRequest> = {
      * @default undefined
      * @example
      * ```typescript
-     * const repository = new RepositoryHttp(client, 'users/?:id', { httpClientOptions: { prefixUrl: 'https://example.com' } })
+     * const repository = new RepositoryHttp(client, 'users/?:id', { httpClientOptions: { prefix: 'https://example.com' } })
      * repository.read({ id: 1 })
      * //=> GET https://example.com/?id=1
      * ```

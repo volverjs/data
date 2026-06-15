@@ -59,7 +59,7 @@ describe('httpClient', () => {
     it('should make a GET request with template and query parameters and prefix url', async () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
         const client = new HttpClient({
-            prefixUrl: 'https://myapi.com/v1',
+            prefix: 'https://myapi.com/v1',
         })
         const data = (await client
             .get({
@@ -79,7 +79,7 @@ describe('httpClient', () => {
     it('should make a GET request with error', async () => {
         fetchMock.mockResponseOnce(() => ({ status: 404 }))
         const client = new HttpClient({
-            prefixUrl: 'https://myapi.com/v1',
+            prefix: 'https://myapi.com/v1',
         })
         try {
             await client
@@ -101,7 +101,7 @@ describe('httpClient', () => {
     it('should abort a GET request', async () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
         const client = new HttpClient({
-            prefixUrl: 'https://myapi.com/v1',
+            prefix: 'https://myapi.com/v1',
         })
         const { responsePromise, abort, signal } = client.request(
             'get',
