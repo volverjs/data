@@ -75,7 +75,7 @@ describe('vue useHttpClient', () => {
     it('should make a GET request with template and query parameters and prefix url', async () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
         createHttpClient({
-            prefixUrl: 'https://myapi.com/v1',
+            prefix: 'https://myapi.com/v1',
             scope: 'myApi',
         })
         const { requestGet } = useHttpClient('myApi')
@@ -99,7 +99,7 @@ describe('vue useHttpClient', () => {
     it('should make a GET request with error', async () => {
         fetchMock.mockResponseOnce(() => ({ status: 404 }))
         createHttpClient({
-            prefixUrl: 'https://myapi.com/v2',
+            prefix: 'https://myapi.com/v2',
             scope: 'myApi2',
         })
         const { requestGet } = useHttpClient('myApi2')
@@ -122,7 +122,7 @@ describe('vue useHttpClient', () => {
     it('should abort a GET request', async () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
         createHttpClient({
-            prefixUrl: 'https://myapi.com/v3',
+            prefix: 'https://myapi.com/v3',
             scope: 'myApi3',
         })
         const { request } = useHttpClient('myApi3')
@@ -140,7 +140,7 @@ describe('vue useHttpClient', () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
 
         createHttpClient({
-            prefixUrl: 'https://myapi.com/v4',
+            prefix: 'https://myapi.com/v4',
             scope: 'myApi4',
         })
 
@@ -156,7 +156,7 @@ describe('vue useHttpClient', () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
 
         createHttpClient({
-            prefixUrl: 'https://myapi.com/v5',
+            prefix: 'https://myapi.com/v5',
             scope: 'myApi5',
         })
 
@@ -173,7 +173,7 @@ describe('vue useHttpClient', () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
 
         createHttpClient({
-            prefixUrl: 'https://myapi.com/v6',
+            prefix: 'https://myapi.com/v6',
             scope: 'myApi6',
         })
 
@@ -187,7 +187,7 @@ describe('vue useHttpClient', () => {
 
         try {
             createHttpClient({
-                prefixUrl: 'https://myapi.com/v6',
+                prefix: 'https://myapi.com/v6',
                 scope: 'myApi6',
             })
         }
@@ -202,7 +202,7 @@ describe('vue useHttpClient', () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
 
         createHttpClient({
-            prefixUrl: 'https://myapi.com/v7',
+            prefix: 'https://myapi.com/v7',
             scope: 'myApi7',
         })
 

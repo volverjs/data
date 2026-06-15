@@ -9,7 +9,7 @@ const fetchMock = createFetchMock(vi)
 
 // Install a plugin onto VueWrapper
 const httpClient = createHttpClient({
-    prefixUrl: 'https://myapi.com/v1',
+    prefix: 'https://myapi.com/v1',
 })
 
 const component = {
@@ -30,7 +30,7 @@ const componentHttpClientV2 = {
     template: '<div />',
     setup: () => {
         createHttpClient({
-            prefixUrl: 'https://myapi.com/v2',
+            prefix: 'https://myapi.com/v2',
             scope: 'v2',
         })
         const { read } = useRepositoryHttp<{ id: string }>(':type', {

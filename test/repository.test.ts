@@ -13,7 +13,7 @@ describe('repositoryHttp', () => {
     it('should read', async () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
         const client = new HttpClient({
-            prefixUrl: 'https://myapi.com/v1',
+            prefix: 'https://myapi.com/v1',
         })
         const repository = new RepositoryHttp<{ id: string }>(client, ':type')
         const { responsePromise } = repository.read({
@@ -31,7 +31,7 @@ describe('repositoryHttp', () => {
     })
     it('should stop a read request', async () => {
         const client = new HttpClient({
-            prefixUrl: 'https://myapi.com/v1',
+            prefix: 'https://myapi.com/v1',
         })
         const repository = new RepositoryHttp(client, ':type?')
         const { responsePromise, abort } = repository.read({})
@@ -43,7 +43,7 @@ describe('repositoryHttp', () => {
     it('should merge 2 equals read requests', async () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
         const client = new HttpClient({
-            prefixUrl: 'https://myapi.com/v1',
+            prefix: 'https://myapi.com/v1',
         })
         const repository = new RepositoryHttp<{ id: string }>(client, ':type')
         const { responsePromise: responsePromise1 } = repository.read({
@@ -69,7 +69,7 @@ describe('repositoryHttp', () => {
     it('should merge 2 equals read request, first aborted', async () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
         const client = new HttpClient({
-            prefixUrl: 'https://myapi.com/v1',
+            prefix: 'https://myapi.com/v1',
         })
         const repository = new RepositoryHttp<{ id: string }>(client, ':type')
         const { responsePromise: responsePromise1, abort } = repository.read({
@@ -95,7 +95,7 @@ describe('repositoryHttp', () => {
     it('should merge 2 equals read request, second aborted', async () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
         const client = new HttpClient({
-            prefixUrl: 'https://myapi.com/v1',
+            prefix: 'https://myapi.com/v1',
         })
         const repository = new RepositoryHttp<{ id: string }>(client, ':type')
         const { responsePromise: responsePromise1 } = repository.read({
@@ -127,7 +127,7 @@ describe('repositoryHttp', () => {
             },
         })
         const client = new HttpClient({
-            prefixUrl: 'https://myapi.com/v1',
+            prefix: 'https://myapi.com/v1',
         })
         const repository = new RepositoryHttp<{ id: string }>(client, ':type')
         const { responsePromise } = repository.read({ type: 'alpha' })
