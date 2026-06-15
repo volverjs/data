@@ -313,7 +313,7 @@ implements Repository<TRequest, TResponse> {
     /**
      * Shared implementation for the `create` (POST) and `update` (PUT) writes.
      */
-    private _write = (
+    private readonly _write = (
         defaultMethod: HttpMethod,
         payload?: TRequest | TRequest[],
         params?: ParamMap,
