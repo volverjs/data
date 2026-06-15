@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.0] - Unreleased
+
+### Changed
+
+- **BREAKING:** upgraded `ky` to `2.x`, which renames the `HttpClient` option `prefixUrl` to `prefix`. Update every `new HttpClient({ prefixUrl })`, `createHttpClient({ prefixUrl })` and `httpClientOptions: { prefixUrl }` usage to `prefix`.
+
+## [2.0.5] - 2026-06-15
+
+### Fixed
+
+- TypeScript 6 compatibility: removed deprecated `baseUrl`, updated `moduleResolution` to `Bundler`.
+- Updated `ky` imports to use the public entry point only, removing internal path dependencies.
+- Fixed relative import paths and implicit `any` types in `src/vue/index.ts`.
+- `RepositoryHttp` default metadata adapter no longer drops `contentLanguage` when both `Content-Language` and `Accept-Language` response headers are present.
+- `useRepositoryHttp` `create()` and `update()` now expose the `item` ref, consistently with `read()`.
+- `HttpClientInstance.setBearerToken` type signature now matches the implementation (nullable token and options).
+
+### Added
+
+- `item` ref returned by the `create()` and `update()` Vue composables.
+
+### Internal
+
+- `RepositoryHttp.create()`/`update()` and the Vue repository composables refactored to remove duplication.
+- Type-check and tests now cover the `test/` folder; declaration emit moved to a dedicated `tsconfig.build.json`.
+
 ## [2.0.4] - 2025-10-09
 
 ### Fixed
@@ -117,6 +143,8 @@ All notable changes to this project will be documented in this file.
 - `UrlBuilder` a class to build URLs through a template;
 - `RepositoryHttp` an implementation of `Repository` interface to fetch data through `HttpClient`.
 
+[3.0.0]: https://github.com/volverjs/data/compare/v2.0.5...v3.0.0
+[2.0.5]: https://github.com/volverjs/data/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/volverjs/data/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/volverjs/data/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/volverjs/data/compare/v2.0.1...v2.0.2

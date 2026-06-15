@@ -1,7 +1,7 @@
-import type { ParamMap } from 'src/types'
 import type { App, Ref } from 'vue'
 import type { HttpClientInputTemplate, HttpClientInstanceOptions, HttpClientMethod, HttpClientRequestOptions, HttpClientResponse, HttpClientUrlTemplate, HTTPError } from '../HttpClient'
 import type { RepositoryHttpOptions, RepositoryHttpReadOptions } from '../RepositoryHttp'
+import type { ParamMap } from '../types'
 import { computed, readonly, ref, unref } from 'vue'
 import {
     HttpClient,
@@ -278,7 +278,7 @@ export function useHttpClient(scope = GLOBAL_SCOPE) {
                     data.value = parsed
                     status.value = HttpRequestStatus.success
                 })
-                .catch((e) => {
+                .catch((e: unknown) => {
                     if (!signal.aborted) {
                         error.value = e as HTTPError
                         status.value = HttpRequestStatus.error
@@ -411,214 +411,126 @@ export function useRepositoryHttp<TRequest = unknown, TResponse = TRequest>(temp
         options,
     )
 
+    /**
+     * Shared reactive wrapper for the repository operations. It manages the
+     * request status, error, optional `data`/`item`/`metadata` refs and the
+     * `immediate` execution, delegating the actual call to `perform`.
+     * @param immediate - Whether to execute the request on creation.
+     * @param resolveArgs - Resolves (and unwraps) the default arguments at call time.
+     * @param perform - Runs the repository operation with the resolved arguments.
+     * @param withData - Whether the operation returns `data`/`item`/`metadata` (false for `remove`).
+     */
+    const defineRepositoryRequest = <TArgs extends unknown[]>(
+        immediate: boolean,
+        resolveArgs: () => TArgs,
+        perform: (...args: TArgs) => {
+            abort: (reason?: string) => void
+            responsePromise: Promise<{
+                ok: boolean
+                aborted?: boolean
+                abortReason?: string
+                data?: TResponse[]
+                item?: TResponse
+                metadata?: ParamMap
+            }>
+        },
+        withData = true,
+    ) => {
+        const { status, isLoading, isError, isSuccess }
+            = defineHttpRequestStatus()
+        const error = ref<HTTPError>()
+        const data = ref<TResponse[]>()
+        const item = ref<TResponse>()
+        const metadata = ref<ParamMap>()
+
+        const execute = (...overrides: Partial<TArgs>) => {
+            status.value = HttpRequestStatus.loading
+            error.value = undefined
+            if (withData) {
+                data.value = undefined
+                item.value = undefined
+            }
+            const args = resolveArgs().map((value, index) =>
+                overrides[index] === undefined ? value : overrides[index],
+            ) as TArgs
+            const { abort, responsePromise } = perform(...args)
+            responsePromise
+                .then((result) => {
+                    if (withData) {
+                        data.value = result.data
+                        item.value = result.item
+                        metadata.value = result.metadata
+                    }
+                    status.value = result.aborted
+                        ? HttpRequestStatus.idle
+                        : HttpRequestStatus.success
+                })
+                .catch((e: unknown) => {
+                    error.value = e as HTTPError
+                    status.value = HttpRequestStatus.error
+                })
+            return { abort, responsePromise }
+        }
+
+        return {
+            execute,
+            isLoading,
+            isSuccess,
+            isError,
+            error: readonly(error),
+            ...(withData ? { data, item, metadata } : {}),
+            ...(immediate ? execute(...([] as unknown as Partial<TArgs>)) : {}),
+        }
+    }
+
     const create = (
         payload: TRequest | Ref<TRequest> | TRequest[] | Ref<TRequest[]> | undefined,
         params: ParamMap = {},
         options: HttpClientComposableRequestOptions = {},
-    ) => {
-        const { status, isLoading, isError, isSuccess }
-            = defineHttpRequestStatus()
-        const immediate = unref(options).immediate ?? true
-        const error = ref<HTTPError>()
-        const data = ref<TResponse[]>()
-        const item = ref<TResponse>()
-        const metadata = ref<ParamMap>()
-
-        const execute = (
-            newPayload = unref(payload),
-            newParams: ParamMap = unref(params),
-            newOptions: RepositoryHttpReadOptions = unref(options),
-        ) => {
-            status.value = HttpRequestStatus.loading
-            error.value = undefined
-            item.value = undefined
-            data.value = undefined
-            const { abort, responsePromise } = repository.create(
-                newPayload,
-                newParams,
-                newOptions,
-            )
-            responsePromise
-                .then((result) => {
-                    data.value = result.data
-                    item.value = result.item
-                    metadata.value = result.metadata
-                    if (result.aborted) {
-                        status.value = HttpRequestStatus.idle
-                        return
-                    }
-                    status.value = HttpRequestStatus.success
-                })
-                .catch((e) => {
-                    error.value = e as HTTPError
-                    status.value = HttpRequestStatus.error
-                })
-            return { abort, responsePromise }
-        }
-        return {
-            execute,
-            isLoading,
-            isSuccess,
-            isError,
-            error: readonly(error),
-            data,
-            metadata,
-            ...(immediate ? execute() : {}),
-        }
-    }
+    ) => defineRepositoryRequest(
+        unref(options).immediate ?? true,
+        () => [unref(payload), unref(params), unref(options)] as [
+            TRequest | TRequest[] | undefined,
+            ParamMap,
+            HttpClientRequestOptions,
+        ],
+        (newPayload, newParams, newOptions) =>
+            repository.create(newPayload, newParams, newOptions),
+    )
 
     const read = (
         params: ParamMap | Ref<ParamMap>,
         options: RepositoryHttpComposableReadOptions = {},
-    ) => {
-        const { status, isLoading, isError, isSuccess }
-            = defineHttpRequestStatus()
-        const immediate = unref(options).immediate ?? true
-        const error = ref<HTTPError>()
-        const data = ref<TResponse[]>()
-        const item = ref<TResponse>()
-        const metadata = ref<ParamMap>()
-
-        const execute = (
-            newParams: ParamMap = unref(params),
-            newOptions: RepositoryHttpReadOptions = unref(options),
-        ) => {
-            status.value = HttpRequestStatus.loading
-            error.value = undefined
-            item.value = undefined
-            data.value = undefined
-            const { abort, responsePromise } = repository.read(
-                newParams,
-                newOptions,
-            )
-            responsePromise
-                .then((result) => {
-                    data.value = result.data
-                    item.value = result.item
-                    metadata.value = result.metadata
-                    if (result.aborted) {
-                        status.value = HttpRequestStatus.idle
-                        return
-                    }
-                    status.value = HttpRequestStatus.success
-                })
-                .catch((e) => {
-                    error.value = e as HTTPError
-                    status.value = HttpRequestStatus.error
-                })
-            return { abort, responsePromise }
-        }
-        return {
-            execute,
-            isLoading,
-            isSuccess,
-            isError,
-            error: readonly(error),
-            data,
-            item,
-            metadata,
-            ...(immediate ? execute() : {}),
-        }
-    }
+    ) => defineRepositoryRequest(
+        unref(options).immediate ?? true,
+        () => [unref(params), unref(options)] as [ParamMap, RepositoryHttpReadOptions],
+        (newParams, newOptions) => repository.read(newParams, newOptions),
+    )
 
     const update = (
         payload: TRequest | Ref<TRequest> | TRequest[] | Ref<TRequest[]> | undefined,
         params: ParamMap = {},
         options: HttpClientComposableRequestOptions = {},
-    ) => {
-        const { status, isLoading, isError, isSuccess }
-            = defineHttpRequestStatus()
-        const immediate = unref(options).immediate ?? true
-        const error = ref<HTTPError>()
-        const data = ref<TResponse[]>()
-        const item = ref<TResponse>()
-        const metadata = ref<ParamMap>()
-
-        const execute = (
-            newPayload = unref(payload),
-            newParams: ParamMap = unref(params),
-            newOptions: RepositoryHttpReadOptions = unref(options),
-        ) => {
-            status.value = HttpRequestStatus.loading
-            error.value = undefined
-            item.value = undefined
-            data.value = undefined
-            const { abort, responsePromise } = repository.update(
-                newPayload,
-                newParams,
-                newOptions,
-            )
-            responsePromise
-                .then((result) => {
-                    data.value = result.data
-                    item.value = result.item
-                    metadata.value = result.metadata
-                    if (result.aborted) {
-                        status.value = HttpRequestStatus.idle
-                        return
-                    }
-                    status.value = HttpRequestStatus.success
-                })
-                .catch((e) => {
-                    error.value = e as HTTPError
-                    status.value = HttpRequestStatus.error
-                })
-            return { abort, responsePromise }
-        }
-        return {
-            execute,
-            isLoading,
-            isSuccess,
-            isError,
-            error: readonly(error),
-            data,
-            metadata,
-            ...(immediate ? execute() : {}),
-        }
-    }
+    ) => defineRepositoryRequest(
+        unref(options).immediate ?? true,
+        () => [unref(payload), unref(params), unref(options)] as [
+            TRequest | TRequest[] | undefined,
+            ParamMap,
+            HttpClientRequestOptions,
+        ],
+        (newPayload, newParams, newOptions) =>
+            repository.update(newPayload, newParams, newOptions),
+    )
 
     const remove = (
         params: ParamMap | Ref<ParamMap>,
         options: HttpClientComposableRequestOptions = {},
-    ) => {
-        const { status, isLoading, isError, isSuccess }
-            = defineHttpRequestStatus()
-        const immediate = unref(options).immediate ?? true
-        const error = ref<HTTPError>()
-
-        const execute = (
-            newParams: ParamMap = unref(params),
-            newOptions: RepositoryHttpReadOptions = unref(options),
-        ) => {
-            status.value = HttpRequestStatus.loading
-            error.value = undefined
-            const { abort, responsePromise } = repository.remove(
-                newParams,
-                newOptions,
-            )
-            responsePromise
-                .then((result) => {
-                    if (result.aborted) {
-                        status.value = HttpRequestStatus.idle
-                        return
-                    }
-                    status.value = HttpRequestStatus.success
-                })
-                .catch((e) => {
-                    error.value = e as HTTPError
-                    status.value = HttpRequestStatus.error
-                })
-            return { abort, responsePromise }
-        }
-        return {
-            execute,
-            isLoading,
-            isSuccess,
-            isError,
-            error: readonly(error),
-            ...(immediate ? execute() : {}),
-        }
-    }
+    ) => defineRepositoryRequest(
+        unref(options).immediate ?? true,
+        () => [unref(params), unref(options)] as [ParamMap, HttpClientRequestOptions],
+        (newParams, newOptions) => repository.remove(newParams, newOptions),
+        false,
+    )
 
     return {
         repository,
