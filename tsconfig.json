@@ -4,7 +4,6 @@
         "jsx": "preserve",
         "lib": ["ESNext", "DOM", "DOM.Iterable"],
         "useDefineForClassFields": true,
-        "rootDir": "src",
         "module": "ESNext",
         "moduleResolution": "Bundler",
         "resolveJsonModule": true,
@@ -23,8 +22,7 @@
         "noImplicitThis": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "declaration": true,
-        "outDir": "dist",
+        "noEmit": true,
         // Recommended
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
@@ -32,5 +30,5 @@
         "verbatimModuleSyntax": true,
         "skipLibCheck": true
     },
-    "include": ["src/*", "src/**/*"]
+    "include": ["src/**/*", "test/**/*", "vite-env.d.ts"]
 }

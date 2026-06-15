@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import createFetchMock from 'vitest-fetch-mock'
-import { HttpClient, RepositoryHttp } from '../node'
+import { HttpClient, RepositoryHttp } from '../src'
 
 const fetchMock = createFetchMock(vi)
 
@@ -117,5 +117,25 @@ describe('repositoryHttp', () => {
         expect(request.url).toEqual(
             'https://myapi.com/v1/alpha?codes=col,pe,at',
         )
+    })
+    it('should keep all language metadata when both headers are present', async () => {
+        fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]), {
+            headers: {
+                'Content-Language': 'it',
+                'Accept-Language': 'en',
+                'X-Total-Count': '42',
+            },
+        })
+        const client = new HttpClient({
+            prefixUrl: 'https://myapi.com/v1',
+        })
+        const repository = new RepositoryHttp<{ id: string }>(client, ':type')
+        const { responsePromise } = repository.read({ type: 'alpha' })
+        const { metadata } = await responsePromise
+        expect(metadata).toEqual({
+            contentLanguage: 'it',
+            acceptLanguage: 'en',
+            total: '42',
+        })
     })
 })

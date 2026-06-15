@@ -14,7 +14,7 @@ const httpClient = createHttpClient({
 
 const component = {
     template: '<div />',
-    setup: (_, { expose }) => {
+    setup: (_props: unknown, { expose }: { expose: (exposed: Record<string, unknown>) => void }) => {
         const { read } = useRepositoryHttp<{ id: string }>(':type')
         const { data, execute, isLoading, isError, error, abort, metadata }
             = read({
