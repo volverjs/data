@@ -1,4 +1,4 @@
-import type { HttpClientInstance, HttpClientMethod as HttpMethod, HttpClientOptions, HttpClientRequestOptions, HttpClientUrlTemplate } from './HttpClient'
+import type { HttpClientInstance, HttpClientOptions, HttpClientRequestOptions, HttpClientUrlTemplate, HttpClientMethod as HttpMethod } from './HttpClient'
 import type { Repository } from './Repository'
 import type { ParamMap } from './types'
 import { Hash } from './Hash'
@@ -84,6 +84,7 @@ export type RepositoryHttpOptions<TRequest, TResponse = TRequest> = {
      * 		}
      * 		if (response.headers.has('Accept-Language')) {
      * 			toReturn = {
+     * 				...toReturn,
      * 				acceptLanguage: response.headers.get('Accept-Language'),
      * 			}
      * 		}
@@ -145,6 +146,7 @@ implements Repository<TRequest, TResponse> {
         }
         if (response.headers.has('Accept-Language')) {
             toReturn = {
+                ...toReturn,
                 acceptLanguage: response.headers.get('Accept-Language'),
             }
         }
@@ -286,33 +288,7 @@ implements Repository<TRequest, TResponse> {
         payload?: TRequest | TRequest[],
         params?: ParamMap,
         options?: HttpClientRequestOptions,
-    ) => {
-        const {
-            responsePromise: httpResponsePromise,
-            abort,
-            signal,
-        } = this._client.request(
-            (options?.method as HttpMethod) ?? 'post',
-            this._requestUrl(params),
-            this._requestOptions(options, payload),
-        )
-        const responsePromise = (async () => {
-            try {
-                const httpResponse = await httpResponsePromise
-                const raw = await httpResponse.json<TResponse>()
-                const data = this._responseAdapter(raw)
-                const metadata = this._metadataAdapter(httpResponse)
-                return { data, item: data?.[0], metadata, ok: httpResponse.ok }
-            }
-            catch (error) {
-                if (!signal.aborted) {
-                    throw error
-                }
-                return { ok: false, aborted: true, abortReason: signal.reason }
-            }
-        })()
-        return { abort, responsePromise, signal }
-    }
+    ) => this._write('post', payload, params, options)
 
     /**
      * @params payload - The payload to use in the request body.
@@ -332,13 +308,23 @@ implements Repository<TRequest, TResponse> {
         payload?: TRequest | TRequest[],
         params?: ParamMap,
         options?: HttpClientRequestOptions,
+    ) => this._write('put', payload, params, options)
+
+    /**
+     * Shared implementation for the `create` (POST) and `update` (PUT) writes.
+     */
+    private readonly _write = (
+        defaultMethod: HttpMethod,
+        payload?: TRequest | TRequest[],
+        params?: ParamMap,
+        options?: HttpClientRequestOptions,
     ) => {
         const {
             responsePromise: httpResponsePromise,
             abort,
             signal,
         } = this._client.request(
-            (options?.method as HttpMethod) ?? 'put',
+            (options?.method as HttpMethod) ?? defaultMethod,
             this._requestUrl(params),
             this._requestOptions(options, payload),
         )

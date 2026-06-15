@@ -25,7 +25,9 @@ describe('vue useHttpClient', () => {
     it('should make a GET request', async () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
         const { client } = useHttpClient()
-        const data = await client.get('https://myapi.com/v1').json()
+        const data = await client
+            .get('https://myapi.com/v1')
+            .json<{ id: string }[]>()
         expect(data[0].id).toBe('12345')
         expect(fetchMock.mock.calls.length).toBe(1)
         const request = fetchMock.mock.calls[0][0] as Request
@@ -35,7 +37,7 @@ describe('vue useHttpClient', () => {
     it('should make a GET request with template parameters', async () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
         const { requestGet } = useHttpClient()
-        const { data, isLoading, isError } = requestGet({
+        const { data, isLoading, isError } = requestGet<{ id: string }[]>({
             template: 'https://myapi.com/v1/:name',
             params: { name: 'example' },
         })
@@ -53,7 +55,7 @@ describe('vue useHttpClient', () => {
     it('should make a GET request with template and query parameters', async () => {
         fetchMock.mockResponseOnce(JSON.stringify([{ id: '12345' }]))
         const { requestGet } = useHttpClient()
-        const { data, isLoading, isError } = requestGet({
+        const { data, isLoading, isError } = requestGet<{ id: string }[]>({
             template: 'https://myapi.com/v1/:type',
             params: { type: 'alpha', codes: ['col', 'pe', 'at'] },
         })
@@ -77,7 +79,7 @@ describe('vue useHttpClient', () => {
             scope: 'myApi',
         })
         const { requestGet } = useHttpClient('myApi')
-        const { data, isLoading, isError } = requestGet({
+        const { data, isLoading, isError } = requestGet<{ id: string }[]>({
             template: ':type',
             params: { type: 'alpha', codes: ['col', 'pe', 'at'] },
         })
@@ -129,7 +131,7 @@ describe('vue useHttpClient', () => {
             await responsePromise
         }
         catch (error) {
-            signal?.aborted && expect(error.message).toBe('Aborted')
+            signal?.aborted && expect((error as Error).message).toBe('Aborted')
         }
         abort?.('Aborted')
     })
@@ -163,7 +165,7 @@ describe('vue useHttpClient', () => {
             requestGet('alpha')
         }
         catch (error) {
-            expect(error.message).toBe('HttpClient instance not found')
+            expect((error as Error).message).toBe('HttpClient instance not found')
         }
     })
 
@@ -190,7 +192,7 @@ describe('vue useHttpClient', () => {
             })
         }
         catch (error) {
-            expect(error.message).toBe(
+            expect((error as Error).message).toBe(
                 'httpClient with scope myApi6 already exist',
             )
         }
@@ -217,7 +219,7 @@ describe('vue useHttpClient', () => {
             useHttpClient('myApi7')
         }
         catch (error) {
-            expect(error.message).toBe('HttpClient instance not found')
+            expect((error as Error).message).toBe('HttpClient instance not found')
         }
 
         requestGet('alpha')

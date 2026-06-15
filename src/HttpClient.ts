@@ -1,7 +1,4 @@
-import type { Hooks, KyInstance, KyResponse, Options, ResponsePromise, Input, RetryOptions } from 'ky'
-
-type HttpMethod = string
-type KyHeadersInit = NonNullable<RequestInit['headers']> | Record<string, string | undefined>
+import type { Hooks, Input, KyInstance, KyResponse, Options, ResponsePromise, RetryOptions } from 'ky'
 import type { ParamMap } from './types'
 import type { UrlBuilderInstance, UrlBuilderOptions } from './UrlBuilder'
 import ky, {
@@ -14,6 +11,9 @@ import {
     UrlBuilder,
 
 } from './UrlBuilder'
+
+type HttpMethod = string
+type KyHeadersInit = NonNullable<RequestInit['headers']> | Record<string, string | undefined>
 
 export type HttpClientResponse = KyResponse
 export type HttpClientResponsePromise = ResponsePromise
@@ -71,7 +71,10 @@ export interface HttpClientInstance {
         abort: (reason?: string) => void
         signal: AbortSignal
     }
-    setBearerToken: (token: string) => void
+    setBearerToken: (
+        token: string | undefined | null,
+        options?: { headerName?: string, prefix?: string },
+    ) => void
     buildUrl: (
         url: HttpClientInputTemplate,
         options?: UrlBuilderOptions,
@@ -164,8 +167,10 @@ export class HttpClient implements HttpClientInstance {
         const { abortController, ...otherOptions } = options
         const { controller, signal }
             = HttpClient.createAbortController(abortController)
+        const verb = method.toLowerCase() as
+            'get' | 'post' | 'put' | 'delete' | 'patch' | 'head'
         return {
-            responsePromise: (this as unknown as Record<string, (url: HttpClientInputTemplate, options?: HttpClientOptions) => HttpClientResponsePromise>)[method](url, { signal, ...otherOptions }),
+            responsePromise: this[verb](url, { signal, ...otherOptions }),
             abort: (reason?: string) => controller.abort(reason),
             signal,
         }

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import createFetchMock from 'vitest-fetch-mock'
-import { HttpClient } from '../node'
+import { HttpClient } from '../src'
 
 const fetchMock = createFetchMock(vi)
 
@@ -90,7 +90,7 @@ describe('httpClient', () => {
                 .json()
         }
         catch (error) {
-            expect(error.response.status).toBe(404)
+            expect((error as { response: { status: number } }).response.status).toBe(404)
         }
         expect(fetchMock.mock.calls.length).toBe(1)
         const request = fetchMock.mock.calls[0][0] as Request
@@ -111,7 +111,7 @@ describe('httpClient', () => {
             await responsePromise
         }
         catch (error) {
-            signal.aborted && expect(error.message).toBe('Aborted')
+            signal.aborted && expect((error as { message: string }).message).toBe('Aborted')
         }
         abort('Aborted')
     })

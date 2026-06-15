@@ -2,7 +2,7 @@
     "name": "@volverjs/data",
     "type": "module",
     "version": "0.0.0",
-    "packageManager": "pnpm@10.33.0",
+    "packageManager": "pnpm@11.7.0",
     "description": "Repository pattern implementation with a tiny HttpClient based on Fetch API.",
     "author": "8 Wave S.r.l.",
     "license": "MIT",
@@ -96,7 +96,7 @@
         "lint:fix": "eslint --fix",
         "type-check": "tsc --noEmit",
         "dev": "vite build --watch",
-        "build": "vite build && vue-tsc --declaration --emitDeclarationOnly && copy src/**/*.d.ts dist",
+        "build": "vite build && vue-tsc --declaration --emitDeclarationOnly -p tsconfig.build.json && copy src/**/*.d.ts dist",
         "test": "pnpm run test-vitest",
         "test-vitest": "vitest run",
         "test-vitest-watch": "vitest watch",
@@ -106,34 +106,29 @@
         "abort-controller": "^3.0.0",
         "ky": "^1.14.3",
         "node-fetch": "^3.3.2",
-        "qs": "^6.15.0",
-        "web-streams-polyfill": "^4.2.0"
+        "qs": "^6.15.2",
+        "web-streams-polyfill": "^4.3.0"
     },
     "optionalDependencies": {
-        "vue": "^3.5.31"
+        "vue": "^3.5.38"
     },
     "devDependencies": {
-        "@antfu/eslint-config": "^8.0.0",
+        "@antfu/eslint-config": "^9.0.0",
         "@nabla/vite-plugin-eslint": "^3.0.1",
-        "@types/node": "^25.5.0",
-        "@types/qs": "^6.15.0",
-        "@vitejs/plugin-vue": "^6.0.5",
-        "@vue/test-utils": "^2.4.6",
+        "@types/node": "^25.9.3",
+        "@types/qs": "^6.15.1",
+        "@vitejs/plugin-vue": "^6.0.7",
+        "@vue/test-utils": "^2.4.11",
         "copy": "^0.3.2",
-        "eslint": "^10.1.0",
-        "globals": "^17.4.0",
-        "happy-dom": "^20.8.8",
-        "typescript": "^6.0.2",
-        "vite": "^8.0.3",
+        "eslint": "^10.5.0",
+        "globals": "^17.6.0",
+        "happy-dom": "^20.10.3",
+        "typescript": "^6.0.3",
+        "vite": "^8.0.16",
         "vite-plugin-externalize-deps": "^0.10.0",
-        "vitest": "^4.1.1",
+        "vitest": "^4.1.9",
         "vitest-fetch-mock": "^0.4.5",
-        "vue": "^3.5.31",
-        "vue-tsc": "^3.2.6"
-    },
-    "pnpm": {
-        "onlyBuiltDependencies": [
-            "esbuild"
-        ]
+        "vue": "^3.5.38",
+        "vue-tsc": "^3.3.5"
     }
 }
