@@ -12,7 +12,7 @@ import {
 
 } from './UrlBuilder'
 
-type HttpMethod = string
+type HttpMethod = NonNullable<Options['method']>
 type KyHeadersInit = NonNullable<RequestInit['headers']> | Record<string, string | undefined>
 
 export type HttpClientResponse = KyResponse
