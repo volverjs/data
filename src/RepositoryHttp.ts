@@ -236,7 +236,7 @@ implements Repository<TRequest, TResponse> {
             abort,
             signal,
         } = this._client.request(
-            (options?.method as HttpMethod) ?? 'get',
+            options?.method ?? 'get',
             this._requestUrl(params),
             this._requestOptions(requestOptions),
         )
@@ -324,7 +324,7 @@ implements Repository<TRequest, TResponse> {
             abort,
             signal,
         } = this._client.request(
-            (options?.method as HttpMethod) ?? defaultMethod,
+            options?.method ?? defaultMethod,
             this._requestUrl(params),
             this._requestOptions(options, payload),
         )
@@ -365,7 +365,7 @@ implements Repository<TRequest, TResponse> {
             abort,
             signal,
         } = this._client.request(
-            (options?.method as HttpMethod) ?? 'delete',
+            options?.method ?? 'delete',
             this._requestUrl(params),
             requestOptions,
         )
