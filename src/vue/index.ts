@@ -84,7 +84,7 @@ class HttpClientPlugin extends HttpClient {
  *
  * const app = createApp(App)
  * const client = createHttpClient({
- *  prefixUrl: 'https://my.api.com'
+ *  prefix: 'https://my.api.com'
  * })
  * app.use(client)
  * ```
@@ -97,7 +97,7 @@ class HttpClientPlugin extends HttpClient {
  *
  * const app = createApp(App)
  * const client = createHttpClient({
- *  prefixUrl: 'https://my.api-v2.com',
+ *  prefix: 'https://my.api-v2.com',
  *  scope: 'apiV2'
  * })
  *

@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.0.0] - Unreleased
+## [3.0.0-beta.1] - 2026-06-15
 
 ### Changed
 
@@ -143,7 +143,7 @@ All notable changes to this project will be documented in this file.
 - `UrlBuilder` a class to build URLs through a template;
 - `RepositoryHttp` an implementation of `Repository` interface to fetch data through `HttpClient`.
 
-[3.0.0]: https://github.com/volverjs/data/compare/v2.0.5...v3.0.0
+[3.0.0-beta.1]: https://github.com/volverjs/data/compare/v2.0.5...v3.0.0-beta.1
 [2.0.5]: https://github.com/volverjs/data/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/volverjs/data/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/volverjs/data/compare/v2.0.2...v2.0.3

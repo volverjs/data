@@ -29,7 +29,7 @@ type HttpClientOptions = {
     headers?: HttpClientHeaders
     json?: unknown
     parseJson?: (text: string) => unknown // default: JSON.parse()
-    prefixUrl?: URL | string
+    prefix?: URL | string
     retry?: HttpClientRetryOptions | number
     timeout?: number | false // default: 10000
     hooks?: HttpClientHooks

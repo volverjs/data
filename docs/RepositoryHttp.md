@@ -20,7 +20,7 @@ class User {
 }
 
 const client = new HttpClient({
-    prefixUrl: 'https://api.example.com'
+    prefix: 'https://api.example.com'
 })
 
 const repository = new RepositoryHttp<User>(client, 'users/:group?/:id?', {

@@ -12,7 +12,7 @@ import {
 
 } from './UrlBuilder'
 
-type HttpMethod = string
+type HttpMethod = NonNullable<Options['method']>
 type KyHeadersInit = NonNullable<RequestInit['headers']> | Record<string, string | undefined>
 
 export type HttpClientResponse = KyResponse
@@ -90,13 +90,13 @@ export { HTTPError, TimeoutError }
 export class HttpClient implements HttpClientInstance {
     private _client: KyInstance
     private _urlBuilder: UrlBuilderInstance
-    private _prefixUrl: string | URL | undefined
+    private _prefix: string | URL | undefined
 
     constructor(options: HttpClientInstanceOptions = {}) {
         const { client, urlBuilder, searchParams, ...clientOptions } = options
         this._client = client ?? ky.create(clientOptions)
         this._urlBuilder = urlBuilder ?? new UrlBuilder(searchParams)
-        this._prefixUrl = clientOptions.prefixUrl
+        this._prefix = clientOptions.prefix
     }
 
     public get = (
@@ -183,7 +183,7 @@ export class HttpClient implements HttpClientInstance {
     public extend = (options: HttpClientOptions = {}) => {
         const { searchParams, ...clientOptions } = options
         this._client = this._client.extend(clientOptions)
-        this._prefixUrl = clientOptions.prefixUrl ?? this._prefixUrl
+        this._prefix = clientOptions.prefix ?? this._prefix
         this._urlBuilder.extend(searchParams ?? {})
     }
 
@@ -216,7 +216,7 @@ export class HttpClient implements HttpClientInstance {
     ): HttpClientInput {
         const toReturn = HttpClient.buildUrl(url, options, this._urlBuilder)
         if (
-            this._prefixUrl
+            this._prefix
             && typeof toReturn === 'string'
             && toReturn?.startsWith('/')
         ) {

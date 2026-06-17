@@ -30,7 +30,7 @@ export type RepositoryHttpOptions<TRequest, TResponse = TRequest> = {
      * @default undefined
      * @example
      * ```typescript
-     * addHttpClient('v2', { prefixUrl: 'https://myapi.com/v2' })
+     * addHttpClient('v2', { prefix: 'https://myapi.com/v2' })
      * const { read } = useRepositoryHttp<{ id: string }>('users/?:id', { httpClientScope: 'v2' })
      * read({ id: 1 })
      * //=> GET https://myapi.com/v2/?id=1
@@ -42,7 +42,7 @@ export type RepositoryHttpOptions<TRequest, TResponse = TRequest> = {
      * @default undefined
      * @example
      * ```typescript
-     * const repository = new RepositoryHttp(client, 'users/?:id', { httpClientOptions: { prefixUrl: 'https://example.com' } })
+     * const repository = new RepositoryHttp(client, 'users/?:id', { httpClientOptions: { prefix: 'https://example.com' } })
      * repository.read({ id: 1 })
      * //=> GET https://example.com/?id=1
      * ```
@@ -133,7 +133,7 @@ export class RepositoryHttp<TRequest, TResponse = TRequest>
 implements Repository<TRequest, TResponse> {
     private _client: HttpClientInstance
     private _template: string | HttpClientUrlTemplate
-    private _responseAdapter = (raw: TResponse): TResponse[] =>
+    private readonly _responseAdapter = (raw: TResponse): TResponse[] =>
         (Array.isArray(raw) ? raw : [raw]) as TResponse[]
 
     private _requestAdapter = (item: TRequest): unknown => item
@@ -184,7 +184,7 @@ implements Repository<TRequest, TResponse> {
             this._httpClientOptions = options.httpClientOptions
         }
         if (options?.class && !options?.responseAdapter) {
-            const OptionsClass = options.class as new (...args: any[]) => TResponse
+            const OptionsClass = options.class
             this._responseAdapter = (raw) => {
                 return Array.isArray(raw)
                     ? raw.map(rawItem => new OptionsClass(rawItem))
@@ -236,7 +236,7 @@ implements Repository<TRequest, TResponse> {
             abort,
             signal,
         } = this._client.request(
-            (options?.method as HttpMethod) ?? 'get',
+            options?.method ?? 'get',
             this._requestUrl(params),
             this._requestOptions(requestOptions),
         )
@@ -324,7 +324,7 @@ implements Repository<TRequest, TResponse> {
             abort,
             signal,
         } = this._client.request(
-            (options?.method as HttpMethod) ?? defaultMethod,
+            options?.method ?? defaultMethod,
             this._requestUrl(params),
             this._requestOptions(options, payload),
         )
@@ -365,7 +365,7 @@ implements Repository<TRequest, TResponse> {
             abort,
             signal,
         } = this._client.request(
-            (options?.method as HttpMethod) ?? 'delete',
+            options?.method ?? 'delete',
             this._requestUrl(params),
             requestOptions,
         )

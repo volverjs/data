@@ -80,7 +80,7 @@ The `HttpClient` class is a wrapper around [`ky`](https://github.com/sindresorhu
 import { HttpClient } from '@volverjs/data'
 
 const client = new HttpClient({
-    prefixUrl: 'https://my.api.com'
+    prefix: 'https://my.api.com'
 })
 const response = await client.get({
     template: ':endpoint/:action?/:id',
@@ -119,7 +119,7 @@ class User {
 }
 
 const client = new HttpClient({
-    prefixUrl: 'https://my.api.com'
+    prefix: 'https://my.api.com'
 })
 
 const repository = new RepositoryHttp<User>(client, 'users/:group?/:id?', {
@@ -152,7 +152,7 @@ import App from './App.vue'
 
 const app = createApp(App)
 const httpClientPlugin = createHttpClient({
-    prefixUrl: 'https://my.api.com'
+    prefix: 'https://my.api.com'
 })
 
 app.use(httpClientPlugin, {
@@ -180,7 +180,7 @@ import { createHttpClient, useHttpClient } from '@volverjs/data/vue'
 import { computed, ref } from 'vue'
 
 createHttpClient({
-    prefixUrl: 'https://my.api.com'
+    prefix: 'https://my.api.com'
 })
 
 const { client } = useHttpClient()
@@ -569,7 +569,7 @@ With `scope` parameter on `createHttpClient()` multiple `httpClient` instances c
 <script lang="ts" setup>
 import { createHttpClient } from '@volverjs/data/vue'
 
-createHttpClient({ scope: 'v2Api', prefixUrl: 'https://my.api.com/v2' })
+createHttpClient({ scope: 'v2Api', prefix: 'https://my.api.com/v2' })
 
 const { requestGet } = useHttpClient('v2Api')
 
@@ -592,7 +592,7 @@ The `global` `httpClient` instance cannot be removed.
 <script lang="ts" setup>
 import { createHttpClient, removeHttpClient } from '@volverjs/data/vue'
 
-createHttpClient({ scope: 'v2Api', prefixUrl: 'https://my.api.com/v2' })
+createHttpClient({ scope: 'v2Api', prefix: 'https://my.api.com/v2' })
 
 const { requestGet } = useHttpClient('v2Api')
 
