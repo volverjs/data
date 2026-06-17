@@ -133,7 +133,7 @@ export class RepositoryHttp<TRequest, TResponse = TRequest>
 implements Repository<TRequest, TResponse> {
     private _client: HttpClientInstance
     private _template: string | HttpClientUrlTemplate
-    private _responseAdapter = (raw: TResponse): TResponse[] =>
+    private readonly _responseAdapter = (raw: TResponse): TResponse[] =>
         (Array.isArray(raw) ? raw : [raw]) as TResponse[]
 
     private _requestAdapter = (item: TRequest): unknown => item
