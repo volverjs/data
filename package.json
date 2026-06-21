@@ -115,7 +115,7 @@
     "devDependencies": {
         "@antfu/eslint-config": "^9.0.0",
         "@nabla/vite-plugin-eslint": "^3.0.1",
-        "@types/node": "^25.9.3",
+        "@types/node": "^26.0.0",
         "@types/qs": "^6.15.1",
         "@vitejs/plugin-vue": "^6.0.7",
         "@vue/test-utils": "^2.4.11",
